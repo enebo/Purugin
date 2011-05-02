@@ -1,0 +1,6 @@
+nbproject/private
+build
+dist
+*~
+*.orig
+*.rej
