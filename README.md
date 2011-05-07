@@ -19,7 +19,8 @@ forewarned, they may change here and there....
 Here is a plugin which gets registered as a plugin in Bukkit which tells
 every use in the players world when a player joins or quits the world:
 
-``--------- player_joined.rb ----------
+<pre><code>
+--------- player_joined.rb ----------
 class PlayerJoinedPlugin
   include Purugin::Plugin
   description 'PlayerJoined', 0.1
@@ -39,17 +40,20 @@ class PlayerJoinedPlugin
       end
     end
   end
-end``
+end
+</code></pre>
 
 ### Load plugins
 
 If you want to include an module into your plugin you can add a line in
 on_enable like:
 
-``def on_enable
+<pre><code>
+def on_enable
   include_plugin_module 'Commands', 'Command'
   # .... use methods from Command module now
-end``
+end
+</code></pre>
 
 This example shows this method include the Command module defined in the 
 Commands plugin into it. 
