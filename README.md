@@ -20,7 +20,33 @@ Here is a plugin which gets registered as a plugin in Bukkit which tells
 every use in the players world when a player joins or quits the world:
 
 <pre><code>
---------- player_joined.rb ----------
+--------- examples/player_joined.rb -----
+purugin('PlayerJoined', 0.1) do
+  def on_enable
+    # Tell everyone in players world that they have joined
+    event(:player_join) do |e|
+      e.player.world.players.each do |p| 
+        p.send_message "Player #{e.player.name} has joined"
+      end
+    end
+
+    # Tell everyone in players world that they have quit
+    event(:player_quit) do |e|
+      e.player.world.players.each do |p| 
+        p.send_message "Player #{e.player.name} has quit"
+      end
+    end
+  end
+end
+</code></pre>
+
+The purugin method allows you to specify the name and version of your
+plugin along with a block which represents the methods that this plugin should
+contain.  To some this is a bit more magic than they want.  If you prefer a
+more traditional way of creating plugins you can:
+
+<pre><code>
+--------- examples/player_joined_full_class.rb ----------
 class PlayerJoinedPlugin
   include Purugin::Plugin
   description 'PlayerJoined', 0.1

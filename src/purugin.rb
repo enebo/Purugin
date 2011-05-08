@@ -492,4 +492,14 @@ module Purugin
   end
 end
 
+class Object
+  def purugin(name, version, &code)
+    cls = Class.new do
+      include Purugin::Plugin
+      description name, version      
+    end
+    cls.class_eval &code    
+  end
+end
+
 Purugin::Purugin
