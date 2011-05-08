@@ -78,7 +78,7 @@ module Purugin
     }
     
     def is?(value)
-      MATERIAL_NAMES[value]
+      self.type == MATERIAL_NAMES[value]
     end  
   end
 end
