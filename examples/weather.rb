@@ -5,8 +5,7 @@ class WeatherPlugin
   def on_enable
     include_plugin_module 'Commands', 'Command'
 
-    config = getConfiguration
-    config.load
+    config = load_configuration
     like_weather = config.get_boolean('weather.storms', true)
 
     command('/weather', '[stop|start] to toggle weather') do |e, cmd, *args|

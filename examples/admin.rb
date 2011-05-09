@@ -5,10 +5,6 @@ class AdminPlugin
   def on_enable
     include_plugin_module 'Commands', 'Command'
 
-    command('/loc', 'display current location') do |e, *args|
-      l = e.player.location
-      e.player.send_message format("loc: %0.2f, %0.2f, %0.2f", l.x, l.y, l.z)
-    end
     command('/time', 'change time +n hours') do |e, *args| 
       e.player.world.time = args[1].to_i
     end
