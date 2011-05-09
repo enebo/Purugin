@@ -106,6 +106,16 @@ module Purugin
   end
 end
 
+class org::bukkit::Location
+  def to_a
+    [x, y, z, pitch, yaw]
+  end
+  
+  def self.from_a(arr)
+    org.bukkit.Location.new(nil, *arr)
+  end
+end
+
 class org::bukkit::event::player::PlayerInteractEvent
   include Purugin::Action
 end
@@ -138,9 +148,14 @@ module org::bukkit::plugin::PluginManager
 end
 
 class org::bukkit::util::config::ConfigurationNode
-  # Once setProperty is called also save this Configuration
+  # Once setProperty/removeProperty is called also save this Configuration
   def set!(path, value)
-    setProperty(path, value)
+    setProperty path, value
+    save
+  end
+  
+  def remove!(path)
+    removeProperty path
     save
   end
 end
@@ -484,6 +499,7 @@ module Purugin
     def load_configuration
       config = getConfiguration
       config.load
+      config
     end
   end
 
