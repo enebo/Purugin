@@ -1,6 +1,6 @@
 class org::bukkit::Location
   def to_a
-    [x, y, z, pitch, yaw]
+    [getX, getY, getZ, pitch, yaw]
   end
   
   def self.from_a(arr)

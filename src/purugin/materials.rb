@@ -72,8 +72,9 @@ module Purugin
       :cookie => M::COOKIE, :gold_record => M::GOLD_RECORD, :green_record => M::GREEN_RECORD
     }
     
-    def is?(value)
-      self.type == MATERIAL_NAMES[value]
+    # Is this block any of the supplied values (names gotten from MATERIAL_NAMES)
+    def is?(*values)
+      values.map() {|value| MATERIAL_NAMES[value] }.include?(type)
     end  
   end
 end
