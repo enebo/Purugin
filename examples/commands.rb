@@ -3,12 +3,10 @@ require 'purugin/colors'
 class CommandsPlugin
   include Purugin::Plugin, Purugin::Colors
   description 'Commands', 0.1
-
   attr_reader :commands
 
   module Command
-    class CMD < Struct.new(:permission, :description, :plugin_name, :code)
-    end
+    class CMD < Struct.new(:permission, :description, :plugin_name, :code); end
 
     def basename
       @basename ||= "purugin.#{getDescription.name.downcase}"
@@ -28,7 +26,7 @@ class CommandsPlugin
 
   include Command
 
-  def initialize(*a)
+  def initialize(*)
     super
     @commands = {}
   end
@@ -39,33 +37,29 @@ class CommandsPlugin
     puts "No permissions...free for all" unless @permissions
 
     command('/help', 'help on all commands', nil) do |e, *args|
-      player = e.player
-      @commands.sort.each do |command, entry|
-        permission = has_permission(player, entry.permission) ? green('*') : red('*')
-        e.player.send_message "#{command} - #{entry.description} [#{entry.plugin_name}]#{permission}"
+      @commands.sort.each do |name, cmd|
+        allowed = permitted?(e.player, cmd.permission) ? green('*') : red('*')
+        e.player.msg "#{name} - #{cmd.description} [#{cmd.plugin_name}]#{allowed}"
       end
     end
 
     event(:player_command_preprocess) do |e|
-      player = e.player
-      command, *args = e.message.split(/\s+/)
-      entry = @commands[command]
+      name, *args = e.message.split(/\s+/)
+      cmd = @commands[name]
 
-      if entry
-        if has_permission(e.player, entry.permission)
-          entry.code.call(e, command, *args)
+      if cmd
+        if permitted? e.player, cmd.permission
+          cmd.code.call(e, name, *args)
         else
-          e.player.send_message "Insufficient privelege for:  #{command}"
+          e.player.msg "Insufficient privelege for:  #{name}"
         end
       else
-        e.player.send_message "Uknown command: #{command}"
+        e.player.msg "Uknown command: #{name}"
       end
     end
   end
 
-  def has_permission(player, permission)
-    !@permissions || !permission || 
-      @permissions.handler.has(player, permission) ||
-      @permissions.handler.has(player, basename)
+  def permitted?(player, permission)
+    !@permissions || !permission || @permissions.handler.has(player, permission)
   end
 end
