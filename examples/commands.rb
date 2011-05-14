@@ -1,5 +1,7 @@
+require 'purugin/colors'
+
 class CommandsPlugin
-  include Purugin::Plugin
+  include Purugin::Plugin, Purugin::Colors
   description 'Commands', 0.1
 
   attr_reader :commands
@@ -31,8 +33,6 @@ class CommandsPlugin
     @commands = {}
   end
 
-  java_import org.bukkit.ChatColor
-
   def on_enable
     @permissions = plugin_manager['Permissions']
 
@@ -41,9 +41,8 @@ class CommandsPlugin
     command('/help', 'help on all commands', nil) do |e, *args|
       player = e.player
       @commands.sort.each do |command, entry|
-        permission = has_permission(player, entry.permission) ? 
-          ChatColor::GREEN : ChatColor::RED
-        e.player.send_message "#{command} - #{entry.description} [#{entry.plugin_name}]#{permission}*"
+        permission = has_permission(player, entry.permission) ? green('*') : red('*')
+        e.player.send_message "#{command} - #{entry.description} [#{entry.plugin_name}]#{permission}"
       end
     end
 

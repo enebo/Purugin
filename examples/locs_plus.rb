@@ -1,8 +1,6 @@
 purugin('LocsPlus', 0.1) do
-  def green(text)
-    "#{org.bukkit.ChatColor::GREEN}#{text}#{org.bukkit.ChatColor::WHITE}"
-  end
-
+  include Purugin::Colors
+  
   def dirify(value, positive, negative)
     value < 0 ? [value.abs, negative] : [value, positive]
   end  
@@ -10,7 +8,7 @@ purugin('LocsPlus', 0.1) do
   def loc_string(name, player, x, y, z, pitch, yaw)
     distance = distance_from_loc(player, x, y, z)
     l = player.location
-    x1, z1, y1 = l.x - x, l.z - z, l.y - y
+    x1, z1, y1 = l.getX - x, l.getZ - z, l.getY - y
     x1, ns = dirify(x1, 'N', 'S')
     z1, ew = dirify(z1, 'E', 'W')
     y1, ud = dirify(y1, 'D', 'U')
@@ -39,7 +37,7 @@ purugin('LocsPlus', 0.1) do
 
   def distance_from_loc(player, x, y, z)
     l = player.location
-    Math.sqrt((l.x-x)*(l.x-x)+(l.y-y)*(l.y-y)+(l.z-z)*(l.z-z))
+    Math.sqrt((l.getX-x)*(l.getX-x)+(l.getY-y)*(l.getY-y)+(l.getZ-z)*(l.getZ-z))
   end
 
   def locations(player)
