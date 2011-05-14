@@ -1,5 +1,6 @@
-purugin('LocsPlus', 0.1) do
-  include Purugin::Colors
+class LocsPlus
+  include Purugin::Plugin, Purugin::Colors
+  description 'LocsPlus', 0.2
   
   def dirify(value, positive, negative)
     value < 0 ? [value.abs, negative] : [value, positive]
