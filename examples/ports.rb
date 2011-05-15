@@ -12,7 +12,7 @@ class PortsPlugin
     state.get_line(1)
   end
   
-  VALUE = '\d+(?:\.\d+)?'
+  VALUE = '-?\d+(?:\.\d+)?'
   DEL = '\s*,\s*'
   LOC = Regexp.new "\s*(#{VALUE})#{DEL}(#{VALUE})#{DEL}(#{VALUE})\s*"
 
@@ -20,10 +20,13 @@ class PortsPlugin
     event(:player_interact) do |e|
       if e.right_click_block? && e.clicked_block.is?(:sign_post, :wall_sign)
         loc = teleporter_loc e.clicked_block.state
-        return unless loc || loc !~ LOC
+        return unless loc 
         
-        destination = org.bukkit.Location.new e.player.world, $1.to_f, $2.to_f, $3.to_f
-        server.scheduler.schedule_sync_delayed_task(plugin) { e.player.teleport destination }
+        if loc =~ LOC
+          x, y, z = $1.to_f, $2.to_f, $3.to_f
+          destination = org.bukkit.Location.new e.player.world, x, y, z
+          server.scheduler.schedule_sync_delayed_task(plugin) { e.player.teleport destination }
+        end
       end
     end
 
