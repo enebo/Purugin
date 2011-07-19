@@ -23,14 +23,21 @@ public class RubyPluginLoader implements PluginLoader {
         master = (PuruginPlugin) server.getPluginManager().getPlugin("PuruginPlugin");
     }
     
+    
     @Override
-    public Plugin loadPlugin(File file) throws InvalidPluginException, InvalidDescriptionException {
+    public Plugin loadPlugin(File file, boolean ignoreSoftDependencies) 
+            throws InvalidPluginException, InvalidDescriptionException {
         ScriptingContainer container = master.getContainer();
         String path = file.getAbsolutePath();
 
         master.executeScriptAt(path);
 
         return (Plugin) container.callMethod(master.getMain(), "instantiate_plugin", this, path);
+    }
+    
+    @Override
+    public Plugin loadPlugin(File file) throws InvalidPluginException, InvalidDescriptionException {
+        return loadPlugin(file, false);
     }
     
     @Override

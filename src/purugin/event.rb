@@ -154,7 +154,6 @@ module Purugin
       :sever_command => T::SERVER_COMMAND, # server command issued
       :chunk_load => T::CHUNK_LOAD, # Chunk of world loaded
       :chunk_unload => T::CHUNK_UNLOAD, # Chunk of world unloaded
-      :chunk_generation => T::CHUNK_GENERATION, # Chunk of world generatin
       :item_spawn => T::ITEM_SPAWN, # item spawns in world
       :spawn_change => T::SPAWN_CHANGE, # spawn changed in some way
       :world_save => T::WORLD_SAVE, # world is being saved
