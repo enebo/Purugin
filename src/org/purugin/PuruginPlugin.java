@@ -18,12 +18,18 @@ public final class PuruginPlugin extends JavaPlugin {
     
     @Override
     public void onDisable() {
-        container.callMethod(main, "onDisable");
+        // FIXME: We seem to now get two instances of PuruginPlugin and I don't know why yet...
+        if (main != null) {
+            container.callMethod(main, "onDisable");
+        }
     }
 
     @Override
     public void onEnable() {
-        container.callMethod(main, "onEnable");
+        // FIXME: We seem to now get two instances of PuruginPlugin and I don't know why yet...
+        if (main != null) {
+            container.callMethod(main, "onEnable");
+        } 
     }
 
     @Override
