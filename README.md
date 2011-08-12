@@ -20,32 +20,6 @@ Here is a plugin which gets registered as a plugin in Bukkit which tells
 every use in the players world when a player joins or quits the world:
 
 <pre><code>
---------- examples/player_joined.rb -----
-purugin('PlayerJoined', 0.1) do
-  def on_enable
-    # Tell everyone in players world that they have joined
-    event(:player_join) do |e|
-      e.player.world.players.each do |p| 
-        p.send_message "Player #{e.player.name} has joined"
-      end
-    end
-
-    # Tell everyone in players world that they have quit
-    event(:player_quit) do |e|
-      e.player.world.players.each do |p| 
-        p.send_message "Player #{e.player.name} has quit"
-      end
-    end
-  end
-end
-</code></pre>
-
-The purugin method allows you to specify the name and version of your
-plugin along with a block which represents the methods that this plugin should
-contain.  To some this is a bit more magic than they want.  If you prefer a
-more traditional way of creating plugins you can:
-
-<pre><code>
 --------- examples/player_joined_full_class.rb ----------
 class PlayerJoinedPlugin
   include Purugin::Plugin
@@ -69,20 +43,51 @@ class PlayerJoinedPlugin
 end
 </code></pre>
 
-### Load plugins
+### Plugin Dependencies
 
-If you want to include an module into your plugin you can add a line in
-on_enable like:
+Plugins can depend on other plugins.  There are multiple ways of accessing 
+dependent plugins.  The first is to declare your plugin dependencies at the top
+of your Purugin:
 
 <pre><code>
-def on_enable
-  include_plugin_module 'Commands', 'Command'
-  # .... use methods from Command module now
+class AdminPlugin
+  include Purugin::Plugin
+  description 'Admin', 0.2
+  required :Commands, :include => :Command
+  
+  def on_enable
+    command('/who', 'display all users') do |e, *args|
+      me = e.player
+      me.world.players.each do |player|
+        me.send_message "#{player.display_name} (#{player.name})"
+      end
+    end
+  end
 end
 </code></pre>
 
-This example shows this method include the Command module defined in the 
-Commands plugin into it. 
+This example shows that the 'Admin' plugin requires (via 'required' method) 
+ the 'Commands' plugin and that it should include the 'Command' module from the 'Commands' plugin.
+
+You can specify optional dependencies via the optional declaration:
+
+<pre><code>
+optional :Permissions
+</code></pre>
+
+As a side-effect both required and optional will define a method by the same 
+name as plugin being referenced (Note: This may change since plugin names may 
+not conform to sane Ruby-naming and some people don't like methods like 
+'Permissions()').
+
+A second way to get a live reference to a plugin is to ask the plugin manager:
+
+<pre><code>
+plugin_manager['Permissions']
+</code></pre>
+
+This has the advantage that a plugin can be named anything and you will still 
+be able to reference it.
 
 ## Running
 
