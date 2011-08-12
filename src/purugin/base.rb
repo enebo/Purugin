@@ -1,4 +1,5 @@
 require 'purugin/event'
+require 'purugin/errors'
 
 module Purugin
   # This is common code used by both Purugin::Plugin and Purugin::Purugin (plugin which loads
@@ -25,7 +26,6 @@ module Purugin
 
     def initialize(plugin, plugin_loader)
       @plugin, @plugin_loader = plugin, plugin_loader
-      @ruby_plugins = {} # Plugins not register in bukkit, but Ruby purugins can see them.
     end
 
     # A reference to the CraftBukkit server
@@ -47,6 +47,8 @@ module Purugin
     # bukkit Plugin impl (see Bukkit API documentation) 
     def onEnable
       @enabled = true
+      process_plugins(@required_plugins, true)
+      process_plugins(@optional_plugins, false)
       on_enable if respond_to? :on_enable
       printStateChange 'ENABLED'
     end
@@ -91,20 +93,46 @@ module Purugin
     def include_plugin_module(plugin_name, plugin_module)
       plugin = plugin_manager[plugin_name] # Try and get full java registered plugin first
       unless plugin
-        plugin = @ruby_plugins[plugin_name] # Look in reloadable plugins
-        unless plugin
-          puts "Unable to find plugin #{plugin_name}...ignoring"
-          return
-        end
-      end
-      
-      mod = plugin.class.const_get plugin_module
-      unless mod
-        puts "Unabled to load module #{plugin_module} from #{plugin_name}"
+        puts "Unable to find plugin #{plugin_name}...ignoring"
         return
       end
       
-      self.class.__send__ :include, mod
+      include_module_from(plugin, plugin_module)
+    end
+    
+    def process_plugins(list, required)
+      return unless list
+      
+      list.each do |name, options|
+        plugin = plugin_manager[name.to_s]
+        
+        if !plugin && required
+          raise MissingDependencyError.new "Plugin #{name} not found for plugin #{description.name}"
+        end
+
+        # Make convenience method for plugin 
+        # TODO: Resolve what happens if plugin conflicts w/ existing method)
+        self.class.send(:define_method, name.to_s) { plugin }
+        process_includes plugin, options[:include] if options[:include]
+      end
+    end
+    private :process_plugins
+    
+    def process_includes(plugin, includes)
+      if includes.respond_to? :to_ary
+        includes.to_ary.each { |const| include_module_from(plugin, const) }
+      else
+        include_module_from(plugin, includes)
+      end
+    end
+    private :process_includes
+    
+    def include_module_from(plugin, name)
+      unless plugin.class.const_defined? name
+        raise MissingDependencyError.new "Module #{name} not found in plugin #{plugin.getDescription.name}"
+      end
+      
+      self.class.__send__ :include, plugin.class.const_get(name)
     end
   end
 end

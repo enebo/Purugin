@@ -1,3 +1,5 @@
+require 'java'
+
 module Purugin
   module Materials
     M = org.bukkit.Material
@@ -74,7 +76,7 @@ module Purugin
     
     # Is this block any of the supplied values (names gotten from MATERIAL_NAMES)
     def is?(*values)
-      values.map() {|value| MATERIAL_NAMES[value] }.include?(type)
+      values.find() {|value| MATERIAL_NAMES[value] == type }
     end  
   end
 end

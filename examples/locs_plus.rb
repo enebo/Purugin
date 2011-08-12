@@ -1,6 +1,7 @@
 class LocsPlus
   include Purugin::Plugin, Purugin::Colors
-  description 'LocsPlus', 0.2
+  description 'LocsPlus', 0.3
+  required :Commands, :include => :Command
   
   def dirify(value, positive, negative)
     value < 0 ? [value.abs, negative] : [value, positive]
@@ -170,8 +171,6 @@ class LocsPlus
   end
 
   def on_enable
-    include_plugin_module 'Commands', 'Command'
-
     @config = load_configuration
 
     load_locations

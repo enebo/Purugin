@@ -1,3 +1,4 @@
+require 'java'
 require 'purugin/materials'
 
 module org::bukkit::block::Block

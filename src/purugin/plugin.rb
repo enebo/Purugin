@@ -39,6 +39,8 @@ module Purugin
       @data_dir = File.dirname(path) + '/' + self.class.plugin_name
       Dir.mkdir @data_dir unless File.exist? @data_dir
       @configuration = org.bukkit.util.config.Configuration.new java.io.File.new(@data_dir, 'config.yml')
+      @required_plugins = self.class.required_plugins
+      @optional_plugins = self.class.optional_plugins
     end
 
     # bukkit Plugin impl (see Bukkit API documentation)

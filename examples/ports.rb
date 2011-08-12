@@ -6,6 +6,7 @@
 class PortsPlugin
   include Purugin::Plugin
   description 'Ports', 0.2
+  optional :LocsPlus
   
   def teleporter_loc(state)
     return nil if state.lines.length < 2 || state.get_line(0) != "Teleporter"
@@ -46,8 +47,10 @@ class PortsPlugin
       if loc =~ /\{([^}]+)\}/
         waypoint = $1
       
-        locs_plus = plugin_manager['LocsPlus']
-        return unless locs_plus
+        unless LocsPlus()
+          e.player.send_message "locs format {name} specified. Please install LocsPlus."
+          return
+        end
 
         waypoint, loc = *locs_plus.locations(e.player).find { |name, *| name == waypoint }
       end

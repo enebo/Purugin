@@ -2,8 +2,9 @@ require 'purugin/colors'
 
 class CommandsPlugin
   include Purugin::Plugin, Purugin::Colors
-  description 'Commands', 0.1
+  description 'Commands', 0.2
   attr_reader :commands
+  optional :Permissions
 
   module Command
     class CMD < Struct.new(:permission, :description, :plugin_name, :code); end
@@ -32,9 +33,7 @@ class CommandsPlugin
   end
 
   def on_enable
-    @permissions = plugin_manager['Permissions']
-
-    puts "No permissions...free for all" unless @permissions
+    puts "No permissions...free for all" unless Permissions()
 
     command('/help', 'help on all commands', nil) do |e, *args|
       @commands.sort.each do |name, cmd|
@@ -60,6 +59,6 @@ class CommandsPlugin
   end
 
   def permitted?(player, permission)
-    !@permissions || !permission || @permissions.handler.has(player, permission)
+    !Permissions() || !permission || Permissions().handler.has(player, permission)
   end
 end

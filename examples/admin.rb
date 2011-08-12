@@ -1,10 +1,9 @@
 class AdminPlugin
   include Purugin::Plugin
-  description 'Admin', 0.1
+  description 'Admin', 0.2
+  required :Commands, :include => :Command
   
   def on_enable
-    include_plugin_module 'Commands', 'Command'
-
     command('/time', 'change time +n hours') do |e, *args| 
       e.player.world.time = args[1].to_i
     end

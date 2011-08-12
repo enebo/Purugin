@@ -12,4 +12,3 @@ class org::bukkit::util::config::ConfigurationNode
     save
   end
 end
-

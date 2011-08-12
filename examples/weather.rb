@@ -1,10 +1,9 @@
 class WeatherPlugin
   include Purugin::Plugin
-  description 'Weather', 0.1
+  description 'Weather', 0.2
+  required :Commands, :include => :Command
 
   def on_enable
-    include_plugin_module 'Commands', 'Command'
-
     config = load_configuration
     like_weather = config.get_boolean('weather.storms', true)
 
