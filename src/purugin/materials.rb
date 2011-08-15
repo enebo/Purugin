@@ -1,6 +1,8 @@
 require 'java'
 
 module Purugin
+  # Convenience methods useful for dealing with anything which works with Materials.  Block is
+  # one type which includes this.
   module Materials
     M = org.bukkit.Material
     MATERIAL_NAMES = {
@@ -74,9 +76,15 @@ module Purugin
       :cookie => M::COOKIE, :gold_record => M::GOLD_RECORD, :green_record => M::GREEN_RECORD
     }
     
-    # Is this block any of the supplied values (names gotten from MATERIAL_NAMES)
+    # Is this block any of the supplied values (see MATERIAL_NAMES constant for a full list)?
+    # === Parameters
+    # * _values_ one or more symbols from MATERIAL_NAMES that you want to test against
+    # === Example
+    # grass_block.is? :grass        #=> true
+    # grass_block.is? :wood, :stone #=> false
+    #
     def is?(*values)
-      values.find() {|value| MATERIAL_NAMES[value] == type }
+      !!values.find() {|value| MATERIAL_NAMES[value] == type }
     end  
   end
 end
