@@ -73,7 +73,10 @@ module Purugin
       :fishing_rod => M::FISHING_ROD, :watch => M::WATCH, :glowstone_dust => M::GLOWSTONE_DUST,
       :raw_fish => M::RAW_FISH, :cooked_fish => M::COOKED_FISH, :ink_sack => M::INK_SACK,
       :bone => M::BONE, :sugar => M::SUGAR, :cake => M::CAKE, :bed => M::BED, :diode => M::DIODE,
-      :cookie => M::COOKIE, :gold_record => M::GOLD_RECORD, :green_record => M::GREEN_RECORD
+      :cookie => M::COOKIE, :gold_record => M::GOLD_RECORD, :green_record => M::GREEN_RECORD,
+      :piston_sticky_base => M::PISTON_STICKY_BASE, :piston_base => M::PISTON_BASE,
+      :piston_extension => M::PISTON_EXTENSION, :piston_moving_piece => M::PISTON_MOVING_PIECE,
+      :shears => M::SHEARS
     }
     
     # Is this block any of the supplied values (see MATERIAL_NAMES constant for a full list)?
