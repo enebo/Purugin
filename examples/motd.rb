@@ -1,4 +1,7 @@
-purugin('MOTD', 0.1) do
+class MOTDPlugin
+  include Purugin::Plugin
+  description 'Message of the day', 0.2
+
   def on_enable
     config = load_configuration
     motd = config.get_string("motd.message", "Welcome!")

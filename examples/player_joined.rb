@@ -1,4 +1,7 @@
-purugin('PlayerJoined', 0.1) do
+class PlayerJoinedPlugin
+  include Purugin::Plugin
+  description 'PlayerJoined', 0.1
+  
   def on_enable
     # Tell everyone in players world that they have joined
     event(:player_join) do |e|
