@@ -49,11 +49,7 @@ class CommandsPlugin
       if cmd
         if permitted? e.player, cmd.permission
           cmd.code.call(e, name, *args)
-        else
-          e.player.msg "Insufficient privelege for:  #{name}"
         end
-      else
-        e.player.msg "Uknown command: #{name}"
       end
     end
   end
