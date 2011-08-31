@@ -4,10 +4,13 @@ class CommandsPlugin
   include Purugin::Plugin, Purugin::Colors
   description 'Commands', 0.2
   attr_reader :commands
-  optional :Permissions
 
   module Command
-    class CMD < Struct.new(:permission, :description, :plugin_name, :code); end
+    class CMD < Struct.new(:permission, :description, :plugin_name, :code)
+      def runnable_by?(player)
+        !permission || player.permission?(permission)
+      end
+    end
 
     def basename
       @basename ||= "purugin.#{getDescription.name.downcase}"
@@ -33,11 +36,9 @@ class CommandsPlugin
   end
 
   def on_enable
-    puts "No permissions...free for all" unless Permissions()
-
     command('/help', 'help on all commands', nil) do |e, *args|
       @commands.sort.each do |name, cmd|
-        allowed = permitted?(e.player, cmd.permission) ? green('*') : red('*')
+        allowed = cmd.runnable_by?(e.player) ? green('*') : red('*')
         e.player.msg "#{name} - #{cmd.description} [#{cmd.plugin_name}]#{allowed}"
       end
     end
@@ -45,16 +46,7 @@ class CommandsPlugin
     event(:player_command_preprocess) do |e|
       name, *args = e.message.split(/\s+/)
       cmd = @commands[name]
-
-      if cmd
-        if permitted? e.player, cmd.permission
-          cmd.code.call(e, name, *args)
-        end
-      end
+      cmd.code.call(e, name, *args) if cmd && cmd.runnable_by?(e.player)
     end
-  end
-
-  def permitted?(player, permission)
-    !Permissions() || !permission || Permissions().handler.has(player, permission)
   end
 end
