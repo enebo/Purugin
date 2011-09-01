@@ -6,6 +6,8 @@ class CommandsPlugin
   attr_reader :commands
 
   module Command
+    class CommandError < Exception
+    end
     class CMD < Struct.new(:permission, :description, :plugin_name, :code)
       def runnable_by?(player)
         !permission || player.permission?(permission)
@@ -14,6 +16,11 @@ class CommandsPlugin
 
     def basename
       @basename ||= "purugin.#{getDescription.name.downcase}"
+    end
+    
+    # If condition is true break out of command and display error message
+    def error(condition, message)
+      raise CommandError.new message if condition
     end
 
     def command(name, desc, perm="#{basename}.#{name[1..-1]}", &code)
@@ -44,9 +51,13 @@ class CommandsPlugin
     end
 
     event(:player_command_preprocess) do |e|
-      name, *args = e.message.split(/\s+/)
-      cmd = @commands[name]
-      cmd.code.call(e, name, *args) if cmd && cmd.runnable_by?(e.player)
+      name, *args = e.message.split(/\s+/)      
+      begin
+        cmd = @commands[name]
+        cmd.code.call(e, name, *args) if cmd && cmd.runnable_by?(e.player)
+      rescue CommandError => ce
+        e.player.send_message red("#{name}: #{ce.message}")
+      end
     end
   end
 end
