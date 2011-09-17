@@ -2,12 +2,9 @@ require 'java'
 
 $LOAD_PATH << 'plugins/Purugin.jar'
 
-require 'bukkit/block'
-require 'bukkit/location'
-require 'bukkit/plugin'
+require 'bukkit'
 require 'bukkit/block/block'
 require 'bukkit/command/player'
-require 'bukkit/entity'
 require 'bukkit/permissions'
 require 'bukkit/event/player'
 require 'bukkit/util/config'

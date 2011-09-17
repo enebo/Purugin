@@ -25,6 +25,13 @@ module org::bukkit::block::Block
     get_relative(face)
   end
   
+  # Wrapper around setType to allow specifying material types by symbol.
+  # Note: Not sure what the error should be if improperly specified
+  def change_type(new_type)
+    new_type = material_for(new_type) if new_type.kind_of? Symbol
+    set_type new_type
+  end
+  
   def face_for(value)
     FACE_VALUES[value]
   end

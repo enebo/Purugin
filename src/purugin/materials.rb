@@ -88,6 +88,11 @@ module Purugin
     #
     def is?(*values)
       !!values.find() {|value| MATERIAL_NAMES[value] == type }
-    end  
+    end
+    
+    # Return the Java equivalent value for the specified material symbol
+    def material_for(value)
+      MATERIAL_NAMES[value]
+    end
   end
 end

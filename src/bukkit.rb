@@ -1,0 +1,5 @@
+require 'bukkit/block'
+require 'bukkit/entity'
+require 'bukkit/location'
+require 'bukkit/plugin'
+require 'bukkit/world'
