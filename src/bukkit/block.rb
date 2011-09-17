@@ -15,14 +15,15 @@ module org::bukkit::block::Block
   # === Parameters
   # * _face_value_* can be :north, :east, :south, :west, :up, :down, :north_east, :north_west,
   #      :ne, :nw, :south_east, :south_west, :se, :sw, :self
+  # * _distance_ * this is optional and defaults to 1.  # of blocks from this block
   # === Examples
   # here.block_at(:north) #=> another earth block
-  def block_at(face_value)
+  def block_at(face_value, distance=nil)
     face = face_for(face_value)
     
     return nil unless face
     
-    get_relative(face)
+    distance ? get_relative(face, distance) : get_relative(face)
   end
   
   # Wrapper around setType to allow specifying material types by symbol.
