@@ -29,6 +29,7 @@ module org::bukkit::block::Block
   # Note: Not sure what the error should be if improperly specified
   def change_type(new_type)
     new_type = material_for(new_type) if new_type.kind_of? Symbol
+    return unless new_type
     set_type new_type
   end
   
