@@ -13,13 +13,17 @@ module org::bukkit::World
     getBlockAt *r
   end
   
-  # Spawn a monster by name mob_name ("chicken", "creeper")
-  # in the specified location
-  def spawn_mob(mob_name, location)
-    mob_type = org.bukkit.entity.CreatureType.from_name(mob_name.to_s.capitalize)
+  # Spawn a creature ("chicken", "creeper") at a specified location.
+  # === Parameters
+  # * mob_name is the creature to spawn (@see CreatureType)
+  # * location is where to put the spawned creature [note: to_loc coercion possible]
+  #
+  def spawn_mob(creature_name, location)
+    creature_type = org.bukkit.entity.CreatureType.from_name(creature_name.to_s.capitalize)
     
-    raise TypeError.new "unknown mob type #{mob_name}" unless mob_type
+    raise TypeError.new "unknown mob type #{creature_name}" unless creature_type
     
-    spawnCreature location, mob_type
+    location = location.respond_to?(:to_loc) ? location.to_loc : location
+    spawnCreature location, creature_type
   end
 end
