@@ -37,6 +37,11 @@ module Purugin
       :glowstone => M::GLOWSTONE, :portal => M::PORTAL, :jack_o_lantern => M::JACK_O_LANTERN,
       :cake_block => M::CAKE_BLOCK, :diode_block_off => M::DIODE_BLOCK_OFF,
       :diode_block_on => M::DIODE_BLOCK_ON, :locked_chest => M::LOCKED_CHEST,
+      :trap_door => M::TRAP_DOOR, :monster_eggs => M::MONSTER_EGGS, :smooth_brick => M::SMOOTH_BRICK,
+      :huge_mushroom_1 => M::HUGE_MUSHROOM_1, :huge_mushroom_2 => M::HUGE_MUSHROOM_2, 
+      :iron_fence => M::IRON_FENCE, :thin_glass => M::THIN_GLASS, :melon_block => M::MELON_BLOCK,
+      :pumpkin_stem => M::PUMPKIN_STEM, :melon_stem => M::MELON_STEM, :vine => M::VINE,
+      :fence_gate => M::FENCE_GATE, :brick_stairs => M::BRICK_STAIRS, # :smooth_stairs => SMOOTH_STAIRS,
       # items
       :iron_spade => M::IRON_SPADE, :iron_pickaxe => M::IRON_PICKAXE,  :iron_axe => M::IRON_AXE,
       :flint_and_steel => M::FLINT_AND_STEEL, :apple => M::APPLE, :bow => M::BOW, :arrow => M::ARROW,
@@ -76,7 +81,10 @@ module Purugin
       :cookie => M::COOKIE, :gold_record => M::GOLD_RECORD, :green_record => M::GREEN_RECORD,
       :piston_sticky_base => M::PISTON_STICKY_BASE, :piston_base => M::PISTON_BASE,
       :piston_extension => M::PISTON_EXTENSION, :piston_moving_piece => M::PISTON_MOVING_PIECE,
-      :shears => M::SHEARS
+      :shears => M::SHEARS, :melon => M::MELON, :pumpkin_seeds => M::PUMPKIN_SEEDS,
+      :melon_seeds => M::MELON_SEEDS, :raw_beef => M::RAW_BEEF, :cooked_beef => M::COOKED_BEEF,
+      :raw_chicken => M::RAW_CHICKEN, :cooked_chicken => M::COOKED_CHICKEN,
+      :rotten_flesh => M::ROTTEN_FLESH, :ender_pearl => M::ENDER_PEARL
     }
     
     # Is this block any of the supplied values (see MATERIAL_NAMES constant for a full list)?
