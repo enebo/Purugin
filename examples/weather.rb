@@ -7,7 +7,7 @@ class WeatherPlugin
     config = load_configuration
     like_weather = config.get_boolean('weather.storms', true)
 
-    command('/weather', '[stop|start] to toggle weather') do |e, cmd, *args|
+    command('/weather', '[stop|start] to toggle weather') do |e, *args|
       p = e.player
 
       if args.empty?

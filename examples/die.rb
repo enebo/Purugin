@@ -1,6 +1,6 @@
 class DeathPlugin
-  include Purugin::Plugin, Purugin::Colors
-  description 'Death', 0.1
+  include Purugin::Plugin
+  description 'Death', 0.2
   required :Commands, :include => :Command
 
   def on_enable

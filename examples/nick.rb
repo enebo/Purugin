@@ -1,12 +1,13 @@
 class NicknamePlugin
   include Purugin::Plugin
-  description 'Nickname', 0.1
+  description 'Nickname', 0.2
   required :Commands, :include => :Command
   
   def on_enable
-    command('/nick', 'change displayed name') do |e, *args|
-      e.player.display_name = args[1]
-      e.player.send_message "Display name changed to #{args[1]}"
+    public_command('/nick', 'change displayed name') do |e, *args|
+      nick = error? args[1], "Must specify a name (/nick frogger)"
+      e.player.display_name = nick
+      e.player.send_message "Display name changed to #{nick}"
     end
   end
 end

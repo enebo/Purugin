@@ -174,18 +174,18 @@ class LocsPlus
     @config = load_configuration
 
     load_locations
-    command('/loc', 'display current location', nil) do |e, *args|
+    public_command('/loc', 'display current location', public) do |e, *|
       l = e.player.location
       e.player.send_message "Location: #{pos_string(*l.to_a)} #{direction(l)}"
     end
 
-    command('/waypoint', 'manage waypoints (/waypoint help)', nil) do |e, *args|
-      waypoint e, *args[1..-1]
+    public_command('/waypoint', 'manage waypoints (/waypoint help)') do |e, *args|
+      waypoint e, *args
     end
 
     setup_tracker_thread
-    command('/track', 'track waypoint_name|stop', nil) do |e, *args|
-      track e, *args[1..-1]
+    public_command('/track', 'track waypoint_name|stop') do |e, *args|
+      track e, *args
     end
   end
 end
