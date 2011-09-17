@@ -2,11 +2,16 @@ require 'purugin/colors'
 
 class CommandsPlugin
   include Purugin::Plugin, Purugin::Colors
-  description 'Commands', 0.2
+  description 'Commands', 0.4
   attr_reader :commands
 
   module Command
     class CommandError < Exception
+      attr_reader :cause
+      def initialize(message, cause=nil)
+        super(message)
+        @cause = cause
+      end
     end
     class CMD < Struct.new(:permission, :description, :plugin_name, :code)
       def runnable_by?(player)
@@ -18,11 +23,27 @@ class CommandsPlugin
       @basename ||= "purugin.#{getDescription.name.downcase}"
     end
     
-    # If condition is true break out of command and display error message
-    def error(condition, message)
-      raise CommandError.new message if condition
+    # If condition is false,nil, or an exception break out of command and display error message.
+    # returns the result of the condition otherwise
+    def error?(condition, message)
+      raise CommandError.new message unless condition
+      condition
+    rescue
+      raise CommandError.new message, $!
     end
 
+    # Create a command which will respond to /name.
+    # 
+    # === Parameters
+    # * _name_ - of the command (e.g. "/nick")
+    # * _desc_ - description for this command
+    # * _perm_ - permission name to check against
+    # * _code_ - block supplied which is the logic for the command
+    # === Example
+    # command('/die', 'End it all...you are stuck') do |e, *args|
+    #   e.player.health = 0
+    # end
+    #    
     def command(name, desc, perm="#{basename}.#{name[1..-1]}", &code)
       commander = plugin_manager['Commands']
       
@@ -32,6 +53,12 @@ class CommandsPlugin
       else
         puts "No commands plugin to register: #{name}. Skipping..."
       end
+    end
+    
+    # Create a command that can be executed by any user (same as 
+    # as command() but no perm parameter.
+    def public_command(name, desc, &code)
+      command(name, desc, nil, &code)
     end
   end
 
@@ -54,7 +81,7 @@ class CommandsPlugin
       name, *args = e.message.split(/\s+/)      
       begin
         cmd = @commands[name]
-        cmd.code.call(e, name, *args) if cmd && cmd.runnable_by?(e.player)
+        cmd.code.call(e, *args) if cmd && cmd.runnable_by?(e.player)
       rescue CommandError => ce
         e.player.send_message red("#{name}: #{ce.message}")
       end
