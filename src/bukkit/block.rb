@@ -26,6 +26,11 @@ module org::bukkit::block::Block
     distance ? get_relative(face, distance) : get_relative(face)
   end
   
+  # Some methods will implcitly convert a block to its location if it responds to :to_loc
+  def to_loc
+    location
+  end
+  
   # Wrapper around setType to allow specifying material types by symbol.
   # Note: Not sure what the error should be if improperly specified
   def change_type(new_type)
