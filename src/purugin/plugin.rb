@@ -24,7 +24,7 @@ module Purugin
   # automatically load this file on startup and instantiate the class you make which implements
   # Purugin::Plugin.
   module Plugin
-    include Base, org.bukkit.plugin.Plugin
+    include Base, Command, org.bukkit.plugin.Plugin
     # :nodoc:
     def self.included(other)
       other.extend(PluginMetaData)

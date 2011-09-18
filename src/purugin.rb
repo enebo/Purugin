@@ -10,6 +10,7 @@ require 'bukkit/event/player'
 require 'bukkit/util/config'
 require 'bukkit/util/vector'
 require 'purugin/colors'
+require 'purugin/command'
 require 'purugin/plugin'
 
 $plugins = []

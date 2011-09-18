@@ -5,7 +5,7 @@
 # anything on lines 3 or lower and it will not affect how the sign works as a teleporter.
 class PortsPlugin
   include Purugin::Plugin
-  description 'Ports', 0.2
+  description 'Ports', 0.3
   optional :LocsPlus
   
   def teleporter_loc(state)

@@ -1,6 +1,6 @@
 class MOTDPlugin
   include Purugin::Plugin
-  description 'Message of the day', 0.2
+  description 'Message of the day', 0.3
 
   def on_enable
     config = load_configuration

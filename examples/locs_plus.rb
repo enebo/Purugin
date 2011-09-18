@@ -1,7 +1,6 @@
 class LocsPlus
   include Purugin::Plugin, Purugin::Colors
-  description 'LocsPlus', 0.3
-  required :Commands, :include => :Command
+  description 'LocsPlus', 0.4
   
   def dirify(value, positive, negative)
     value < 0 ? [value.abs, negative] : [value, positive]
@@ -118,48 +117,48 @@ class LocsPlus
     player.send_message loc_string("bind", player, *player.world.spawn_location.to_a)
   end
 
-  def waypoint(e, *args)
+  def waypoint(sender, *args)
     case args.length
-    when 0 then waypoint_show_all e.player
+    when 0 then waypoint_show_all sender
     when 1 then 
       if args[0] == 'help'
-        waypoint_help e.player
+        waypoint_help sender
       else
-        waypoint_show e.player, args[0]
+        waypoint_show sender, args[0]
       end
     when 2 then
       command, arg = *args
 
       if command == 'create'
-        waypoint_create e.player, arg
+        waypoint_create sender, arg
       elsif command == 'remove'
-        waypoint_remove e.player, arg
+        waypoint_remove sender, arg
       else
-        e.player.send_message "Bad args: /waypoint #{args.join(' ')}"
+        sender.msg red("Bad args: /waypoint #{args.join(' ')}")
       end
     else
-      e.player.send_message "Bad args: /waypoint: #{args.join(' ')}"
+      sender.msg red("Bad args: /waypoint: #{args.join(' ')}")
     end
   rescue ArgumentError => error
-    e.player.send_message "Error: #{error.message}"
+    sender.msg red("Error: #{error.message}")
   end
 
-  def track(e, *args)
+  def track(sender, *args)
     @track_time = @config.get_int('locs_plus.track_time', 4)
     case args.length
     when 1 then
       name = args[0]
       if name  == 'stop'
-        @tracks[e.player] = nil
-        e.player.send_message "Tracking stopped"
+        @tracks[sender] = nil
+        sender.msg "Tracking stopped"
       elsif name == 'help'
-        track_help e.player
+        track_help sender
       else
         begin
-          loc = location e.player, name
-          @tracks[e.player] = [name, loc] if loc
+          loc = location sender, name
+          @tracks[sender] = [name, loc] if loc
         rescue ArgumentError => error
-          e.player.send_message error.message
+          sender.msg red(error.message)
         end
       end
     end
@@ -174,18 +173,18 @@ class LocsPlus
     @config = load_configuration
 
     load_locations
-    public_command('/loc', 'display current location', public) do |e, *|
-      l = e.player.location
-      e.player.send_message "Location: #{pos_string(*l.to_a)} #{direction(l)}"
+    public_command('loc', 'display current location') do |sender, *|
+      l = sender.location
+      sender.msg "Location: #{pos_string(*l.to_a)} #{direction(l)}"
     end
 
-    public_command('/waypoint', 'manage waypoints (/waypoint help)') do |e, *args|
-      waypoint e, *args
+    public_command('waypoint', 'manage waypoints (/waypoint help)') do |sender, *args|
+      waypoint sender, *args
     end
 
     setup_tracker_thread
-    public_command('/track', 'track waypoint_name|stop') do |e, *args|
-      track e, *args
+    public_command('track', 'track waypoint_name|stop') do |sender, *args|
+      track sender, *args
     end
   end
 end

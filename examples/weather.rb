@@ -1,15 +1,12 @@
 class WeatherPlugin
   include Purugin::Plugin
-  description 'Weather', 0.2
-  required :Commands, :include => :Command
+  description 'Weather', 0.3
 
   def on_enable
     config = load_configuration
     like_weather = config.get_boolean('weather.storms', true)
 
-    command('/weather', '[stop|start] to toggle weather') do |e, *args|
-      p = e.player
-
+    command('weather', 'toggle weather', '/weather {stop|start}?') do |p, *args|
       if args.empty?
         p.send_message "weather: #{p.world.has_storm ? "storms": "clear skies"}"
       elsif args[0] == 'stop'
