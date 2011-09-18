@@ -81,10 +81,13 @@ module Purugin
       @naggable = naggable
     end
 
+    # Write a message to the console
+    alias :console :print
+
     # Used to display modules lifecycle state changes to the CraftBukkit console.
     def printStateChange(state)
       description = getDescription
-      puts "[#{description.name}] version #{description.version} #{state}"
+      console "[#{description.name}] version #{description.version} #{state}"
     end
     
     # This method will ask for a plugin of name plugin_name and then look for a module
