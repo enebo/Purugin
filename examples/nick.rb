@@ -5,7 +5,7 @@ class NicknamePlugin
   
   def on_enable
     public_command('/nick', 'change displayed name') do |e, *args|
-      nick = error? args[1], "Must specify a name (/nick frogger)"
+      nick = error? args[0], "Must specify a name (/nick frogger)"
       e.player.display_name = nick
       e.player.send_message "Display name changed to #{nick}"
     end
