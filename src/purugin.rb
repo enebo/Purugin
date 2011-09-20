@@ -20,7 +20,9 @@ module Purugin
     include ::Purugin::Base
     
     def on_load
-      plugin_manager.load_plugins java.io.File.new("plugins")
+      Dir["plugins/*.rb"].each do |f|
+        plugin_manager.load_plugin java.io.File.new(f)
+      end
     end
 
     def on_enable
