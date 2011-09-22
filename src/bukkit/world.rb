@@ -26,4 +26,9 @@ module org::bukkit::World
     location = location.respond_to?(:to_loc) ? location.to_loc : location
     spawnCreature location, creature_type
   end
+  
+  # Is the world experiencing a storm currently
+  def storming?
+    has_storm
+  end
 end

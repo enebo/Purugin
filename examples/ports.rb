@@ -4,36 +4,38 @@
 # will substitute that name with the loc it represents when the sign is placed. You can write
 # anything on lines 3 or lower and it will not affect how the sign works as a teleporter.
 class PortsPlugin
-  include Purugin::Plugin
+  include Purugin::Plugin, Purugin::Colors
   description 'Ports', 0.3
-  optional :LocsPlus
+  required :LocsPlus, :include => :CoordinateEncoding
   
   def teleporter_loc(state)
     return nil if state.lines.length < 2 || state.get_line(0) != "Teleporter"
     state.get_line(1)
   end
   
-  VALUE = '[0-9a-z]+'
-  LOC = Regexp.new "(#{VALUE}),(#{VALUE}),(#{VALUE})"
+  SAFE_BLOCKS = [:air, :water]
   
-  def encode(value)
-    (value.to_i + 32000).to_s(36)
+  def safe_loc?(world, location)
+    bottom_block = world.block_at location
+    top_block = bottom_block.block_at(:up)
+    top_block.is?(*SAFE_BLOCKS) && bottom_block.is?(*SAFE_BLOCKS)
   end
   
-  def decode(value)
-    value.to_i(36) - 32000
-  end
-
   def on_enable
     event(:player_interact) do |e|
       if e.right_click_block? && e.clicked_block.is?(:sign_post, :wall_sign)
         loc = teleporter_loc e.clicked_block.state
         return unless loc 
         
-        if loc =~ LOC
+        if loc =~ /([0-9a-z]+)\s*,\s*([0-9a-z]+)\s*,\s*([0-9a-z]+)/
           x, y, z = $1, $2, $3
           destination = org.bukkit.Location.new e.player.world, decode(x), decode(y), decode(z)
-          server.scheduler.schedule_sync_delayed_task(plugin) { e.player.teleport destination }
+
+          if safe_loc? e.player.world, destination
+            server.scheduler.schedule_sync_delayed_task(plugin) { e.player.teleport destination }
+          else
+            e.player.msg red("Crud at destination!")
+          end
         end
       end
     end
@@ -46,13 +48,8 @@ class PortsPlugin
       return unless loc
       if loc =~ /\{([^}]+)\}/
         waypoint = $1
-      
-        unless LocsPlus()
-          e.player.send_message "locs format {name} specified. Please install LocsPlus."
-          return
-        end
-
-        waypoint, loc = *locs_plus.locations(e.player).find { |name, *| name == waypoint }
+        waypoint, loc = *LocsPlus().locations(e.player).find { |name, l| name == waypoint }
+        p waypoint, loc
       end
       
       e.set_line 1, loc[0..2].map {|l| encode(l) }.join(",") if loc

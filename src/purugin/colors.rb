@@ -9,6 +9,22 @@ module Purugin
       "#{color}#{message}#{done_color}"
     end
     
+    COLOR_MAP = {"black" => ChatColor::BLACK, "dark_blue" => ChatColor::DARK_BLUE,
+      "dark_green" => ChatColor::DARK_GREEN, "dark_aqua" => ChatColor::DARK_AQUA, 
+      "dark_red" => ChatColor::DARK_RED, "dark_purple" => ChatColor::DARK_PURPLE,
+      "gold" => ChatColor::GOLD, "gray" => ChatColor::GRAY,
+      "dark_gray" => ChatColor::DARK_GRAY, "blue" => ChatColor::BLUE,
+      "green" => ChatColor::GREEN, "aqua" => ChatColor::AQUA,
+      "red" => ChatColor::RED, "light_purple" => ChatColor::LIGHT_PURPLE
+    } 
+
+    def colorize_string(string)
+      string.to_s.gsub(/{[^}]+}/) do |name|
+        color_name = name[1..-2]
+        COLOR_MAP[color_name] ? COLOR_MAP[color_name] : DEFAULT
+      end
+    end
+    
     def black(message); color(ChatColor::BLACK, message); end
     def dark_blue(message); color(ChatColor::DARK_BLUE, message); end
     def dark_green(message); color(ChatColor::DARK_GREEN, message); end

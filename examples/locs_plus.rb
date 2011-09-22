@@ -2,6 +2,18 @@ class LocsPlus
   include Purugin::Plugin, Purugin::Colors
   description 'LocsPlus', 0.4
   
+  module CoordinateEncoding
+    def encode(value)
+      (value.to_i + 32000).to_s(36)
+    end
+  
+    def decode(value)
+      value.to_i(36) - 32000
+    end
+  end
+  
+  include CoordinateEncoding
+  
   def dirify(value, positive, negative)
     value < 0 ? [value.abs, negative] : [value, positive]
   end  
@@ -19,7 +31,8 @@ class LocsPlus
   end
 
   def pos_string(x, y, z, *)
-    format("%0.1f, %0.1f, %0.1f", x, y, z)
+    format("%0.1f, %0.1f, %0.1f [%s, %s, %s]", x, y, z,
+      encode(x), encode(y), encode(z))
   end
 
   def direction(location)
@@ -110,7 +123,7 @@ class LocsPlus
   end
 
   def waypoint_show_all(player)
-    player.send_message "Saved waypoints (name loc):"
+    player.msg "Saved waypoints (name loc):"
     locations(player).each do |name, loc|
       player.send_message loc_string(name, player, *loc)
     end
@@ -165,25 +178,25 @@ class LocsPlus
   end
 
   def track_help(player)
-    player.send_message "/track name {time} - update loc every n seconds"
-    player.send_message "/track stop"
+    player.msg "/track name {time} - update loc every n seconds"
+    player.msg "/track stop"
   end
 
   def on_enable
     @config = load_configuration
 
     load_locations
-    public_command('loc', 'display current location') do |sender, *|
-      l = sender.location
-      sender.msg "Location: #{pos_string(*l.to_a)} #{direction(l)}"
+    public_player_command('loc', 'display current location') do |me, *|
+      l = me.location
+      me.msg "Location: #{pos_string(*l.to_a)} #{direction(l)}"
     end
 
-    public_command('waypoint', 'manage waypoints (/waypoint help)') do |sender, *args|
-      waypoint sender, *args
+    public_player_command('waypoint', 'manage waypoints', '/waypoint name|create|remove|help? name?') do |me, *args|
+      waypoint me, *args
     end
 
     setup_tracker_thread
-    public_command('track', 'track waypoint_name|stop') do |sender, *args|
+    public_player_command('track', 'track to a waypoint', '/track {waypoint_name|stop}') do |sender, *args|
       track sender, *args
     end
   end

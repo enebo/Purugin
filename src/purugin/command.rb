@@ -12,14 +12,24 @@ module Purugin
       include Purugin::Colors
       attr_reader :plugin_name
       
-      def initialize(name, perm, desc, usage, plugin_name, code)
+      # === Parameters
+      # * _style_ - :all, :player, :console
+      def initialize(name, perm, desc, usage, plugin_name, style, code)
         super(name, desc, usage, [])
         set_permission perm if perm
-        @plugin_name, @code = plugin_name, code
+        @plugin_name, @style, @code = plugin_name, style, code
       end
       
+      # FIXME: return values and make sure this is easy from commands
       def execute(sender, command_label, args)
-        @code.call sender, *args
+        what = sender.player? ? :player : :console
+        
+        if (@style == :all || @style == what) && permitted?(sender)
+          @code.call sender, *args
+        elsif @style == :player && what == :console
+          sender.msg red("#{name}: will not work from the console")
+          false
+        end
         true
       rescue CommandError => ce
         sender.msg red("#{name}: #{ce.message}")
@@ -29,7 +39,18 @@ module Purugin
     end
 
     def basename
-      @basename ||= "purugin.#{getDescription.name.downcase}"
+      @basename ||= getDescription.name.downcase
+    end
+    
+    # Specify that you are done executing this command due to something that went
+    # wrong.  You can send a message to display an error.
+    # === Parameters
+    # * _message_ to display on abort
+    # === Example
+    # abort! "You suck"
+    #
+    def abort!(message)
+      raise CommandError.new message
     end
     
     # If condition is false,nil, or an exception break out of command and display error message.
@@ -54,15 +75,34 @@ module Purugin
     #   e.player.health = 0
     # end
     #    
-    def command(name, desc, usage="/#{name}", perm="#{basename}.#{name[1..-1]}", &code)
+    def command(name, desc, usage="/#{name}", perm="#{basename}.#{name}", style=:all, &code)
       plugin_name = getDescription.name.downcase
-      plugin_manager.add_command CMD.new(name, perm, desc, usage, plugin_name, code)
+      plugin_manager.add_command CMD.new(name, perm, desc, usage, plugin_name, style, code)
     end
     
-    # Create a command that can be executed by any user (same as 
-    # as command() but no perm parameter.
+    # Create a command that can be executed by permitted users and
+    # will give a friendly error message for console users.
+    def player_command(name, desc, usage="/#{name}", perm="#{basename}.#{name}", &code)
+      command(name, desc, usage, perm, :player, &code)
+    end
+    
+    # Create a command that can be executed by the console only.
+    # Players will not know of its existence.
+    def console_command(name, desc, usage="/#{name}", perm="#{basename}.#{name}", &code)
+      command(name, desc, usage, perm, :console, &code)
+    end    
+    
+    # Create a command that can be executed by any user or from 
+    # the console (Usage same as as command() but no perm parameter).
     def public_command(name, desc, usage="/#{name}", &code)
       command(name, desc, usage, nil, &code)
+    end
+    
+    # Create a command that can be executed by any user but if 
+    # executed from the console, the console will get a friendly
+    # error message (Usage same as as command() but no perm parameter).
+    def public_player_command(name, desc, usage="/#{name}", &code)
+      command(name, desc, usage, nil, :player, &code)      
     end
   end
 end

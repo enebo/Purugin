@@ -3,7 +3,7 @@ class SpawnPlugin
   description 'Spawn', 0.2
   
   def on_enable
-    public_command('spawn', 'spawn a mob', '/spawn {name} {future_secs}?') do |sender, *args|
+    command('spawn', 'spawn a mob', '/spawn {name} {future_secs}?') do |sender, *args|
       mob_name = error? args[0], "Must specify a mob name"
       time = args.length > 1 ? args[1] : 0;
       time = error? time.to_i, "Time must be a valid integer"
