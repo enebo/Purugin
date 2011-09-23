@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'rss'
+require 'open-uri'
+require 'openssl'
+require 'fileutils'
+require 'yaml'
+
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
+BIN_DIR = File.join File.dirname(__FILE__)
+
+directory = ARGV.shift || "../minecraft"
+config_url = "http://cloud.github.com/downloads/enebo/Purugin/bits.yml"
+yaml = open(config_url) { |f| f.read }
+resources = YAML.load(yaml)
+
+def retrieve(uri, as_name)
+  puts "Retrieving #{as_name} from #{uri}"
+  File.open(as_name, "wb") do |f|
+    f.write open(uri, :redirect => false) { |f| f.read }
+  end
+  puts "Done retrieving #{as_name} from #{uri}"
+rescue OpenURI::HTTPRedirect
+  uri = $!.uri
+  retry
+rescue
+  puts "Error: Unable to retrieve #{uri}: #{$!}"
+  puts "Try running again of manually try and retrieve"
+end
+
+Dir.mkdir directory unless File.exist? directory
+FileUtils.cp File.join(BIN_DIR, "run.bat"), directory
+FileUtils.cp File.join(BIN_DIR, "run.sh"), directory
+Dir.chdir(directory) do
+  resources["jars"].each { |file_name, url| retrieve url, file_name }
+
+  Dir.mkdir "plugins" unless File.exist? "plugins"
+  Dir.chdir("plugins") do
+    resources["plugins"].each do |file_name, url|
+      retrieve url, file_name
+      if file_name =~ /.zip/
+ 	# Yuck...no extra gems for install please unless I break down 
+ 	# and start using bundler
+	system "unzip", file_name
+	File.unlink file_name
+      end
+    end
+  end
+end
