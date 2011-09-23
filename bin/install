@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 
+if RUBY_VERSION.to_f < 1.9
+  puts "You must run a 1.9 impl of Ruby"
+  exit -1
+end
+
 require 'rss'
 require 'open-uri'
 require 'openssl'
@@ -30,8 +35,8 @@ rescue
 end
 
 Dir.mkdir directory unless File.exist? directory
-FileUtils.cp File.join(BIN_DIR, "run.bat"), directory
-FileUtils.cp File.join(BIN_DIR, "run.sh"), directory
+FileUtils.cp File.join(BIN_DIR, "run.bat"), directory, :preserve => true
+FileUtils.cp File.join(BIN_DIR, "run.sh"), directory, :preserve => true
 Dir.chdir(directory) do
   resources["jars"].each { |file_name, url| retrieve url, file_name }
 
