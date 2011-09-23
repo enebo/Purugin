@@ -1,0 +1,8 @@
+jars:
+  craftbukkit.jar: http://ci.bukkit.org/job/dev-CraftBukkit/1185/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
+  minecraft_server.jar: http://www.minecraft.net/download/minecraft_server.jar
+  jruby-complete.jar: http://jruby.org.s3.amazonaws.com/downloads/1.6.4/jruby-complete-1.6.4.jar
+plugins:
+  purugin.jar: https://www.github.com/downloads/enebo/Purugin/Purugin.jar
+  bukkit-permissions.jar: http://ci.onarandombox.com/job/PermissionsBukkit/lastSuccessfulBuild/artifact/target/bukkit-permissions-0.1.0-SNAPSHOT.jar
+  dynmap.zip: http://webbukkit.org/jenkins/public/dynmap/dynmap-0.21.1-bin.zip
