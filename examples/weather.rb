@@ -9,8 +9,7 @@ class WeatherPlugin
   end
   
   def on_enable
-    config = load_configuration
-    @weather = config.get_boolean('weather.storms', true)
+    @weather = config.get_boolean!('weather.storms', true)
 
     public_command('weather', 'toggle weather', '/weather stop|start? world?') do |me, *args|
       # Console or explicit world provided
@@ -30,7 +29,7 @@ class WeatherPlugin
           world.storm = true
           me.msg "weather: storm started"
         else
-          abort! "weather: no can do..weather disabled"
+          abort! "no can do..weather disabled"
         end
       elsif args[0] == 'disable'
         @weather = config.set! 'weather.storms', false

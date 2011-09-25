@@ -87,7 +87,7 @@ class LocsPlus
 
   def setup_tracker_thread
     @tracks = {} # All tracking locations for all players
-    @track_time = @config.get_int('locs_plus.track_time', 4)
+    @track_time = config.get_fixnum!('locs_plus.track_time', 4)
 
     Thread.new do # Tracker thread to display all players locs of interest
       while(true)
@@ -157,7 +157,7 @@ class LocsPlus
   end
 
   def track(sender, *args)
-    @track_time = @config.get_int('locs_plus.track_time', 4)
+    @track_time = config.get_fixnum!('locs_plus.track_time', 4)
     case args.length
     when 1 then
       name = args[0]
@@ -183,8 +183,6 @@ class LocsPlus
   end
 
   def on_enable
-    @config = load_configuration
-
     load_locations
     public_player_command('loc', 'display current location') do |me, *|
       l = me.location

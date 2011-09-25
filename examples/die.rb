@@ -3,8 +3,9 @@ class DeathPlugin
   description 'Death', 0.4
 
   def on_enable
-    player_command('die', 'End it all...you are stuck') do |sender, *|
-      sender.health = 0
+    player_command('die', 'End it all...', '/die') do |me, *|
+      me.msg "Goodbye cruel world!"
+      me.health = 0
     end
   end
 end

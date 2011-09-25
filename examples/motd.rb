@@ -1,6 +1,6 @@
 class MOTDPlugin
   include Purugin::Plugin, Purugin::Colors
-  description 'Message of the day', 0.4
+  description 'Message of the day', 0.5
   
   def display_motd(me)
     me.msg "Message of the Day:"
@@ -12,13 +12,14 @@ class MOTDPlugin
   end
 
   def on_enable
-    config = load_configuration
-    @motd = config.get_string("motd.message", "Welcome!")
+    @motd = config.get! "motd.message", "Welcome!"
     
     event(:player_join) { |e| display_motd(e.player) }
     
-    public_command('motd', 'Set message of the day', '/motd line1#line2#...') do |me, *args|
-      @motd = config.set! "motd.message", make_motd_from_cli(*args) if args.length > 0
+    public_command('motd', 'Message of the day', '/motd line1#line2#...') do |me, *args|
+      if args.length > 0
+        @motd = config.set! "motd.message", make_motd_from_cli(*args) 
+      end
       display_motd me
     end
   end
