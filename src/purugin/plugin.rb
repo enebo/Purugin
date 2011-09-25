@@ -65,9 +65,12 @@ module Purugin
     
     # Convenience method for getting the Java loaded version of a loaded YAML file (each
     # Bukkit plugin may have it's own YAML file for config data (see Bukkit documentation).
-    def load_configuration
+    def config
       config = getConfiguration
-      config.load
+      unless @configuration_loaded
+        config.load
+        @configuration_loaded = true
+      end
       config
     end
   end
