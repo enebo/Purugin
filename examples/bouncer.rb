@@ -27,21 +27,19 @@ class BouncerPlugin
     end
 
     event(:player_move) do |e|
-      player = e.player
-      loc = org.bukkit.Location.new player.world, e.to.x, e.to.y - 0.5, e.to.z
+      me = e.player
+      block = me.world.block_at(e.to).block_at(:down)      
       
-      if loc.block.is? :stone # Take off
-        players[player] = FlightInfo.new unless players[player]
-        players[player].higher!
-        p player.location.direction
-        player.velocity = player.location.direction.multiply(0.2).tap do |dir|
-          dir.y = players[player].height
+      if block.is? :stone # Take off
+        (players[me] ||= FlightInfo.new).higher!
+        me.velocity = me.location.direction.multiply(0.2).tap do |dir|
+          dir.y = players[me].height
         end
-        player.fall_distance = 0
-      elsif players[player] && players[player].falling
-        if !loc.block.is?(:air, :stone)  # not a bouncy thing. stop.
-          players.delete(player)
-          player.fall_distance = 0
+        me.fall_distance = 0
+      elsif players[me] && players[me].falling
+        if !block.is?(:air, :stone)  # not a bouncy thing. stop.
+          players.delete(me)
+          me.fall_distance = 0
         end
       end
     end
