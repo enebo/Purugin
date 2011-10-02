@@ -24,6 +24,7 @@ module Purugin
         COLOR_MAP[color_name] ? COLOR_MAP[color_name] : DEFAULT
       end
     end
+    alias :colorize :colorize_string
     
     def black(message); color(ChatColor::BLACK, message); end
     def dark_blue(message); color(ChatColor::DARK_BLUE, message); end
