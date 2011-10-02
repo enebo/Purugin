@@ -41,6 +41,7 @@ Dir.chdir(directory) do
   resources["jars"].each { |file_name, url| retrieve url, file_name }
 
   Dir.mkdir "plugins" unless File.exist? "plugins"
+  Dir.mkdir "gems" unless File.exist? "gems"
   Dir.chdir("plugins") do
     resources["plugins"].each do |file_name, url|
       retrieve url, file_name
