@@ -2,7 +2,6 @@ require 'java'
 
 # jar:file:/Users/enebo/work/minecraft/plugins/purugin.jar!/purugin.rb
 purugin_jar_path = __FILE__.gsub(/(^jar:file:|!.*$)/, '')
-puts purugin_jar_path
 
 $LOAD_PATH << purugin_jar_path
 
