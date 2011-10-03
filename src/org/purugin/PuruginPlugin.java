@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import org.jruby.embed.ScriptingContainer;
 
 public final class PuruginPlugin extends JavaPlugin {
@@ -18,26 +19,26 @@ public final class PuruginPlugin extends JavaPlugin {
     
     @Override
     public void onDisable() {
-        // FIXME: We seem to now get two instances of PuruginPlugin and I don't know why yet...
-        if (main != null) {
-            container.callMethod(main, "onDisable");
-        }
+        container.callMethod(main, "onDisable");
     }
 
     @Override
     public void onEnable() {
-        // FIXME: We seem to now get two instances of PuruginPlugin and I don't know why yet...
-        if (main != null) {
-            container.callMethod(main, "onEnable");
-        } 
+        container.callMethod(main, "onEnable");
     }
 
     @Override
     public void onLoad() {
-        Object brainsClass = executeScript(getClass().getResourceAsStream(MAIN), MAIN);
-        main = container.callMethod(brainsClass, "new", this, getPluginLoader());
-        getServer().getPluginManager().registerInterface(RubyPluginLoader.class);
-        container.callMethod(main, "onLoad");
+        try {
+            URL url = getClass().getResource(MAIN);
+
+            Object brainsClass = executeScript(url.openStream(), url.toString());
+            main = container.callMethod(brainsClass, "new", this, getPluginLoader());
+            getServer().getPluginManager().registerInterface(RubyPluginLoader.class);
+            container.callMethod(main, "onLoad");
+        } catch (IOException e) {
+            System.out.println("Error: Cannot openStream (this should be impossible)");
+        }
     }
     
     protected Object executeScript(InputStream io, String path) {
