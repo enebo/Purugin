@@ -34,7 +34,7 @@ module Purugin
     # :nodoc:
     def initialize(plugin, plugin_manager, path)
       super(plugin, plugin_manager)
-      $plugins << self
+      $plugins[path] = [self, File.mtime(path)]
       @plugin_description = org.bukkit.plugin.PluginDescriptionFile.new self.class.plugin_name, self.class.plugin_version.to_s, 'none'
       @data_dir = File.dirname(path) + '/' + self.class.plugin_name
       Dir.mkdir @data_dir unless File.exist? @data_dir

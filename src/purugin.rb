@@ -8,28 +8,31 @@ require 'bukkit/command'
 require 'bukkit/permissions'
 require 'bukkit/event/player'
 require 'bukkit/util'
+require 'purugin/change_listener'
 require 'purugin/colors'
 require 'purugin/command'
 require 'purugin/plugin'
 
-$plugins = []
+$plugins = {} # path => [purugin, time_loaded]
 
 module Purugin
   class Purugin
+    PURUGINS_GLOB = "plugins/*.rb"
     include ::Purugin::Base
     
     def on_load
-      Dir["plugins/*.rb"].each do |f|
+      Dir[PURUGINS_GLOB].each do |f|
         plugin_manager.load_plugin java.io.File.new(f)
       end
     end
 
     def on_enable
-      $plugins.each { |plugin| plugin_manager.enable_plugin plugin }
+      $plugins.each { |_, (plugin, _)| plugin_manager.enable_plugin plugin }
+      Thread.new { ChangeListener.new(self, PURUGINS_GLOB).listen }
     end
 
     def on_disable
-      $plugins.each { |plugin| plugin_manager.disable_plugin plugin }
+      $plugins.each { |_, (plugin, _)| plugin_manager.disable_plugin plugin }
     end
     
     def getDescription
@@ -43,7 +46,7 @@ module Purugin
     def instantiate_plugin(plugin_loader, path)
       return unless $last_loaded
       plugin = $last_loaded.new(@plugin, plugin_loader, path)
-      $last_loaded = nil;
+      $last_loaded = nil
       plugin
     end
   end
