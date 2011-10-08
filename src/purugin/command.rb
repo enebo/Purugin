@@ -10,7 +10,7 @@ module Purugin
     
     class CMD < org::bukkit::command::Command
       include Purugin::Colors
-      attr_reader :plugin_name
+      attr_accessor :plugin_name, :style, :code
       
       # === Parameters
       # * _style_ - :all, :player, :console
@@ -18,6 +18,20 @@ module Purugin
         super(name, desc, usage, [])
         set_permission perm if perm
         @plugin_name, @style, @code = plugin_name, style, code
+      end
+
+      # FIXME: Bukkit command registry does not allow removing commands
+      # without removing every single one.  This hacks around it by 
+      # allowing us to transfer state of our new command into the last
+      # registered version.  On top of being a hack there is a certain
+      # amount of danger since we do not lock the command in mid-flight,
+      # but it may be a minor danger since only the code var should truly
+      # bone us and that race should be SAFE in JRuby.
+      def infect(other)
+        other.plugin_name = plugin_name
+        other.style = style
+        other.set_permission = get_permission if get_permission
+        other.code = code
       end
       
       # FIXME: return values and make sure this is easy from commands
