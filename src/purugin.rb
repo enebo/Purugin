@@ -22,6 +22,8 @@ module Purugin
   class Purugin
     PURUGINS_GLOB = "plugins/*.rb"
     include ::Purugin::Base
+
+    attr_accessor :ruby_plugin_loader
     
     def on_load
       Dir[PURUGINS_GLOB].each do |f|
@@ -46,9 +48,9 @@ module Purugin
       @plugin.get_configuration
     end
     
-    def instantiate_plugin(plugin_loader, path)
+    def instantiate_plugin(path)
       return unless $last_loaded
-      plugin = $last_loaded.new(@plugin, plugin_loader, path)
+      plugin = $last_loaded.new(@plugin, ruby_plugin_loader, path)
       $last_loaded = nil
       plugin
     end

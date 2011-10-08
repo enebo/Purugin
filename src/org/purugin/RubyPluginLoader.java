@@ -21,6 +21,7 @@ public class RubyPluginLoader implements PluginLoader {
     public RubyPluginLoader(Server server) {
         this.server = server;
         master = (PuruginPlugin) server.getPluginManager().getPlugin("PuruginPlugin");
+        master.getContainer().callMethod(master.getMain(), "ruby_plugin_loader=", this);
     }
     
     
@@ -32,7 +33,7 @@ public class RubyPluginLoader implements PluginLoader {
 
         master.executeScriptAt(path);
 
-        return (Plugin) container.callMethod(master.getMain(), "instantiate_plugin", this, path);
+        return (Plugin) container.callMethod(master.getMain(), "instantiate_plugin", path);
     }
     
     @Override
