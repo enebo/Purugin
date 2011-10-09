@@ -55,6 +55,7 @@ module Purugin
 
     # Isolate starting in a thread to not stop the world
     def restart_plugin(path)
+      puts "RESTARTING: #{path}"
       Thread.new do
         begin
           disable_plugin path
@@ -69,6 +70,7 @@ module Purugin
 
     # Isolate starting in a thread to not stop the world
     def start_plugin(path)
+      puts "STARTING: #{path}"      
       Thread.new do
         begin
           load_plugin path

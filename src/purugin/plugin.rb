@@ -33,6 +33,7 @@ module Purugin
 
     # :nodoc:
     def initialize(plugin, plugin_manager, path)
+      path.gsub!(/\\/, '/') # Wackiness until nicer plugin reg than $plugins (for win paths)
       @plugin, @plugin_loader = plugin, plugin_manager
       @server = plugin.server
       $plugins[path] = [self, File.mtime(path)]
