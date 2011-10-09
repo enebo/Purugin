@@ -37,7 +37,15 @@ module Purugin
 
     def disable_plugin(path)
       plugin = plugin_for(path)
-      plugin_manager.disablePlugin plugin if plugin && plugin.enabled?
+      if plugin && plugin.enabled?
+        plugin_manager.disablePlugin plugin 
+        # Hack around lack of unregistering
+        begin
+          plugin_manager.unregister_events_for @main.plugin #if plugin_manager.respond_to? :unregister_events_for
+        rescue
+          puts "Who #{$!}"
+        end
+      end
     end
 
     def enable_plugin(path)
