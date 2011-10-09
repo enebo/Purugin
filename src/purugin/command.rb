@@ -30,7 +30,7 @@ module Purugin
       def infect(other)
         other.plugin_name = plugin_name
         other.style = style
-        other.set_permission = get_permission if get_permission
+        other.permission = permission if permission
         other.code = code
       end
       
