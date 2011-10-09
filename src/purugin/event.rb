@@ -185,7 +185,7 @@ module Purugin
       type = event_type_for(event_name)
       priority = priority_for(priority_value)
       listener = listener_for(type).new(&code)
-      plugin_manager.register_event(type, listener, priority, @plugin)
+      plugin_manager.register_event(type, listener, priority, self)
     end
 
     def event_type_for(name)

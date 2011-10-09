@@ -48,9 +48,8 @@ public class RubyPluginLoader implements PluginLoader {
 
     @Override
     public EventExecutor createExecutor(final Event.Type type, Listener listener) {
-        // TODO: Make Prugin method which returns Listener instance from brains.        
-        // return new EventExecutor() { public void execute(Listener listener, Event event) { // } }
-        return null;
+        // Use master to create this since this is a shitload of code...
+        return master.getPluginLoader().createExecutor(type, listener) ;
     }    
     
     @Override

@@ -24,7 +24,7 @@ module Purugin
   # automatically load this file on startup and instantiate the class you make which implements
   # Purugin::Plugin.
   module Plugin
-    include Base, Command, org.bukkit.plugin.Plugin
+    include Base, Command, Event, org.bukkit.plugin.Plugin
     # :nodoc:
     def self.included(other)
       other.extend(PluginMetaData)
@@ -33,7 +33,8 @@ module Purugin
 
     # :nodoc:
     def initialize(plugin, plugin_manager, path)
-      super(plugin, plugin_manager)
+      @plugin, @plugin_loader = plugin, plugin_manager
+      @server = plugin.server
       $plugins[path] = [self, File.mtime(path)]
       @plugin_description = org.bukkit.plugin.PluginDescriptionFile.new self.class.plugin_name, self.class.plugin_version.to_s, 'none'
       @data_dir = File.dirname(path) + '/' + self.class.plugin_name
@@ -41,11 +42,6 @@ module Purugin
       @configuration = org.bukkit.util.config.Configuration.new java.io.File.new(@data_dir, 'config.yml')
       @required_plugins = self.class.required_plugins
       @optional_plugins = self.class.optional_plugins
-    end
-
-    # bukkit Plugin impl (see Bukkit API documentation)
-    def getDescription
-      @plugin_description
     end
 
     # bukkit Plugin impl (see Bukkit API documentation)
@@ -57,11 +53,127 @@ module Purugin
     end
     alias :data_folder :getDataFolder
     
+    # bukkit Plugin impl (see Bukkit API documentation)
+    def getDescription
+      @plugin_description
+    end    
+    
     # bukkit Plugin impl (see Bukkit API documentation)    
     def getConfiguration
       @configuration
     end
     alias :configuration :getConfiguration
+    
+    # bukkit Plugin impl (see Bukkit API documentation) 
+    def getPluginLoader
+      @plugin_loader
+    end
+    
+    def getServer
+      server
+    end
+    
+    # bukkit Plugin impl (see Bukkit API documentation) 
+    def isEnabled
+      @enabled
+    end
+    alias :enabled? :isEnabled
+    
+    # bukkit Plugin impl (see Bukkit API documentation) 
+    def onDisable
+      on_disable if respond_to? :on_disable
+      @enabled = false
+      printStateChange 'DISABLED'      
+    end    
+    
+    # bukkit Plugin impl (see Bukkit API documentation)     
+    def onLoad
+      on_load if respond_to? :on_load
+    end
+    
+    # bukkit Plugin impl (see Bukkit API documentation) 
+    def onEnable
+      @enabled = true
+      process_plugins(@required_plugins, true)
+      process_plugins(@optional_plugins, false)
+      on_enable if respond_to? :on_enable
+      printStateChange 'ENABLED'
+    end
+    
+    # bukkit Plugin impl (see Bukkit API documentation) 
+    def isNaggable
+      @naggable
+    end
+
+    # bukkit Plugin impl (see Bukkit API documentation) 
+    def setNaggable(naggable)
+      @naggable = naggable
+    end
+    
+    def getDatabase
+      nil
+    end
+    
+    def getDefaultWorldGenerator(string, string1)
+      nil
+    end
+
+    # Write a message to the console
+    alias :console :print
+
+    # Used to display modules lifecycle state changes to the CraftBukkit console.
+    def printStateChange(state)
+      description = getDescription
+      console "[#{description.name}] version #{description.version} #{state}"
+    end
+    
+    # This method will ask for a plugin of name plugin_name and then look for a module
+    # of name plugin_module and include it into your plugin.  This method should be used
+    # in your on_enable method (see examples/admin.rb for usage).
+    def include_plugin_module(plugin_name, plugin_module)
+      plugin = plugin_manager[plugin_name] # Try and get full java registered plugin first
+      unless plugin
+        puts "Unable to find plugin #{plugin_name}...ignoring"
+        return
+      end
+      
+      include_module_from(plugin, plugin_module)
+    end
+    
+    def process_plugins(list, required)
+      return unless list
+      
+      list.each do |name, options|
+        plugin = plugin_manager[name.to_s]
+        
+        if !plugin && required
+          raise MissingDependencyError.new "Plugin #{name} not found for plugin #{description.name}"
+        end
+
+        # Make convenience method for plugin 
+        # TODO: Resolve what happens if plugin conflicts w/ existing method)
+        self.class.send(:define_method, name.to_s) { plugin }
+        process_includes plugin, options[:include] if options[:include]
+      end
+    end
+    private :process_plugins
+    
+    def process_includes(plugin, includes)
+      if includes.respond_to? :to_ary
+        includes.to_ary.each { |const| include_module_from(plugin, const) }
+      else
+        include_module_from(plugin, includes)
+      end
+    end
+    private :process_includes
+    
+    def include_module_from(plugin, name)
+      unless plugin.class.const_defined? name
+        raise MissingDependencyError.new "Module #{name} not found in plugin #{plugin.getDescription.name}"
+      end
+      
+      self.class.__send__ :include, plugin.class.const_get(name)
+    end
     
     # Convenience method for getting the Java loaded version of a loaded YAML file (each
     # Bukkit plugin may have it's own YAML file for config data (see Bukkit documentation).
@@ -75,4 +187,3 @@ module Purugin
     end
   end
 end
-

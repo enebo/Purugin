@@ -1,4 +1,5 @@
 require 'bukkit/block'
+require 'bukkit/command'
 require 'bukkit/entity'
 require 'bukkit/location'
 require 'bukkit/plugin'

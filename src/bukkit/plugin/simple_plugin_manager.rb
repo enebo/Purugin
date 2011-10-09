@@ -20,11 +20,8 @@ class org::bukkit::plugin::SimplePluginManager
   # Hack to unregister all events for a particular plugin
   def unregister_events_for(plugin)
     listeners.values.each do |type_set|
-      puts "checking listener set #{type_set}"
       type_set.to_a.each do |item|
-        puts "checking plugin #{item.plugin} == #{plugin}"
         if item.plugin == plugin
-          puts "PLUGIN FOUND"
           type_set.remove item 
         end
       end
