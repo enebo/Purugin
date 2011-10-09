@@ -41,10 +41,11 @@ module Purugin
         plugin_manager.disablePlugin plugin 
         # Hack around lack of unregistering
         begin
-          plugin_manager.unregister_events_for plugin #if plugin_manager.respond_to? :unregister_events_for
+          plugin_manager.unregister_events_for plugin if plugin_manager.respond_to? :unregister_events_for
         rescue
           puts "Who #{$!}"
         end
+        unregister_constants plugin
       end
     end
 
@@ -78,6 +79,14 @@ module Purugin
         rescue
           puts "Problem starting #{path}: #{$!}"          
         end
+      end
+    end
+    
+    # Undefine constants to eliminate warning on const redefinition
+    def unregister_constants(plugin)
+      ack = plugin.class.constants - plugin.class.ancestors[1].constants
+      ack.each do |constant|
+        plugin.class.send :remove_const, constant
       end
     end
   end
