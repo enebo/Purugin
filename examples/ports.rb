@@ -32,7 +32,7 @@ class PortsPlugin
           destination = org.bukkit.Location.new e.player.world, decode(x), decode(y), decode(z)
 
           if safe_loc? e.player.world, destination
-            server.scheduler.schedule_sync_delayed_task(plugin) { e.player.teleport destination }
+            server.scheduler.schedule_sync_delayed_task(self) { e.player.teleport destination }
           else
             e.player.msg red("Crud at destination!")
           end
@@ -52,7 +52,13 @@ class PortsPlugin
         p waypoint, loc
       end
       
-      e.set_line 1, loc[0..2].map {|l| encode(l) }.join(",") if loc
+      e.lines.to_a.each_with_index do |line, i|
+        if i == 1 && loc
+          e.set_line i, loc[0..2].map {|l| encode(l) }.join(",")
+        else
+          e.set_line i, colorize(line)
+        end
+      end
     end
   end
 end
