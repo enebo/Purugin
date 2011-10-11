@@ -15,12 +15,29 @@ module Purugin
       "gold" => ChatColor::GOLD, "gray" => ChatColor::GRAY,
       "dark_gray" => ChatColor::DARK_GRAY, "blue" => ChatColor::BLUE,
       "green" => ChatColor::GREEN, "aqua" => ChatColor::AQUA,
-      "red" => ChatColor::RED, "light_purple" => ChatColor::LIGHT_PURPLE
+      "red" => ChatColor::RED, "light_purple" => ChatColor::LIGHT_PURPLE,
+      "yellow" => ChatColor::YELLOW, "white" => ChatColor::WHITE,
+      "0" => ChatColor::BLACK, "1" => ChatColor::DARK_BLUE,
+      "2" => ChatColor::DARK_GREEN, "3" => ChatColor::DARK_AQUA,
+      "4" => ChatColor::DARK_RED, "5" => ChatColor::DARK_PURPLE,
+      "6" => ChatColor::GOLD, "7" => ChatColor::GRAY,
+      "8" => ChatColor::DARK_GRAY, "9" => ChatColor::BLUE,
+      "a" => ChatColor::GREEN, "b" => ChatColor::AQUA,
+      "c" => ChatColor::RED, "d" => ChatColor::LIGHT_PURPLE,
+      "e" => ChatColor::YELLOW, "f" => ChatColor::WHITE
     } 
 
+
+    # You can use either {color_name} or &digit to specify colors
+    # http://www.minecraftwiki.net/wiki/Classic_Server_Protocol#Color_Codes
     def colorize_string(string)
-      string.to_s.gsub(/{[^}]+}/) do |name|
-        color_name = name[1..-2]
+      string.to_s.gsub(/({[^}]+}|&[0-9a-f])/) do |name|
+        if name =~ /^&/
+          color_name = name[1..-1]
+        else
+          color_name = name[1..-2]
+        end
+        
         COLOR_MAP[color_name] ? COLOR_MAP[color_name] : DEFAULT
       end
     end
