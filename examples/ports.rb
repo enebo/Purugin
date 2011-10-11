@@ -49,7 +49,6 @@ class PortsPlugin
       if loc =~ /\{([^}]+)\}/
         waypoint = $1
         waypoint, loc = *LocsPlus().locations(e.player).find { |name, l| name == waypoint }
-        p waypoint, loc
       end
       
       e.lines.to_a.each_with_index do |line, i|
