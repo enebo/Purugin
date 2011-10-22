@@ -42,10 +42,10 @@ module Purugin
         # Hack around lack of unregistering
         begin
           plugin_manager.unregister_events_for plugin if plugin_manager.respond_to? :unregister_events_for
+          unregister_constants plugin.class
         rescue
           puts "Who #{$!}"
         end
-        unregister_constants plugin
       end
     end
 
@@ -83,10 +83,34 @@ module Purugin
     end
     
     # Undefine constants to eliminate warning on const redefinition
-    def unregister_constants(plugin)
-      ack = plugin.class.constants - plugin.class.ancestors[1].constants
-      ack.each do |constant|
-        plugin.class.send :remove_const, constant
+    def unregister_constants(clz)
+      local_constants(clz).each do |constant|
+        unregister_constants(constant) if constant.is_a? Module
+        clz.send :remove_const, constant.to_s
+      end
+    end
+    
+    # Adapted from Activesupport (perhaps I should just make Purugin depend on 1.9 mode?)
+    if RUBY_VERSION < '1.9'
+      # Returns the constants that have been defined locally by this object and
+      # not in an ancestor. This method is exact if running under Ruby 1.9. In
+      # previous versions it may miss some constants if their definition in some
+      # ancestor is identical to their definition in the receiver.
+      def local_constants(clz)
+        inherited = {}
+        
+        clz.ancestors.each do |anc|
+          next if anc == clz
+          anc.constants.each { |const| inherited[const] = anc.const_get(const) }
+        end
+
+        clz.constants.select do |const|
+          !inherited.key?(const) || inherited[const].object_id != clz.const_get(const).object_id
+        end
+      end
+    else
+      def local_constants(clz) #:nodoc:
+        clz.constants(false)
       end
     end
   end
