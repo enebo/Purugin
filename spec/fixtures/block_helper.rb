@@ -1,4 +1,7 @@
+require 'java'
+require File.join(File.dirname(__FILE__),'..','..','dist','Purugin.jar')
 require 'bukkit/block'
+require 'bukkit/material'
 
 # This represents a live version of a block.  Note that we cannot use
 # real instances without actually using Craftbukkit and figuring out

@@ -1,5 +1,3 @@
-require 'java'
-require File.join(File.dirname(__FILE__),'..','dist','Purugin.jar')
 require 'fixtures/block_helper'
 
 describe Purugin::Materials do
