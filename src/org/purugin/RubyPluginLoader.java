@@ -5,7 +5,8 @@ import java.util.regex.Pattern;
 import org.bukkit.Server;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginEvent;
+import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
@@ -54,13 +55,13 @@ public class RubyPluginLoader implements PluginLoader {
     
     @Override
     public void enablePlugin(Plugin plugin) {
-        server.getPluginManager().callEvent(new PluginEvent(Event.Type.PLUGIN_ENABLE, plugin));
+        server.getPluginManager().callEvent(new PluginEnableEvent(plugin));
         plugin.onEnable();
     }
 
     @Override
     public void disablePlugin(Plugin plugin) {
-        server.getPluginManager().callEvent(new PluginEvent(Event.Type.PLUGIN_DISABLE, plugin));
+        server.getPluginManager().callEvent(new PluginDisableEvent(plugin));
         plugin.onDisable();
     }
 }
