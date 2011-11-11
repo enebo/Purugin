@@ -26,20 +26,21 @@ module Purugin
 
     attr_accessor :ruby_plugin_loader
     
-    def initialize(plugin, plugin_loader)
+    def initialize(plugin, plugin_loader, purugin_path)
       @purugin_plugin, @plugin_loader = plugin, plugin_loader
       @server = @purugin_plugin.server
+      @purugins_glob = File.join(purugin_path, "*.rb")
     end
     
     def onLoad
-      Dir[PURUGINS_GLOB].each do |f|
+      Dir[@purugins_glob].each do |f|
         plugin_manager.load_plugin java.io.File.new(f)
       end
     end
 
     def onEnable
       $plugins.each { |_, (plugin, _)| plugin_manager.enable_plugin plugin }
-      Thread.new { ChangeListener.new(self, PURUGINS_GLOB).listen }
+      Thread.new { ChangeListener.new(self, @purugins_glob).listen }
     end
 
     def onDisable
