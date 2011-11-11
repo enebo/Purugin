@@ -90,6 +90,7 @@ module Purugin
       listener = listener_for(type).new(&code)
       plugin_manager.register_event(type, listener, priority, self)
     end
+    alias on event
 
     def event_type_for(name)
       name = name.to_s.upcase

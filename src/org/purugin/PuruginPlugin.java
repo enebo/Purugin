@@ -33,7 +33,8 @@ public final class PuruginPlugin extends JavaPlugin {
             URL url = getClass().getResource(MAIN);
 
             Object brainsClass = executeScript(url.openStream(), url.toString());
-            main = container.callMethod(brainsClass, "new", this, getPluginLoader());
+            String path = getConfiguration().getString("path", "plugins");
+            main = container.callMethod(brainsClass, "new", this, getPluginLoader(), path);
             getServer().getPluginManager().registerInterface(RubyPluginLoader.class);
             container.callMethod(main, "onLoad");
         } catch (IOException e) {
