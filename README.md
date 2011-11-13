@@ -91,11 +91,11 @@ be able to reference it.
 
 ## Running
 
-Unfortunately, there is some weird Java Classloader interaction between JRuby
-and CraftBukkit.  To start up Craftbukkit with Purugin, you need to do a couple
-of extra things:
+If you used the install script (requires a Ruby interpreter >1.9.1), then
+all you need to do is execute the run.sh or run.bat script which gets put
+into your minecraft directory.
 
-1. Have jruby-complete.jar from www.jruby.org/downloads in your Craftbukkit directory.
-2. java -Xms1024M -Xmx1024M -cp jruby-complete-0.6.1.jar:craftbukkit-0.0.1-SNAPSHOT.jar org.bukkit.craftbukkit.Main
+If you want to do this manually, then you will need to:
+1. Have jruby-complete.jar from www.jruby.org/downloads in your Minecraft directory.
+2. java -Xms1024M -Xmx1024M -cp jruby-complete.jar:craftbukkit-0.0.1-SNAPSHOT.jar org.bukkit.craftbukkit.Main
 
-Not ideal, but not particularly difficult either...
