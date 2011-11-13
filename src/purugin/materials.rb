@@ -14,5 +14,10 @@ module Purugin
     def is?(*values)
       !!values.find() {|value| type.is?(value) }
     end
+    
+    # Return the Java equivalent value for the specified material symbol/str
+    def material_for(value)
+      org.bukkit.Material.match_material value.to_s
+    end
   end
 end
