@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLDecoder;
 import org.jruby.embed.ScriptingContainer;
 
 public final class PuruginPlugin extends JavaPlugin {
@@ -31,8 +32,8 @@ public final class PuruginPlugin extends JavaPlugin {
     public void onLoad() {
         try {
             URL url = getClass().getResource(MAIN);
-
-            Object brainsClass = executeScript(url.openStream(), url.toString());
+            String unescapedURL = URLDecoder.decode(url.toString(), "UTF-8");
+            Object brainsClass = executeScript(url.openStream(), unescapedURL);
             String path = getConfiguration().getString("path", "plugins");
             main = container.callMethod(brainsClass, "new", this, getPluginLoader(), path);
             getServer().getPluginManager().registerInterface(RubyPluginLoader.class);
