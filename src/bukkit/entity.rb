@@ -1,5 +1,2 @@
-require 'bukkit/entity/creature'
 require 'bukkit/entity/entity'
 require 'bukkit/entity/living_entity'
-require 'bukkit/entity/monster'
-require 'bukkit/entity/player'

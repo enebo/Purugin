@@ -1,10 +1,6 @@
 require 'java'
 
-module org::bukkit::entity::LivingEntity
-  def living?
-    true
-  end
-  
+module org::bukkit::entity::LivingEntity  
   # Get the block that the player has targeted.  Note: this is a Ruby convenience method
   # for Bukkit's LivingEntity getTargetBlock(HashSet<Byte>, int).
   # 
