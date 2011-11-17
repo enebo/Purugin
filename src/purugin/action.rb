@@ -20,6 +20,14 @@ module Purugin
     def physical?
       getAction == A::PHYSICAL
     end
+    
+    def clicked_air?
+      left_click_air? || right_click_air?
+    end
+    
+    def clicked_block?
+      left_click_block? || right_click_block?
+    end
   end
 end
 
