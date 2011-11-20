@@ -1,10 +1,5 @@
 #!/usr/bin/env ruby
 
-if RUBY_VERSION.to_f < 1.9
-  puts "You must run a 1.9 impl of Ruby"
-  exit -1
-end
-
 require 'rss'
 require 'open-uri'
 require 'openssl'
@@ -16,19 +11,14 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 BIN_DIR = File.join File.dirname(__FILE__)
 
 directory = ARGV.shift || "../minecraft"
-config_url = "http://cloud.github.com/downloads/enebo/Purugin/bits.yml"
+config_url = ARGV.shift || "http://cloud.github.com/downloads/enebo/Purugin/bits.yml"
 yaml = open(config_url) { |f| f.read }
 resources = YAML.load(yaml)
 
 def retrieve(uri, as_name)
   puts "Retrieving #{as_name} from #{uri}"
-  File.open(as_name, "wb") do |f|
-    f.write open(uri, :redirect => false) { |f| f.read }
-  end
+  File.open(as_name, "wb") { |f| f.write open(uri) { |f| f.read } }
   puts "Done retrieving #{as_name} from #{uri}"
-rescue OpenURI::HTTPRedirect
-  uri = $!.uri
-  retry
 rescue
   puts "Error: Unable to retrieve #{uri}: #{$!}"
   puts "Try running again of manually try and retrieve"
