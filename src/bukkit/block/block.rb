@@ -59,10 +59,9 @@ module org::bukkit::block::Block
   end
   
   def break!
-    mat = self.get_type
-    itemstack = org::bukkit::inventory::ItemStack.new(mat,1)
-    location.world.drop_item_naturally(location,itemstack)
-    self.change_type :air
+    itemstack = org::bukkit::inventory::ItemStack.new(type, 1)
+    location.world.drop_item_naturally(location, itemstack)
+    change_type :air
   end
   
   def face_for_symbol(value)
