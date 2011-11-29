@@ -36,7 +36,7 @@ class TunnelGenerationPlugin
           block = deep_block.block_at(height_facing,height_dist)
           width.times do |width_dist|
             # for now the block will only be replaced by air. No mining.
-            block.block_at(width_facing,width_dist).change_type :air
+            block.block_at(width_facing,width_dist).break!
           end
         end
       end

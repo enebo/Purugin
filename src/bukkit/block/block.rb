@@ -58,6 +58,13 @@ module org::bukkit::block::Block
     face_for_symbol(ROTATIONS[symbol_for_face(face)][direction])
   end
   
+  def break!
+    mat = self.get_type
+    itemstack = org::bukkit::inventory::ItemStack.new(mat,1)
+    location.world.drop_item_naturally(location,itemstack)
+    self.change_type :air
+  end
+  
   def face_for_symbol(value)
     FACE_VALUES[value]
   end
