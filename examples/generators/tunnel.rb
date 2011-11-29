@@ -1,35 +1,36 @@
 class TunnelGenerationPlugin
   include Purugin::Plugin
   description 'Tunnel Generator', 0.1
-  #required :Commands, :include => :Command
-  
+
   def on_enable
     public_command('tunnel', 'tunnel depth, height, width, torches?, break_the_block?') do |me, *args|
+      error? args.length >= 3, "Must provide at least depth height and width"
       depth = error? args[0].to_i, "Depth must be an integer value"
       height = error? args[1].to_i, "Height must be an integer value"
       width = error? args[2].to_i, "Width must be an integer value"
-      torches = args[3].to_i == 1 ? true : false
-      breakit = args[4].to_i == 1 ? true : false
+      torches = args.length > 3 && args[3].to_i == 1 ? true : false
+      breakit = args.length > 4 && args[4].to_i == 1 ? true : false
 
       error? depth > 0 || height > 0 || width > 0, "Dims must be integers >0"
       me.msg "Creating tunnel #{depth}x#{height}x#{width}"
 
       start = me.location
-      begin                                                
+      target = me.target_block
+      begin
         # if me targets a block that is not next to my feet
-        unless me.target_block.get_face(me.location.get_block).nil?
-          facing = me.target_block.get_face(me.location.get_block).get_opposite_face
+        unless target.get_face(start.block).nil?
+          facing = target.get_face(start.block).opposite_face
         else
           # than try to reach the targeted bock from my head position
-          facing = me.target_block.get_face(me.location.get_block.block_at(:up)).get_opposite_face
+          facing = target.get_face(start.block.block_at(:up)).opposite_face
         end
       rescue NoMethodError
         me.msg "I must stand next to the block with should be my tunnel!"
         # maybe return something smart here...
       end
-      height_facing = me.target_block.rotate(facing,:up)
-      width_facing = me.target_block.rotate(facing,:left)
-      first_block = me.target_block.block_at(facing.get_opposite_face)
+      height_facing = target.rotate(facing,:up)
+      width_facing = target.rotate(facing,:left)
+      first_block = target.block_at(facing.opposite_face)
       
       1.upto(depth) do |depth_dist|
         deep_block = first_block.block_at(facing,depth_dist)
