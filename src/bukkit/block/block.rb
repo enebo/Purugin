@@ -10,6 +10,14 @@ module org::bukkit::block::Block
     :ne => BF::NORTH_EAST, :nw => BF::NORTH_WEST, :south_east => BF::SOUTH_EAST, 
     :south_west => BF::SOUTH_WEST, :se => BF::SOUTH_EAST, :sw => BF::SOUTH_WEST, :self => BF::SELF
   }
+  ROTATIONS = {
+    :north => {:left => :east, :right => :west, :up => :down, :down =>:up}, 
+    :east => {:left => :south, :right => :north, :up => :down, :down =>:up},
+    :south => {:left => :west, :right => :east, :up => :down, :down =>:up},
+    :west => {:left => :north, :right => :south, :up => :down, :down =>:up},
+    :up => {:left => :east, :right => :west, :up => :north, :down =>:south},
+    :down => {:left => :east, :right => :west, :up => :south, :down =>:north}
+  }
   
   # Find a nearby block relative to the current block based on a friendly symbol name
   # === Parameters
@@ -46,10 +54,27 @@ module org::bukkit::block::Block
     set_type new_type
   end
   
+  def rotate(face,direction)
+    face_for_symbol(ROTATIONS[symbol_for_face(face)][direction])
+  end
+  
+  def break!
+    mat = self.get_type
+    itemstack = org::bukkit::inventory::ItemStack.new(mat,1)
+    location.world.drop_item_naturally(location,itemstack)
+    self.change_type :air
+  end
+  
   def face_for_symbol(value)
     FACE_VALUES[value]
   end
   private :face_for_symbol
+  
+  def symbol_for_face(value)
+    # oh-my... ruby<1.9 hashes dont have key()?!
+    FACE_VALUES.invert[value]
+  end
+  private :symbol_for_face
   
   def inspect
     "Block: #{self.type}"
