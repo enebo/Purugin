@@ -4,7 +4,7 @@ class TunnelGenerationPlugin
   #required :Commands, :include => :Command
   
   def on_enable
-    public_command('tunnel', 'tunnel depth, height, width, torches?') do |me, *args|
+    public_command('tunnel', 'tunnel depth, height, width, torches?, break_the_block?') do |me, *args|
       depth = error? args[0].to_i, "Depth must be an integer value"
       height = error? args[1].to_i, "Height must be an integer value"
       width = error? args[2].to_i, "Width must be an integer value"
