@@ -58,10 +58,15 @@ module org::bukkit::block::Block
     face_for_symbol(ROTATIONS[symbol_for_face(face)][direction])
   end
   
-  def break!
-    itemstack = org::bukkit::inventory::ItemStack.new(type, 1)
-    location.world.drop_item_naturally(location, itemstack)
-    change_type :air
+  def break!(with_drop=false,replace_type=:air)
+    # dropping blocks of :air will cause the client to crash
+    unless type.is?(:air)
+      if with_drop 
+        itemstack = org::bukkit::inventory::ItemStack.new(type, 1)
+        location.world.drop_item_naturally(location, itemstack)
+      end
+      change_type replace_type
+    end
   end
   
   def face_for_symbol(value)
