@@ -54,19 +54,29 @@ module org::bukkit::block::Block
     set_type new_type
   end
   
-  def rotate(face,direction)
+  # return the face relative to the supplied face given a direction
+  def rotate(face, direction)
     face_for_symbol(ROTATIONS[symbol_for_face(face)][direction])
   end
   
-  def break!(with_drop=false,replace_type=:air)
-    # dropping blocks of :air will cause the client to crash
-    unless type.is?(:air)
-      if with_drop 
-        itemstack = org::bukkit::inventory::ItemStack.new(type, 1)
-        location.world.drop_item_naturally(location, itemstack)
-      end
-      change_type replace_type
+  # Break (e.g. destroy) this block and possibly leave a dropped item behind
+  # === Parameters
+  # * _with_drop_* will drop an item if it is a droppable type (def: false)
+  # * _replace_type_* replace this block with another type (def: air)
+  # === Examples
+  # bad_block.break!      # replaces it with air and not dropped item to pick up
+  # bad_block.break! true # same as above but it leaves an item to pick up
+  # bad_block.break! true, :stone # drops item and replaces broken block with stone
+  def break!(with_drop=false, replace_type=:air)
+    # Some blocks are not droppable? FIXME: Make predicate for droppable
+    return if type.is?(:air, :water, :lava)
+    
+    if with_drop 
+      itemstack = org::bukkit::inventory::ItemStack.new(type, 1)
+      location.world.drop_item_naturally(location, itemstack)
     end
+    
+    change_type replace_type
   end
   
   def face_for_symbol(value)
