@@ -68,15 +68,15 @@ module org::bukkit::block::Block
   # bad_block.break! true # same as above but it leaves an item to pick up
   # bad_block.break! true, :stone # drops item and replaces broken block with stone
   def break!(with_drop=false, replace_type=:air)
-    # Some blocks are not droppable? FIXME: Make predicate for droppable
-    return if type.is?(:air, :water, :lava)
-    
-    if with_drop 
+    droppable = !type.is?(:air, :water, :lava)
+ 
+    # Only drop items which are actually droppable    
+    if with_drop && droppable
       itemstack = org::bukkit::inventory::ItemStack.new(type, 1)
       location.world.drop_item_naturally(location, itemstack)
     end
     
-    change_type replace_type
+    change_type replace_type if type != replace_type
   end
   
   def face_for_symbol(value)
