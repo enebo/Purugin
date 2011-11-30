@@ -50,24 +50,16 @@ dependent plugins.  The first is to declare your plugin dependencies at the top
 of your Purugin:
 
 <pre><code>
-class AdminPlugin
-  include Purugin::Plugin
-  description 'Admin', 0.2
-  required :Commands, :include => :Command
-  
-  def on_enable
-    command('/who', 'display all users') do |e, *args|
-      me = e.player
-      me.world.players.each do |player|
-        me.send_message "#{player.display_name} (#{player.name})"
-      end
-    end
-  end
+class PortsPlugin
+  include Purugin::Plugin, Purugin::Colors
+  description 'Ports', 0.3
+  required :LocsPlus, :include => :CoordinateEncoding
+  #...
 end
 </code></pre>
 
-This example shows that the 'Admin' plugin requires (via 'required' method) 
- the 'Commands' plugin and that it should include the 'Command' module from the 'Commands' plugin.
+This example shows that the 'Ports' plugin requires (via 'required' method) 
+ the 'LocsPlus' plugin and that it should include the 'CoordinateEncoding' module from the 'LocsPlus' plugin.
 
 You can specify optional dependencies via the optional declaration:
 
