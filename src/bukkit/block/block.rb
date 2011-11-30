@@ -76,7 +76,7 @@ module org::bukkit::block::Block
       location.world.drop_item_naturally(location, itemstack)
     end
     
-    change_type replace_type if type != replace_type
+    change_type replace_type unless type.is? replace_type
   end
   
   def face_for_symbol(value)
