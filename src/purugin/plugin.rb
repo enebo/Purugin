@@ -39,7 +39,6 @@ module Purugin
       $plugins[path] = [self, File.mtime(path)]
       @plugin_description = org.bukkit.plugin.PluginDescriptionFile.new self.class.plugin_name, self.class.plugin_version.to_s, 'none'
       @data_dir = File.dirname(path) + '/' + self.class.plugin_name
-      Dir.mkdir @data_dir unless File.exist? @data_dir
       @configuration = org.bukkit.util.config.Configuration.new java.io.File.new(@data_dir, 'config.yml')
       @required_plugins = self.class.required_plugins
       @optional_plugins = self.class.optional_plugins
@@ -50,6 +49,7 @@ module Purugin
     # As a Ruby plugin you can store whatever you want in this directory (marshalled data,
     # YAML, library of congress as CSV file).
     def getDataFolder
+      Dir.mkdir @data_dir unless File.exist? @data_dir
       @data_dir
     end
     alias :data_folder :getDataFolder
