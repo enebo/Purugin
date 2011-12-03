@@ -1,3 +1,4 @@
+# Plugin originally from Tom Dervan, Chaazd
 class GameModePlugin
   include Purugin::Plugin, Purugin::Colors
   description 'Gamemode', 0.1

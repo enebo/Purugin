@@ -1,8 +1,0 @@
-require 'bukkit/block'
-require 'bukkit/command'
-require 'bukkit/entity'
-require 'bukkit/game_mode'
-require 'bukkit/location'
-require 'bukkit/material'
-require 'bukkit/plugin'
-require 'bukkit/world'
