@@ -1,5 +1,5 @@
 class SpawnPlugin
-  include Purugin::Plugin
+  include Purugin::Plugin, Purugin::Tasks
   description 'Spawn', 0.3
   
   def on_enable
@@ -9,8 +9,7 @@ class SpawnPlugin
       time = error? time.to_i, "Time must be a valid integer"
       error? time >= 0, "Time must be a positive integer"
       
-      Thread.new do # Don't lock down the server while waiting
-        sleep time if time > 0
+      sync_task(time) do
         spawn_block = me.target_block.block_at(:up)
         me.world.spawn_mob(mob_name, spawn_block)
       end
