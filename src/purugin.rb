@@ -36,6 +36,7 @@ require 'purugin/change_listener'
 require 'purugin/colors'
 require 'purugin/command'
 require 'purugin/plugin'
+require 'purugin/tasks'
 
 $plugins = {} # path => [purugin, time_loaded]
 
