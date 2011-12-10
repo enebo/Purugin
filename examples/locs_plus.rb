@@ -1,6 +1,6 @@
 class LocsPlus
-  include Purugin::Plugin, Purugin::Colors
-  description 'LocsPlus', 0.4
+  include Purugin::Plugin, Purugin::Colors, Purugin::Tasks
+  description 'LocsPlus', 0.5
   
   module CoordinateEncoding
     def encode(value)
@@ -86,15 +86,13 @@ class LocsPlus
   end
 
   def setup_tracker_thread
-    @tracks = {} # All tracking locations for all players
+    tracks = @tracks = {} # All tracking locations for all players
     @track_time = config.get_fixnum!('locs_plus.track_time', 4)
 
-    Thread.new do # Tracker thread to display all players locs of interest
-      while(true)
-        sleep @track_time
-        @tracks.each do |player, (name, loc)|
-          player.send_message loc_string(name, player, *loc)
-        end
+    # Tracker thread to display all players locs of interest
+    sync_task(0, @track_time) do
+      tracks.each do |player, (name, loc)|
+        player.msg loc_string(name, player, *loc)
       end
     end
   end
@@ -157,7 +155,6 @@ class LocsPlus
   end
 
   def track(sender, *args)
-    @track_time = config.get_fixnum!('locs_plus.track_time', 4)
     case args.length
     when 1 then
       name = args[0]
@@ -169,7 +166,11 @@ class LocsPlus
       else
         begin
           loc = location sender, name
-          @tracks[sender] = [name, loc] if loc
+          if loc
+            @tracks[sender] = [name, loc] 
+          else
+            sender.msg "No location? for #{name}"
+          end
         rescue ArgumentError => error
           sender.msg red(error.message)
         end
