@@ -19,8 +19,8 @@ forewarned, they may change here and there....
 Here is a plugin which gets registered as a plugin in Bukkit which tells
 every use in the players world when a player joins or quits the world:
 
-<pre><code>
---------- examples/player_joined_full_class.rb ----------
+```ruby
+#--------- examples/player_joined_full_class.rb ----------
 class PlayerJoinedPlugin
   include Purugin::Plugin
   description 'PlayerJoined', 0.1
@@ -41,7 +41,7 @@ class PlayerJoinedPlugin
     end
   end
 end
-</code></pre>
+```
 
 ### Plugin Dependencies
 
