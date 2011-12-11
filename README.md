@@ -22,21 +22,21 @@ every use in the players world when a player joins or quits the world:
 ```ruby
 #--------- examples/player_joined_full_class.rb ----------
 class PlayerJoinedPlugin
-  include Purugin::Plugin
+  include Purugin::Plugin, Purugin::Colors
   description 'PlayerJoined', 0.1
   
   def on_enable
     # Tell everyone in players world that they have joined
     event(:player_join) do |e|
       e.player.world.players.each do |p| 
-        p.send_message "Player #{e.player.name} has joined"
+        p.msg red("Player #{e.player.name} has joined")
       end
     end
 
     # Tell everyone in players world that they have quit
     event(:player_quit) do |e|
       e.player.world.players.each do |p| 
-        p.send_message "Player #{e.player.name} has quit"
+        p.msg red("Player #{e.player.name} has quit")
       end
     end
   end
@@ -49,23 +49,23 @@ Plugins can depend on other plugins.  There are multiple ways of accessing
 dependent plugins.  The first is to declare your plugin dependencies at the top
 of your Purugin:
 
-<pre><code>
-class PortsPlugin
-  include Purugin::Plugin, Purugin::Colors
-  description 'Ports', 0.3
-  required :LocsPlus, :include => :CoordinateEncoding
-  #...
-end
-</code></pre>
+```ruby
+    class PortsPlugin
+      include Purugin::Plugin, Purugin::Colors
+      description 'Ports', 0.3
+      required :LocsPlus, :include => :CoordinateEncoding
+      #...
+    end
+```
 
 This example shows that the 'Ports' plugin requires (via 'required' method) 
  the 'LocsPlus' plugin and that it should include the 'CoordinateEncoding' module from the 'LocsPlus' plugin.
 
 You can specify optional dependencies via the optional declaration:
 
-<pre><code>
-optional :Permissions
-</code></pre>
+```ruby
+    optional :Permissions
+```
 
 As a side-effect both required and optional will define a method by the same 
 name as plugin being referenced (Note: This may change since plugin names may 
@@ -74,9 +74,9 @@ not conform to sane Ruby-naming and some people don't like methods like
 
 A second way to get a live reference to a plugin is to ask the plugin manager:
 
-<pre><code>
-plugin_manager['Permissions']
-</code></pre>
+```ruby
+    plugin_manager['Permissions']
+```
 
 This has the advantage that a plugin can be named anything and you will still 
 be able to reference it.
