@@ -12,7 +12,7 @@ module Purugin
     TICKS_PER_SECOND = 20
     
     def sync_task(delay=0, repeat=-1, &block)
-      delay, repeat = delay.to_i * TICKS_PER_SECOND, repeat.to_i * TICKS_PER_SECOND
+      delay, repeat = (delay.to_f * TICKS_PER_SECOND).to_i, (repeat.to_f * TICKS_PER_SECOND).to_i
       code = java.lang.Runnable.impl &block
       
       raise ArgumentError.new "delay must be a positive value" if delay < 0
@@ -29,7 +29,7 @@ module Purugin
     end
     
     def async_task(delay=0, repeat=-1, &block)
-      delay, repeat = delay.to_i * TICKS_PER_SECOND, repeat.to_i * TICKS_PER_SECOND
+      delay, repeat = (delay.to_f * TICKS_PER_SECOND).to_i, (repeat.to_f * TICKS_PER_SECOND).to_i
       code = java.lang.Runnable.impl &block
       
       raise ArgumentError.new "delay must be a positive value" if delay < 0
