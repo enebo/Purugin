@@ -4,7 +4,7 @@ class MOTDPlugin
   
   def display_motd(me)
     me.msg "Message of the Day:"
-    @motd.split(/\n/).each { |line| me.msg line }
+    @motd.each_line { |line| me.msg line }
   end
   
   def make_motd_from_cli(*args)
