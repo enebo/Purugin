@@ -1,11 +1,11 @@
-class AdminPlugin
+class WhoPlugin
   include Purugin::Plugin
-  description 'Who', 0.3
+  description 'Who', 0.4
   
   def on_enable
     public_command('who', 'display all users') do |me, *|
       me.world.players.each do |player|
-        me.send_message "#{player.display_name} (#{player.name})"
+        me.msg "#{player.display_name} (#{player.name})"
       end
     end
   end
