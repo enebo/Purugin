@@ -92,5 +92,38 @@ module org::bukkit::block::Block
   
   def inspect
     "Block: #{self.type}"
-  end  
+  end
+  
+  def biome # Must be referencing a block. I.E 'self' must be a block
+    get_biome = self.getBiome().downcase.capitalize
+    if respond_to? get_biome
+      get_biome
+    end
+    false
+  end 
+  
+  def light_level # Must be referencing a block. I.E 'self' must be a block
+    get_light_level = self.getLightLevel()
+    if respond_to? get_light_level
+      get_light_level
+    end
+    false
+  end
+  
+  def get_crop_state # Must be referencing crops. I.E 'self' must be a crop block  
+    get_crop_level = self.getState().downcase.capitalize
+    if respond_to? get_crop_level
+      get_crop_level
+    end
+    false
+  end
+  
+  def set_crop_state(level) # Must be referencing crops. I.E 'self' must be a crop block
+    ulevel = level.upcase
+    set_crop  = self.setState(ulevel)
+    if respond_to? set_crop
+      set_crop
+    end
+    false
+  end
 end

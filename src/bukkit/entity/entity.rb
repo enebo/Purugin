@@ -60,10 +60,27 @@ module org::bukkit::entity::Entity
   # entity.arrow?
   # However for extended entity types added by mods this method will be needed.
   # TODO: Add support for determining type of extends mod entity types.
+  
+  def get_entity
+    entity_name = self.getCreatureType().getName()
+    if respond_to? entity_name
+      entity_name
+    end
+    false
+  end
+  
   def is?(type)
     predicate_name = type.to_s + "?"
     if respond_to? predicate_name
       __send__ predicate_name
+    end
+    false
+  end
+  
+  def name
+    creature_name = self.get_entity.gsub(/(.)([A-Z])/, '\1 \2')
+    if respond_to? creature_name
+      creature_name
     end
     false
   end
