@@ -1,8 +1,10 @@
 require 'java'
 require 'purugin/predicate'
+require 'purugin/util'
 
 module org::bukkit::entity::Entity
   extend Purugin::Predicate
+  include Purugin::StringUtils
 
   predicate :item, org::bukkit::entity::Item  
   predicate :flying, org::bukkit::entity::Flying
@@ -66,6 +68,18 @@ module org::bukkit::entity::Entity
       __send__ predicate_name
     end
     false
+  end
+
+  
+  # What kind of entity is this? (e.g. :arrow, :creeper)
+  def kind
+    camelcase_to(self.class.name.split('::Craft')[-1], '_').downcase.to_sym
+  end
+  # FIXME: ^---- ::Craft WTF...There has to be a better way (also fix 'name')
+
+  # What is the name of this entity (e.g. Arrow, Storage Minecart)
+  def name
+    camelcase_to(self.class.name.split('::Craft')[-1])
   end
 end
 
