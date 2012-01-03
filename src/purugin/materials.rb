@@ -19,5 +19,17 @@ module Purugin
     def material_for(value)
       org.bukkit.Material.match_material value.to_s
     end
+    
+    # Is this block/material solid enough to walk on (or possibly attach to)
+    # === Example
+    # stone_block.solid? #=> true
+    # water.solid?       #=> false
+    def solid?
+      # FIXME: This is pretty innefficient
+      is?(:stone, :cobblestone, :grass, :dirt, :wood, :log, :netherrack, :iron_block, :gold_block,
+          :diamond_block, :sand, :sandstone, :bedrock, :redstone_ore, :coal_ore, :diamond_ore,
+          :iron_ore, :gold_ore, :smooth_brick, :brick, :clay, :double_step, :lapis_block, 
+          :lapis_ore, :sponge, :snow, :huge_mushroom1, :huge_mushroom2)
+    end
   end
 end
