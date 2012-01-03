@@ -1,58 +1,56 @@
 require 'java'
 require 'purugin/predicate'
-require 'purugin/util'
 
 module org::bukkit::entity::Entity
   extend Purugin::Predicate
-  include Purugin::StringUtils
 
-  predicate :item, org::bukkit::entity::Item  
-  predicate :flying, org::bukkit::entity::Flying
-  predicate :living, org::bukkit::entity::LivingEntity
-  predicate :human, org::bukkit::entity::HumanEntity
-  predicate :creature, org::bukkit::entity::Creature
-  predicate :animal, org::bukkit::entity::Animals 
-  predicate :chicken, org::bukkit::entity::Chicken
-  predicate :cow, org::bukkit::entity::Cow
-  predicate :fish, org::bukkit::entity::Fish
-  predicate :pig, org::bukkit::entity::Pig
-  predicate :sheep, org::bukkit::entity::Sheep
-  predicate :wolf, org::bukkit::entity::Wolf
+  predicate org::bukkit::entity::Item  
+  predicate org::bukkit::entity::Flying
+  predicate org::bukkit::entity::LivingEntity, :living
+  predicate org::bukkit::entity::HumanEntity, :human
+  predicate org::bukkit::entity::Creature
+  predicate org::bukkit::entity::Animals, :animal
+  predicate org::bukkit::entity::Chicken
+  predicate org::bukkit::entity::Cow
+  predicate org::bukkit::entity::Fish
+  predicate org::bukkit::entity::Pig
+  predicate org::bukkit::entity::Sheep
+  predicate org::bukkit::entity::Wolf
   
-  predicate :monster, org::bukkit::entity::Monster 
-  predicate :cave_spider, org::bukkit::entity::CaveSpider
-  predicate :creeper, org::bukkit::entity::Creeper
-  predicate :enderman, org::bukkit::entity::Enderman 
-  predicate :giant, org::bukkit::entity::Giant
-  predicate :pig_zombie, org::bukkit::entity::PigZombie
-  predicate :silverfish, org::bukkit::entity::Silverfish  
-  predicate :skelton, org::bukkit::entity::Skeleton
-  predicate :slime, org::bukkit::entity::Slime
-  predicate :spider, org::bukkit::entity::Spider
-  predicate :zombie, org::bukkit::entity::Zombie
+  predicate org::bukkit::entity::Monster 
+  predicate org::bukkit::entity::CaveSpider
+  predicate org::bukkit::entity::Creeper
+  predicate org::bukkit::entity::Enderman 
+  predicate org::bukkit::entity::Giant
+  predicate org::bukkit::entity::PigZombie
+  predicate org::bukkit::entity::Silverfish  
+  predicate org::bukkit::entity::Skeleton
+  predicate org::bukkit::entity::Slime
+  predicate org::bukkit::entity::Spider
+  predicate org::bukkit::entity::Zombie
   
-  predicate :water_mob, org::bukkit::entity::WaterMob
-  predicate :squid, org::bukkit::entity::Squid
+  predicate org::bukkit::entity::WaterMob
+  predicate org::bukkit::entity::Squid
   
-  predicate :player, org::bukkit::entity::Player
+  predicate org::bukkit::entity::Player
 
-  predicate :powered_minecart, org::bukkit::entity::PoweredMinecart
-  predicate :lightning_strike, org::bukkit::entity::LightningStrike 
-  predicate :boat, org::bukkit::entity::Boat
-  predicate :storage_minecart, org::bukkit::entity::StorageMinecart
-  predicate :falling_sand, org::bukkit::entity::FallingSand
-  predicate :explosive, org::bukkit::entity::Explosive
-  predicate :painting, org::bukkit::entity::Painting
-  predicate :egg, org::bukkit::entity::Egg
-  predicate :fireball, org::bukkit::entity::Fireball
-  predicate :vehicle, org::bukkit::entity::Vehicle
-  predicate :experience_orb, org::bukkit::entity::ExperienceOrb
-  predicate :snowball, org::bukkit::entity::Snowball
-  predicate :projectile, org::bukkit::entity::Projectile
-  predicate :arrow, org::bukkit::entity::Arrow
-  predicate :tnt_primed, org::bukkit::entity::TNTPrimed
-  predicate :minecart, org::bukkit::entity::Minecart
-  predicate :weather, org::bukkit::entity::Weather
+  predicate org::bukkit::entity::PoweredMinecart
+  predicate org::bukkit::entity::LightningStrike 
+  predicate org::bukkit::entity::Boat
+  predicate org::bukkit::entity::StorageMinecart
+  predicate org::bukkit::entity::FallingSand
+  predicate org::bukkit::entity::Explosive
+  predicate org::bukkit::entity::Painting
+  predicate org::bukkit::entity::Egg
+  predicate org::bukkit::entity::Fireball
+  predicate org::bukkit::entity::Vehicle
+  predicate org::bukkit::entity::ExperienceOrb
+  predicate org::bukkit::entity::Snowball
+  predicate org::bukkit::entity::Projectile
+  predicate org::bukkit::entity::Arrow
+  predicate org::bukkit::entity::TNTPrimed, :tnt_primed
+  predicate org::bukkit::entity::Minecart
+  predicate org::bukkit::entity::Weather
   
   # Is this entity a particular type of entity
   # === Examples
@@ -68,18 +66,6 @@ module org::bukkit::entity::Entity
       __send__ predicate_name
     end
     false
-  end
-
-  
-  # What kind of entity is this? (e.g. :arrow, :creeper)
-  def kind
-    camelcase_to(self.class.name.split('::Craft')[-1], '_').downcase.to_sym
-  end
-  # FIXME: ^---- ::Craft WTF...There has to be a better way (also fix 'name')
-
-  # What is the name of this entity (e.g. Arrow, Storage Minecart)
-  def name
-    camelcase_to(self.class.name.split('::Craft')[-1])
   end
 end
 
