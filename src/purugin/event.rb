@@ -1,129 +1,61 @@
 module Purugin
-  BukkitEvent = org.bukkit.event.Event
-
   module Event
-    T = org.bukkit.event.Event::Type
+    CATEGORIES = {} # Category -> Listener
     
-    module ProcLogic
-      def self.included(other)
-        other.extend(EventAliases)
+    P = org.bukkit.event.Event::Priority
+    PRIORITIES = {:lowest => P::Lowest, :low => P::Low, :normal => P::Normal, :high => P::High,
+      :highest => P::Highest, :monitor => P::Monitor
+    }
+
+    ##
+    # Construct a class which has all _onFoo_ methods from the base *Java* class dispatch 
+    # through the constructors provided proc.  Additionally associate the category to the 
+    # particular listener class.
+    def self.proc_listener(event_listener_base, *categories)
+      cls = Class.new(event_listener_base) do 
+        def initialize(&proc)
+          super()
+          @proc = proc
+        end
+
+        def onEvent(event)
+          @proc.call(event)
+        end 
+        
+        event_listener_base.java_class.java_instance_methods.map do |m|
+          name = m.name.to_s
+          alias_method name, :onEvent if name =~ /\Aon/ && name != "onEvent"
+        end
       end
       
-      def initialize(&proc)
-        super()
-        @proc = proc
-      end
-
-      def onEvent(event)
-        @proc.call(event)
-      end      
+      categories.each { |category| CATEGORIES[category] = cls }
+      cls
     end
     
-    module EventAliases
-      def handlers(*names)
-        names.each { |name| alias_method name, :onEvent }
-      end
-    end
-    
-    class ProcBlockListener < org.bukkit.event.block.BlockListener
-      include ProcLogic
-      handlers :onBlockDamage, :onBlockCanBuild, :onBlockFromTo, :onBlockFlow,
-        :onBlockIgnite, :onBlockPhysics, :onBlockPlace, :onBlockRedstoneChange,
-        :onLeavesDecay, :onSignChange, :onBlockBurn, :onBlockBreak
-    end
-
-    class ProcCustomEventListener < org.bukkit.event.CustomEventListener
-      include ProcLogic
-      handlers :onCustomEvent
-    end
-
-    class ProcEntityListener < org.bukkit.event.entity.EntityListener
-      include ProcLogic
-      handlers :onCreatureSpawn, :onEntityCombust, :onEntityDamage,
-        :onEntityExplode, :onExplosionPrime, :onEntityDeath,
-        :onEntityTarget, :onEntityInteract
-    end
-    
-    class ProcInventoryListener < org.bukkit.event.inventory.InventoryListener
-      include ProcLogic
-      handlers :onFurnaceBurn, :onFurnaceSmelt
-    end
-
-    class ProcPlayerListener < org.bukkit.event.player.PlayerListener
-      include ProcLogic
-      handlers :onPlayerJoin, :onPlayerQuit, :onPlayerKick, :onPlayerChat,
-        :onPlayerCommandPreprocess, :onPlayerMove, :onPlayerTeleport,
-        :onPlayerRespawn, :onPlayerInteract, :onPlayerLogin,
-        :onPlayerEggThrow, :onPlayerAnimation, :onInventoryOpen,
-        :onItemHeldChange, :onPlayerDropItem, :onPlayerPickupItem,
-        :onPlayerToggleSneak, :onPlayerBucketFill, :onPlayerBucketEmpty,
-        :onPlayerQuit, :onPlayerCommandPreprocess, :onPlayerTeleport,
-        :onPlayerJoin
-    end
-
-    class ProcServerListener < org.bukkit.event.server.ServerListener
-      include ProcLogic
-      handlers :onPluginEnable, :onPluginDisable, :onServerCommand
-    end
-
-    class ProcVehicleListener < org.bukkit.event.vehicle.VehicleListener
-      include ProcLogic
-      handlers :onVehicleCreate, :onVehicleDamage, :onVehicleBlockCollision, 
-        :onVehicleEntityCollision, :onVehicleEnter, :onVehicleExit, 
-        :onVehicleMove, :onVehicleDestroy, :onVehicleUpdate
-    end
-
-    class ProcWeatherListener < org.bukkit.event.weather.WeatherListener
-      include ProcLogic
-      handlers :onWeatherChange, :onThunderChange, :onLightningStrike
-    end
-
-    class ProcWorldListener < org.bukkit.event.world.WorldListener
-      include ProcLogic
-      handlers :onChunkLoad, :onChunkUnload, :onSpawnChange,
-        :onWorldSave, :onWorldLoad
-    end
+    # FIXME: It appears events are more fine-grained now and this is using deprecated APIs
+    C = org.bukkit.event.Event::Category
+    ProcBlockListener = proc_listener(org.bukkit.event.block.BlockListener, C::BLOCK)
+    ProcCustomEventListener = proc_listener(org.bukkit.event.CustomEventListener, C::MISCELLANEOUS)
+    ProcEntityListener = proc_listener(org.bukkit.event.entity.EntityListener, C::ENTITY, C::LIVING_ENTITY)
+    ProcInventoryListener = proc_listener(org.bukkit.event.inventory.InventoryListener, C::INVENTORY)
+    ProcPlayerListener = proc_listener(org.bukkit.event.player.PlayerListener, C::PLAYER)
+    ProcServerListener = proc_listener(org.bukkit.event.server.ServerListener, C::SERVER)
+    ProcVehicleListener = proc_listener(org.bukkit.event.vehicle.VehicleListener, C::VEHICLE)
+    ProcWeatherListener = proc_listener(org.bukkit.event.weather.WeatherListener, C::WEATHER)
+    ProcWorldListener = proc_listener(org.bukkit.event.world.WorldListener, C::WORLD)
 
     def event(event_name, priority_value=:lowest, &code)
       type = event_type_for(event_name)
-      priority = priority_for(priority_value)
-      listener = listener_for(type).new(&code)
+      priority = PRIORITIES[priority_value]
+      listener = CATEGORIES[type.category].new(&code)
       plugin_manager.register_event(type, listener, priority, self)
     end
     alias on event
 
     def event_type_for(name)
       name = name.to_s.upcase
-      T.values.find { |event| event.name == name }
+      org.bukkit.event.Event::Type.values.find { |event| event.name == name }
     end
     private :event_type_for
-
-    def priority_for(value)
-      case value
-      when :lowest then BukkitEvent::Priority::Lowest
-      when :low then BukkitEvent::Priority::Low
-      when :normal then BukkitEvent::Priority::Normal
-      when :high then BukkitEvent::Priority::High
-      when :highest then BukkitEvent::Priority::Highest
-      when :monitor then BukkitEvent::Priority::Monitor
-      end
-    end
-    private :priority_for
-
-    def listener_for(event_type)
-      case event_type.category
-      when BukkitEvent::Category::PLAYER then ProcPlayerListener
-      when BukkitEvent::Category::ENTITY then ProcEntityListener
-      when BukkitEvent::Category::BLOCK then ProcBlockListener
-      when BukkitEvent::Category::LIVING_ENTITY then ProcEntityListener
-      when BukkitEvent::Category::WEATHER then ProcWeatherListener
-      when BukkitEvent::Category::VEHICLE then ProcVehicleListener
-      when BukkitEvent::Category::WORLD then ProcWorldListener
-      when BukkitEvent::Category::SERVER then ProcServerListener
-      when BukkitEvent::Category::INVENTORY then ProcInventoryListener
-      when BukkitEvent::Category::MISCELLANEOUS then ProcCustomListener
-      end
-    end
-    private :listener_for
   end
 end

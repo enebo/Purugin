@@ -2,7 +2,7 @@ require 'purugin/util'
 
 module Purugin
   module Predicate
-    include Purugin::StringUtils    
+    include Purugin::StringUtils
     # Define a method called name on this class which returns false
     # and then define a method on true_class which returns true
     # === Examples
