@@ -1,6 +1,6 @@
 jars:
-  craftbukkit.jar: http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-1.0.1-R1.jar
-  jruby-complete.jar: http://jruby.org.s3.amazonaws.com/downloads/1.6.5/jruby-complete-1.6.5.jar
+  craftbukkit.jar: http://ci.bukkit.org/job/dev-CraftBukkit/1818/artifact/target/craftbukkit-1.1-R1.jar
+  jruby-complete.jar: http://jruby.org.s3.amazonaws.com/downloads/1.6.5.1/jruby-complete-1.6.5.1.jar
 plugins:
   purugin.jar: http://cloud.github.com/downloads/enebo/Purugin/Purugin.jar
   dynmap.zip: http://webbukkit.org/jenkins/public/dynmap/dynmap-0.25-bin.zip
