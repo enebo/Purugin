@@ -22,10 +22,12 @@ module org::bukkit::entity::Entity
   predicate org::bukkit::entity::Creeper
   predicate org::bukkit::entity::Enderman 
   predicate org::bukkit::entity::Giant
+  predicate org::bukkit::entity::MagmaCube, :lava_slime
   predicate org::bukkit::entity::PigZombie
   predicate org::bukkit::entity::Silverfish  
   predicate org::bukkit::entity::Skeleton
   predicate org::bukkit::entity::Slime
+  predicate org::bukkit::entity::Snowman, :snow_man
   predicate org::bukkit::entity::Spider
   predicate org::bukkit::entity::Zombie
   
