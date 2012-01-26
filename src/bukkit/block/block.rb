@@ -19,6 +19,7 @@ module org::bukkit::block::Block
     :down => {:left => :east, :right => :west, :up => :south, :down =>:north}
   }
   
+  ##
   # Find a nearby block relative to the current block based on a friendly symbol name
   # === Parameters
   # * _face_* can be :north, :east, :south, :west, :up, :down, :north_east, :north_west,
@@ -34,6 +35,7 @@ module org::bukkit::block::Block
     distance ? get_relative(face, distance) : get_relative(face)
   end
   
+  ##
   # Which face relative to the supplied block would be visible?
   # === Parameters
   # * _other_block_ - the block we want to compare against
@@ -41,11 +43,13 @@ module org::bukkit::block::Block
     get_face(other_block)
   end
   
+  ##
   # Some methods will implcitly convert a block to its location if it responds to :to_loc
   def to_loc
     location
   end
   
+  ##
   # Wrapper around setType to allow specifying material types by symbol.
   # Note: Not sure what the error should be if improperly specified
   def change_type(new_type)
@@ -54,11 +58,13 @@ module org::bukkit::block::Block
     set_type new_type
   end
   
+  ##
   # return the face relative to the supplied face given a direction
   def rotate(face, direction)
     face_for_symbol(ROTATIONS[symbol_for_face(face)][direction])
   end
   
+  ##
   # Break (e.g. destroy) this block and possibly leave a dropped item behind
   # === Parameters
   # * _with_drop_* will drop an item if it is a droppable type (def: false)
