@@ -41,7 +41,7 @@ module Purugin
         plugin_manager.disablePlugin plugin 
         # Hack around lack of unregistering
         begin
-          plugin_manager.unregister_events_for plugin if plugin_manager.respond_to? :unregister_events_for
+          org.bukkit.event.HandlerList.unregisterAll(plugin)          
           unregister_constants plugin.class
         rescue
           puts "Who #{$!}"
