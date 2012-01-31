@@ -15,14 +15,16 @@ module Purugin
       !!values.find() {|value| type.is?(value) }
     end
     
+    ##
+    # Is this item powered or not?  Note: This overrides existing builtin powered? (on things
+    # which define it like RedstoneTorch) and returns false for all non-powered materials.  This 
+    # saves having to respond_to? :powered? in purugin code.
+    # === Example
+    # grass_block.powered?   #=> false
+    # redstone_torch.powered? #=> true or false depend on whether torch has power or not
+    #
     def powered?
-      if self.is?(:redstone)
-        self.isPowered()
-      elsif self.is?(:redstone_wire)
-        self.isPowered()
-      elsif self.is(:redstone_torch)
-        self.isPowered()
-      end
+      respond_to? :isPowered ? isPowered : false
     end
     
     # Return the Java equivalent value for the specified material symbol/str
