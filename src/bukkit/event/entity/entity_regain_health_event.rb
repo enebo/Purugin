@@ -1,10 +1,10 @@
 require 'java'
+require 'purugin/predicate'
 
 class org::bukkit::event::entity::EntityRegainHealthEvent
-  # Will define predicates for all Regain Health events: regen?, eating?, etc...
-  org.bukkit.event.entity.EntityRegainHealthEvent::RegainReason.values.each do |cause|
-    define_method(cause.name.downcase + "?") do
-      self.cause == cause
-    end
-  end
+  extend Purugin::Predicate
+
+  # Will define predicates for all Regain Health events: regain_reason.regen?,
+  # regain_reason.eating?, etc...
+  enum_predicates org.bukkit.event.entity.EntityRegainHealthEvent::RegainReason
 end

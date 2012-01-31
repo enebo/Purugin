@@ -1,11 +1,10 @@
 require 'java'
+require 'purugin/predicate'
 
 class org::bukkit::event::player::PlayerPreLoginEvent
-  # Will define predicates for all states of fishing events: allowed?, kick_other?, etc...
-  org.bukkit.event.player.PlayerLoginEvent::Result.values.each do |cause|
-    define_method(cause.name.downcase + "?") do
-      self.cause == cause
-    end
-  end
+  extend Purugin::Predicate
+
+  # Will define predicates for all states of login events: result.allowed?, result.kick_other?, etc...
+  enum_predicates org.bukkit.event.player.PlayerPreLoginEvent::Result
 end
 

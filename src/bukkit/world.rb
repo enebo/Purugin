@@ -1,6 +1,9 @@
 require 'java'
+require 'purugin/predicate'
 
 module org::bukkit::World
+  extend Purugin::Predicate
+  
   # Get the block at the given coordinates
   # === Parameters
   # * x,y,z - Give three coord. location
@@ -45,10 +48,11 @@ module org::bukkit::World
     environment_name.to_s.upcase == environment.name
   end
 
+  enum_predicates org.bukkit.World::Environment
+  
   # Define one method for each environment (e.g. nether?, normal? skylands?)
   org.bukkit.World::Environment.values.each do |environment|
-    define_method(environment.name.downcase + "?") do
-      self.environment == environment
-    end
+    pred_name = environment.kind.to_s + '?'
+    eval "def #{pred_name}; environment.#{pred_name}; end"
   end
 end

@@ -1,10 +1,9 @@
 require 'java'
+require 'purugin/predicate'
 
 class org::bukkit::event::entity::CreatureSpawnEvent
-  # Will define predicates for all Creature Spawns: egg?, spawner?, etc...
-  org.bukkit.event.entity.CreatureSpawnEvent::SpawnReason.values.each do |cause|
-    define_method(cause.name.downcase + "?") do
-      self.cause == cause
-    end
-  end
+  extend Purugin::Predicate
+  
+  # Will define predicates for all Creature Spawns: cause.egg?, cause.spawner?, etc...
+  enum_predicates org.bukkit.event.entity.CreatureSpawnEvent::SpawnReason
 end

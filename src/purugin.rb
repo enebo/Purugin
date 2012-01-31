@@ -6,6 +6,7 @@ purugin_jar_path = __FILE__.gsub(/(^jar:file:|!.*$)/, '')
 $LOAD_PATH << purugin_jar_path
 
 require 'purugin/predicate'
+require 'bukkit/block/biome'
 require 'bukkit/block/block'
 require 'bukkit/command/command'
 require 'bukkit/command/command_sender'

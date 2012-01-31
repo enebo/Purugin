@@ -1,11 +1,10 @@
 require 'java'
+require 'purugin/predicate'
 
 class org::bukkit::event::entity::EntityTargetEvent
-  # Will define predicates for all Target events: target_died?, random_target?, etc...
-  org.bukkit.event.entity.EntityTargetEvent::TargetReason.values.each do |cause|
-    define_method(cause.name.downcase + "?") do
-      self.cause == cause
-    end
-  end
+  extend Purugin::Predicate
+
+  # Will define predicates for all Target events: reason.target_died?, reason.random_target?, etc...
+  enum_predicates org.bukkit.event.entity.EntityTargetEvent::TargetReason
 end
 

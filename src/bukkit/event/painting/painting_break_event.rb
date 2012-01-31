@@ -1,11 +1,10 @@
 require 'java'
+require 'purugin/predicate'
 
 class org::bukkit::event::painting::PaintingBreakEvent
+  extend Purugin::Predicate
+
   # Will define predicates for all Paintint break events: fire?, water?, etc...
-  org.bukkit.event.painting.PaintingBreakEvent::RemoveCause.values.each do |cause|
-    define_method(cause.name.downcase + "?") do
-      self.cause == cause
-    end
-  end
+  enum_predicates org.bukkit.event.painting.PaintingBreakEvent::RemoveCause
 end
 
