@@ -22,6 +22,8 @@ module Purugin
         self.isPowered()
       elsif self.is(:redstone_torch)
         self.isPowered()
+      end
+    end
     
     # Return the Java equivalent value for the specified material symbol/str
     def material_for(value)
