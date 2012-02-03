@@ -155,6 +155,7 @@ module Purugin
         # TODO: Resolve what happens if plugin conflicts w/ existing method)
         self.class.send(:define_method, name.to_s) { plugin }
         process_includes plugin, options[:include] if options[:include]
+        process_services plugin, options[:services] if options[:services]
       end
     end
     private :process_plugins
@@ -167,6 +168,22 @@ module Purugin
       end
     end
     private :process_includes
+    
+    ##
+    # Retrieves each requested service that the plugin wants and then saves the retrieved
+    # service as an instance variable accessiable via a reader using the provided bind_method.
+    # === Examples
+    # require :Vault, :services => {"net.milkbowl.vault.economy.Economy" => :economy}
+    def process_services(plugin, services)
+      services.each do |bind_method, service_class_name|
+        service_class = plugin.class_loader.find_class service_class_name
+        economy_provider = server.services_manager.get_registration(service_class)
+        bind_variable = '@' + bind_method.to_s
+        self.instance_variable_set bind_variable, economy_provider.provider
+        self.class.__send__ :attr_reader, bind_method.to_s
+      end
+    end
+    private :process_services
     
     def include_module_from(plugin, name)
       unless plugin.class.const_defined? name
