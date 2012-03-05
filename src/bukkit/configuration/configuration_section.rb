@@ -1,6 +1,6 @@
 require 'java'
 
-class org::bukkit::util::config::ConfigurationNode
+module org::bukkit::configuration::ConfigurationSection
   # Get 
   def get(path)
     getProperty(path)
