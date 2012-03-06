@@ -177,9 +177,12 @@ module Purugin
     def process_services(plugin, services)
       services.each do |bind_method, service_class_name|
         service_class = plugin.class_loader.find_class service_class_name
-        economy_provider = server.services_manager.get_registration(service_class)
+        service_provider = server.services_manager.get_registration(service_class)
+        if !service_provider
+          raise MissingDependencyError.new "Cannot load provider for #{service_class_name} (none exist?)"
+        end
         bind_variable = '@' + bind_method.to_s
-        self.instance_variable_set bind_variable, economy_provider.provider
+        self.instance_variable_set bind_variable, service_provider.provider
         self.class.__send__ :attr_reader, bind_method.to_s
       end
     end
