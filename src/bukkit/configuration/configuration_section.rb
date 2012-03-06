@@ -30,14 +30,16 @@ module org::bukkit::configuration::ConfigurationSection
   
   # Once setProperty/removeProperty is called also save this Configuration
   def set!(path, value)
-    setProperty path, value
-    save if respond_to? :save # Only Configuration can save
+    set path, value
+# FIXME: configuration no longer has ability to save without explicit File reference?    
+#    save if respond_to? :save # Only Configuration can save
     value
   end
   
   def remove!(path)
-    removeProperty path
-    save if respond_to? :save # Only Configuration can save
+    remove path
+# FIXME: configuration no longer has ability to save without explicit File reference?  
+#     save if respond_to? :save # Only Configuration can save
     path
   end
 end
