@@ -118,6 +118,10 @@ module Purugin
     def getDefaultWorldGenerator(string, string1)
       nil
     end
+    
+    def getName
+      self.class.plugin_name
+    end    
 
     # Write a message to the console
     alias :console :print
