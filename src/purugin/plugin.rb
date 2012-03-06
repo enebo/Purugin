@@ -39,7 +39,7 @@ module Purugin
       $plugins[path] = [self, File.mtime(path)]
       @plugin_description = org.bukkit.plugin.PluginDescriptionFile.new self.class.plugin_name, self.class.plugin_version.to_s, 'none'
       @data_dir = File.dirname(path) + '/' + self.class.plugin_name
-      @configuration = org.bukkit.util.config.Configuration.new java.io.File.new(@data_dir, 'config.yml')
+      @configuration = org.bukkit.configuration.file.YamlConfiguration.load_configuration java.io.File.new(@data_dir, 'config.yml')
       @required_plugins = self.class.required_plugins
       @optional_plugins = self.class.optional_plugins
     end
@@ -193,15 +193,8 @@ module Purugin
       self.class.__send__ :include, plugin.class.const_get(name)
     end
     
-    # Convenience method for getting the Java loaded version of a loaded YAML file (each
-    # Bukkit plugin may have it's own YAML file for config data (see Bukkit documentation).
     def config
-      config = getConfiguration
-      unless @configuration_loaded
-        config.load
-        @configuration_loaded = true
-      end
-      config
+      getConfiguration
     end
   end
 end
