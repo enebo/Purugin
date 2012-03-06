@@ -2,9 +2,9 @@ module Purugin
   module Event
     CATEGORIES = {} # Category -> Listener
     
-    P = org.bukkit.event.Event::Priority
-    PRIORITIES = {:lowest => P::Lowest, :low => P::Low, :normal => P::Normal, :high => P::High,
-      :highest => P::Highest, :monitor => P::Monitor
+    P = org.bukkit.event.EventPriority
+    PRIORITIES = {:lowest => P::LOWEST, :low => P::LOW, :normal => P::NORMAL, :high => P::HIGH,
+      :highest => P::HIGHEST, :monitor => P::MONITOR
     }
 
     ##
