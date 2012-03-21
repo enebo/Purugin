@@ -3,4 +3,4 @@ jars:
   jruby-complete.jar: http://jruby.org.s3.amazonaws.com/downloads/1.6.5.1/jruby-complete-1.6.5.1.jar
 plugins:
   purugin.jar: http://cloud.github.com/downloads/enebo/Purugin/Purugin.jar
-  dynmap.zip: http://webbukkit.org/jenkins/public/dynmap/dynmap-0.25-bin.zip
+  dynmap.zip: http://webbukkit.org/jenkins/public/dynmap/dynmap-0.36-bin.zip
