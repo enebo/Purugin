@@ -38,8 +38,9 @@ module Purugin
       @server = plugin.server
       $plugins[path] = [self, File.mtime(path)]
       @plugin_description = org.bukkit.plugin.PluginDescriptionFile.new self.class.plugin_name, self.class.plugin_version.to_s, 'none'
-      @data_dir = File.dirname(path) + '/' + self.class.plugin_name
-      @configuration = org.bukkit.configuration.file.YamlConfiguration.load_configuration java.io.File.new(@data_dir, 'config.yml')
+      @data_dir = File.join(File.dirname(path), self.class.plugin_name)
+      @config_file = File.join(@data_dir, 'config.yml')
+      @configuration = Purugin::Config.new(self, loadConfig)
       @required_plugins = self.class.required_plugins
       @optional_plugins = self.class.optional_plugins
     end
@@ -61,7 +62,7 @@ module Purugin
     
     # bukkit Plugin impl (see Bukkit API documentation)    
     def getConfiguration
-      @configuration
+      @configuration.real_config
     end
     alias :configuration :getConfiguration
     
@@ -70,6 +71,17 @@ module Purugin
       @plugin_loader
     end
     
+    # bukkit Plugin impl (see Bukkit API documentation)     
+    def saveConfig
+      config.real_config.save @config_file
+    end
+    
+    # bukkit Plugin impl (see Bukkit API documentation)    
+    def loadConfig
+      org.bukkit.configuration.file.YamlConfiguration.load_configuration java.io.File.new(@config_file)
+    end
+    
+    # bukkit Plugin impl (see Bukkit API documentation)
     def getServer
       server
     end
@@ -201,7 +213,7 @@ module Purugin
     end
     
     def config
-      getConfiguration
+      @configuration
     end
   end
 end
