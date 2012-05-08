@@ -4,6 +4,11 @@ module Kernel
   end
 end
 
+# TODO: better execution protection
+# TODO: make abort work in async_blocks
+# TODO: Add 3d support
+# TODO: Add better jump
+
 class LogoPlugin
   include Purugin::Plugin, Purugin::Tasks
   description 'Logo', 0.2
@@ -151,7 +156,7 @@ class LogoPlugin
             puts "PIX #{z}"
             s.z = z
             pixel(s)
-            z += m == 0 ? 0 : (1/m)
+            z += (1/m)
             s.x += 1
             puts "S<E Z #{s.x < e.x} #{s.x} #{e.x}"
           end
@@ -161,7 +166,7 @@ class LogoPlugin
             puts "PIX #{z}"
             s.z = z
             pixel(s)
-            z -= m == 0 ? 0 : (1/m)
+            z -= (1/m)
             s.x -= 1
             puts "S<E Z #{s.x > e.x} #{s.x} #{e.x}"
           end
