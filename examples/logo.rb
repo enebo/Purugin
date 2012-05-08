@@ -154,9 +154,9 @@ class LogoPlugin
           puts "S<E x"
           while s.x < e.x
             puts "PIX #{z}"
-            s.z = z
+            s.z = z.round
             pixel(s)
-            z += (1/m)
+            z += (m == 0) ? 0 : (1/m)
             s.x += 1
             puts "S<E Z #{s.x < e.x} #{s.x} #{e.x}"
           end
@@ -164,9 +164,9 @@ class LogoPlugin
           puts "S>E Z"
           while s.x > e.x
             puts "PIX #{z}"
-            s.z = z
+            s.z = z.round
             pixel(s)
-            z -= (1/m)
+            z -= (m == 0) ? 0 : (1/m)
             s.x -= 1
             puts "S<E Z #{s.x > e.x} #{s.x} #{e.x}"
           end
@@ -178,14 +178,14 @@ class LogoPlugin
         z = s.z
         if s.x <= e.x
           while s.x < e.x
-            s.z = z
+            s.z = z.round
             pixel(s)
             z += m
             s.x += 1
           end
         else
           while s.x > e.x
-            s.z = z
+            s.z = z.round
             pixel(s)
             z -= m
             s.x -= 1
