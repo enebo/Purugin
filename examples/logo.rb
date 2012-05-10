@@ -99,7 +99,7 @@ class LogoPlugin
     end
 
     def turn(degrees)
-      log "turning #{degrees} degrees"
+      log "turning #{degrees} degrees #{@location.yaw - degrees}"
       @location.yaw -= degrees
     end
 
@@ -108,120 +108,20 @@ class LogoPlugin
     end
 
     def go(amount)
+      turn 180 if amount < 0
       log "go #{amount} forward"
-      loc0 = @location
-      loc1 = loc0.clone
-      loc1.add(loc1.direction.multiply(amount))
-      line(loc0, loc1)
-      @location = loc1
-    end
-
-    # Drawing in a specific order is painful and I am sure this can be
-    # boiled down better than it has so far...also not so great at some angles.
-    def line(loc0, loc1)
-      puts "LOC0 #{loc0.to_a.join(", ")} -> #{loc1.to_a.join(", ")}"
-      dx = loc1.x - loc0.x
-      dz = loc1.z - loc0.z
-
-      if dx == 0 # vertical line
-        puts "VERT"
-        s, e = loc0, loc1
-        if s.z <= e.z
-          puts "S<E Z #{s.z < e.z} #{s.z} #{e.z}"
-          z = s.z
-          while z < e.z
-            puts "PIX #{z}"
-            s.z = z
-            pixel(s)
-            z += 1
-          end
-        else
-          z = s.z
-          puts "S>E Z"
-          while z > e.z
-            puts "PIX #{z}"
-            s.z = z
-            pixel(s)
-            z -= 1
-          end
-        end
-      elsif dx.abs > 1 # More rise than run
-        puts "RISE>RUN"
-        s, e = loc0, loc1
-        m = dz / dx
-        z = s.z
-        if s.x <= e.x
-          puts "S<E x"
-          while s.x < e.x
-            puts "PIX #{z}"
-            s.z = z.round
-            pixel(s)
-            z += (m == 0) ? 0 : (1/m)
-            s.x += 1
-            puts "S<E Z #{s.x < e.x} #{s.x} #{e.x}"
-          end
-        else
-          puts "S>E Z"
-          while s.x > e.x
-            puts "PIX #{z}"
-            s.z = z.round
-            pixel(s)
-            z -= (m == 0) ? 0 : (1/m)
-            s.x -= 1
-            puts "S<E Z #{s.x > e.x} #{s.x} #{e.x}"
-          end
-        end        
-      else # More run than rise
-        puts "RUN>RISE"
-        s, e = loc0, loc1
-        m = dz / dx
-        z = s.z
-        if s.x <= e.x
-          while s.x < e.x
-            s.z = z.round
-            pixel(s)
-            z += m
-            s.x += 1
-          end
-        else
-          while s.x > e.x
-            s.z = z.round
-            pixel(s)
-            z -= m
-            s.x -= 1
-          end
-        end        
+      direction = @location.direction # cache to prevent math
+      amount.abs.times do
+        loc = @location.add(direction).dup
+        loc.x, loc.y, loc.z = loc.x.round, loc.y.round, loc.z.round
+        pixel loc
       end
-    end
-
-    # Bresenham's line algo (consider making 3d bres algo)
-    def line2(loc0, loc1)
-      puts "LOC0 #{loc0.to_a.join(", ")} -> #{loc1.to_a.join(", ")}"
-      dx, dz = (loc1.x - loc0.x).abs, (loc1.z - loc0.z).abs
-      sx = loc0.x < loc1.x ? 1 : -1
-      sz = loc0.z < loc1.z ? 1 : -1
-      err = dx - dz
- 
-      loop do
-        puts "Loop"
-        sleep 0.5
-        pixel(loc0)
-        break if loc0.x.abs >= loc1.x.abs
-        e2 = err*2
-        if e2 > -dz
-          err -= dz
-          loc0.add(sx, 0, 0)
-        end
-        if e2 < dx
-          err += dx
-          loc0.add(0, 0, sz)
-        end
-      end
+      turn 180 if amount < 0
     end
 
     def pixel(loc)
       puts "Changing [#{loc.to_a.join(", ")}] to #{@penstyle}"
-      @player.world.block_at(loc).change_type @penstyle
+      loc.block.change_type @penstyle
     end
   end
 
