@@ -36,12 +36,16 @@ class LogoPlugin
       add_command "log", message
     end
 
+    def mark(name)
+      add_command "mark", name
+    end
+
     def pos
       add_command "pos"
     end
 
-    def goto(x, y)
-      add_command "goto", x, y
+    def goto(name)
+      add_command "goto", name
     end
 
     def forward(distance)
@@ -53,11 +57,19 @@ class LogoPlugin
     end
 
     def turnleft(degrees)
-      add_command "turn", -degrees.abs
+      add_command "yaw", degrees
     end
 
     def turnright(degrees)
-      add_command "turn", degrees.abs
+      add_command "yaw", -degrees
+    end
+
+    def turnup(degrees)
+      add_command "pitch", -degrees
+    end
+
+    def turndown(degrees)
+      add_command "pitch", degrees
     end
 
     def draw(interface)
@@ -74,6 +86,7 @@ class LogoPlugin
         loc.pitch = 0
         loc.yaw = 0
       end
+      @markers = {}
     end
 
     def server
@@ -90,6 +103,16 @@ class LogoPlugin
       puts $!.caller
     end
 
+    def mark(name)
+      @markers[name] = @location.clone
+      puts "marked #{name} -> #{@location}"
+    end
+
+    def goto(name)
+      @location = @markers[name].clone
+      puts "goto #{name} -> #{@location}"
+    end
+
     def penstyle(type)
       @penstyle = type.to_sym
     end
@@ -98,9 +121,26 @@ class LogoPlugin
       @player.msg message
     end
 
-    def turn(degrees)
-      log "turning #{degrees} degrees #{@location.yaw - degrees}"
-      @location.yaw -= degrees
+    def yaw(degrees)
+      new_yaw = @location.yaw + degrees
+      if new_yaw >= 360.0
+        new_yaw = new_yaw - 360.0
+      elsif new_yaw <= 0
+        new_yaw = 360.0 + new_yaw
+      end
+      puts "new yaw: #{new_yaw}"
+      @location.yaw = new_yaw
+    end
+
+    def pitch(degrees)
+      new_pitch = @location.pitch + degrees
+      if new_pitch >= 360.0
+        new_pitch = new_pitch - 360.0
+      elsif new_pitch <= 0
+        new_pitch = 360.0 + new_pitch
+      end
+      puts "new pitch: #{new_pitch}"
+      @location.pitch = new_pitch
     end
 
     def pos
@@ -108,15 +148,15 @@ class LogoPlugin
     end
 
     def go(amount)
-      turn 180 if amount < 0
+      yaw 180 if amount < 0
       log "go #{amount} forward"
       direction = @location.direction # cache to prevent math
       amount.abs.times do
-        loc = @location.add(direction).dup
+        loc = @location.add(direction).clone
         loc.x, loc.y, loc.z = loc.x.round, loc.y.round, loc.z.round
         pixel loc
       end
-      turn 180 if amount < 0
+      yaw 180 if amount < 0
     end
 
     def pixel(loc)
@@ -146,6 +186,7 @@ class LogoPlugin
         begin
           turtle.draw(TurtleInterface.new(me))
         rescue Exception => e
+          puts e
           abort! "Problem executing logo app: #{$!}"
         end
       end
