@@ -8,7 +8,7 @@ end
 # TODO: make abort work in async_blocks
 
 class LogoPlugin
-  include Purugin::Plugin, Purugin::Tasks
+  include Purugin::Plugin, Purugin::Tasks, Purugin::Colors
   description 'Logo', 0.2
 
   class Turtle
@@ -170,6 +170,7 @@ class LogoPlugin
     default = File.join(File.dirname(__FILE__), "logo")
     logo_directory = config.get!("logo.directory", default)
     sessions = TurtleSessions.new
+    error = nil
 
     player_command('draw', 'draw logo file', '/draw file') do |me, *args|
       abort! "No program supplied" if args.length == 0
@@ -180,16 +181,20 @@ class LogoPlugin
         begin
           turtle = eval File.readlines(filename).join("\n")
         rescue Exception => e
-          abort! "Problem loading logo app: #{$!}"
+          me.msg red("Problem loading logo app: #{$!}")
+          break;
         end
 
-        abort! "Not a turtle program #{program}" unless turtle.kind_of? Turtle
+        unless turtle.kind_of? Turtle  # pretty ugly for asyc
+          me.msg red("Not a turtle program #{program}")
+          break
+        end
         
         begin
           turtle.draw(TurtleInterface.new(sessions, me))
         rescue Exception => e
-          puts e
-          abort! "Problem executing logo app: #{$!}"
+          me.msg red("Problem executing logo app: #{$!}")
+          break;
         end
       end
     end
