@@ -4,9 +4,6 @@ module Kernel
   end
 end
 
-# TODO: better execution protection
-# TODO: make abort work in async_blocks
-
 class LogoPlugin
   include Purugin::Plugin, Purugin::Tasks, Purugin::Colors
   description 'Logo', 0.2
@@ -65,7 +62,12 @@ class LogoPlugin
     end
   end
 
+  class ExecutionAborted < Exception
+  end
+
   class TurtleInterface
+    include Purugin::Colors
+    MAX_PIXEL_COUNT = 1000
     DEFAULT_BLOCK_TYPE = :wood
     attr_reader :player
 
@@ -171,6 +173,8 @@ class LogoPlugin
         @original_blocks[block] = original_type
         @sessions[block] = self
       end
+
+      raise ExecutionAborted.new "Program has too many blocks (>#{MAX_PIXEL_COUNT})" if @original_blocks.size > MAX_PIXEL_COUNT
     end
   end
 
