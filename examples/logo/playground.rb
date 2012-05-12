@@ -1,6 +1,6 @@
 turtle do
   dimensions = 20
-  pencolor :grass
+  block :grass
 
   dimensions.times do |i|
     log "#{i}th iteration"

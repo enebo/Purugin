@@ -6,8 +6,6 @@ end
 
 # TODO: better execution protection
 # TODO: make abort work in async_blocks
-# TODO: Add 3d support
-# TODO: Add better jump
 
 class LogoPlugin
   include Purugin::Plugin, Purugin::Tasks
@@ -28,65 +26,62 @@ class LogoPlugin
       @commands << [command, *args]
     end
 
-    def pencolor(color)
-      add_command "penstyle", color
-    end
-    
-    def log(message)
-      add_command "log", message
-    end
-
-    def mark(name)
-      add_command "mark", name
-    end
-
-    def pos
-      add_command "pos"
-    end
-
-    def goto(name)
-      add_command "goto", name
-    end
-
-    def forward(distance)
-      add_command "go", distance
-    end
-
-    def backward(distance)
-      add_command "go", -distance
-    end
-
-    def turnleft(degrees)
-      add_command "yaw", degrees
-    end
-
-    def turnright(degrees)
-      add_command "yaw", -degrees
-    end
-
-    def turnup(degrees)
-      add_command "pitch", -degrees
-    end
-
-    def turndown(degrees)
-      add_command "pitch", degrees
-    end
+    def block(type); add_command "block", type; end
+    def log(message); add_command "log", message; end
+    def mark(name); add_command "mark", name; end
+    def pos; add_command "pos"; end
+    def goto(name); add_command "goto", name; end
+    def forward(distance); add_command "go", distance; end
+    def backward(distance); add_command "go", -distance; end
+    def turnleft(degrees); add_command "yaw", degrees; end
+    def turnright(degrees); add_command "yaw", -degrees; end
+    def turnup(degrees); add_command "pitch", -degrees; end
+    def turndown(degrees); add_command "pitch", degrees; end
 
     def draw(interface)
       interface.execute @commands
     end
   end
 
-  class TurtleInterface
-    DEFAULT_PENSTYLE = :wood
+  class TurtleSessions
+    def initialize
+      @blocks = {} # block -> interface_instance
+    end
 
-    def initialize(player)
-      @player, @penstyle = player, DEFAULT_PENSTYLE
+    def []=(block, instance)
+      @blocks[block] = instance
+    end
+
+    def delete(block)
+      @blocks.delete(block)
+    end
+
+    def undraw(block)
+      instance = @blocks[block]
+      instance.undraw if instance
+    end
+  end
+
+  class TurtleInterface
+    DEFAULT_BLOCK_TYPE = :wood
+
+    def initialize(sessions, player)
+      @sessions, @player, @block_type = sessions, player, DEFAULT_BLOCK_TYPE
       @location = player.target_block.location.tap do |loc|
         loc.pitch = 0
         loc.yaw = 0
       end
       @markers = {}
+      @original_blocks = {} # loc -> type
+    end
+
+    # Undraw/revert all blocks changed by this turtleinterface
+    def undraw
+      @original_blocks.each_pair do |block, block_type|
+        @sessions.delete(block)
+        block.change_type block_type
+      end
+      @original_blocks = {}
     end
 
     def server
@@ -113,8 +108,8 @@ class LogoPlugin
       puts "goto #{name} -> #{@location}"
     end
 
-    def penstyle(type)
-      @penstyle = type.to_sym
+    def block(type)
+      @block_type = type.to_sym
     end
 
     def log(message)
@@ -160,14 +155,21 @@ class LogoPlugin
     end
 
     def pixel(loc)
-      puts "Changing [#{loc.to_a.join(", ")}] to #{@penstyle}"
-      loc.block.change_type @penstyle
+      puts "Changing [#{loc.to_a.join(", ")}] to #{@block_type}"
+      block = loc.block
+      original_type = block.type
+      block.change_type @block_type unless @block_type == :none
+      unless @original_blocks[block]
+        @original_blocks[block] = original_type
+        @sessions[block] = self
+      end
     end
   end
 
   def on_enable
     default = File.join(File.dirname(__FILE__), "logo")
     logo_directory = config.get!("logo.directory", default)
+    sessions = TurtleSessions.new
 
     player_command('draw', 'draw logo file', '/draw file') do |me, *args|
       abort! "No program supplied" if args.length == 0
@@ -184,12 +186,16 @@ class LogoPlugin
         abort! "Not a turtle program #{program}" unless turtle.kind_of? Turtle
         
         begin
-          turtle.draw(TurtleInterface.new(me))
+          turtle.draw(TurtleInterface.new(sessions, me))
         rescue Exception => e
           puts e
           abort! "Problem executing logo app: #{$!}"
         end
       end
+    end
+
+    player_command('undraw', 'remove drawing', '/undraw') do |me, *|
+      sessions.undraw me.target_block
     end
   end
 end
