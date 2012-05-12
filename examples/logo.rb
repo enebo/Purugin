@@ -1,6 +1,6 @@
 module Kernel
-  def turtle(&block)
-    LogoPlugin::Turtle.start &block
+  def turtle(name=nil, &block)
+    LogoPlugin::Turtle.start name, &block
   end
 end
 
@@ -12,20 +12,21 @@ class LogoPlugin
   description 'Logo', 0.2
 
   class Turtle
-    attr_reader :commands
+    attr_reader :commands, :name
 
-    def initialize()
-      @commands = []
+    def initialize(name)
+      @name, @commands = name, []
     end
 
-    def self.start(&script)
-      new.tap { |t|  t.instance_eval(&script) }
+    def self.start(name, &script)
+      new(name).tap { |t|  t.instance_eval(&script) }
     end
 
     def add_command(command, *args)
       @commands << [command, *args]
     end
 
+    def verbose(state); add_command "verbose", state; end
     def block(type); add_command "block", type; end
     def log(message); add_command "log", message; end
     def mark(name); add_command "mark", name; end
@@ -39,7 +40,7 @@ class LogoPlugin
     def turndown(degrees); add_command "pitch", degrees; end
 
     def draw(interface)
-      interface.execute @commands
+      interface.execute @name, @commands
     end
   end
 
@@ -56,14 +57,17 @@ class LogoPlugin
       @blocks.delete(block)
     end
 
-    def undraw(block)
+    # Undraw any previous draw I have performed or someone elses drawing if op
+    def undraw(me)
+      block = me.target_block
       instance = @blocks[block]
-      instance.undraw if instance
+      instance.undraw if instance && (me.op? || me == player.instance)
     end
   end
 
   class TurtleInterface
     DEFAULT_BLOCK_TYPE = :wood
+    attr_reader :player
 
     def initialize(sessions, player)
       @sessions, @player, @block_type = sessions, player, DEFAULT_BLOCK_TYPE
@@ -71,6 +75,7 @@ class LogoPlugin
         loc.pitch = 0
         loc.yaw = 0
       end
+      @verbose = false
       @markers = {}
       @original_blocks = {} # loc -> type
     end
@@ -88,14 +93,18 @@ class LogoPlugin
       @player.server
     end
 
-    def execute(commands)
+    def execute(name, commands)
+      label = name ? name + ":" : ''
       commands.each do |cmd, *args|
-        @player.msg "exec'ing #{cmd}(#{args.join(", ")})"
-        puts "exec'ing #{cmd}(#{args.join(", ")})"
+        @player.msg "#{label}#{cmd} #{args.join(", ")}" if @verbose && cmd != "verbose"
         __send__ cmd, *args
       end
-    rescue NoMethodError
-      puts $!.caller
+    rescue NoMethodError => e
+      @player.msg red("#{name}: Unknown command #{e.name}")
+    end
+
+    def verbose(state)
+      @verbose = state
     end
 
     def mark(name)
@@ -144,7 +153,6 @@ class LogoPlugin
 
     def go(amount)
       yaw 180 if amount < 0
-      log "go #{amount} forward"
       direction = @location.direction # cache to prevent math
       amount.abs.times do
         loc = @location.add(direction).clone
@@ -200,7 +208,7 @@ class LogoPlugin
     end
 
     player_command('undraw', 'remove drawing', '/undraw') do |me, *|
-      sessions.undraw me.target_block
+      sessions.undraw me
     end
   end
 end

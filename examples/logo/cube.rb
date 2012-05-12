@@ -1,4 +1,4 @@
-turtle do
+turtle("cube") do
   # Draw base of cube
   4.times do |i|
     mark i # Mark 4 lower corners
