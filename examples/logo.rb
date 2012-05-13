@@ -1,6 +1,6 @@
 module Kernel
-  def turtle(name=nil, &block)
-    LogoPlugin::Turtle.start name, &block
+  def turtle(name=nil, entity=Turtle::DEFAULT_DRAWER, &block)
+    LogoPlugin::Turtle.start name, entity, &block
   end
 end
 
@@ -9,14 +9,15 @@ class LogoPlugin
   description 'Logo', 0.2
 
   class Turtle
+    DEFAULT_DRAWER = :chicken
     attr_reader :commands, :name
 
-    def initialize(name)
-      @name, @commands = name, []
+    def initialize(name, entity)
+      @name, @entity, @commands = name, entity, []
     end
 
-    def self.start(name, &script)
-      new(name).tap { |t|  t.instance_eval(&script) }
+    def self.start(name, entity=DEFAULT_DRAWER, &script)
+      new(name, entity).tap { |t|  t.instance_eval(&script) }
     end
 
     def add_command(command, *args)
@@ -37,7 +38,7 @@ class LogoPlugin
     def turndown(degrees); add_command "pitch", degrees; end
 
     def draw(interface)
-      interface.execute @name, @commands
+      interface.execute @name, @entity, @commands
     end
   end
 
@@ -95,12 +96,14 @@ class LogoPlugin
       @player.server
     end
 
-    def execute(name, commands)
+    def execute(name, drawer, commands)
+      @drawer = @player.world.spawn_mob drawer, @location
       label = name ? name + ":" : ''
       commands.each do |cmd, *args|
         @player.msg "#{label}#{cmd} #{args.join(", ")}" if @verbose && cmd != "verbose"
         __send__ cmd, *args
       end
+      @drawer.remove
     rescue NoMethodError => e
       @player.msg red("#{name}: Unknown command #{e.name}")
     end
@@ -157,6 +160,7 @@ class LogoPlugin
       yaw 180 if amount < 0
       direction = @location.direction # cache to prevent math
       amount.abs.times do
+        sleep 0.1
         loc = @location.add(direction).clone
         loc.x, loc.y, loc.z = loc.x.round, loc.y.round, loc.z.round
         pixel loc
@@ -165,6 +169,7 @@ class LogoPlugin
     end
 
     def pixel(loc)
+      @drawer.teleport(loc)
       puts "Changing [#{loc.to_a.join(", ")}] to #{@block_type}"
       block = loc.block
       original_type = block.type
@@ -183,6 +188,10 @@ class LogoPlugin
     logo_directory = config.get!("logo.directory", default)
     sessions = TurtleSessions.new
     error = nil
+
+    event(:entity_damage) do |e|
+      e.cancelled = true
+    end
 
     public_player_command('draw', 'draw logo file', '/draw file') do |me, *args|
       abort! "No program supplied" if args.length == 0
