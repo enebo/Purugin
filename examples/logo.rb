@@ -58,7 +58,7 @@ class LogoPlugin
     def undraw(me)
       block = me.target_block
       instance = @blocks[block]
-      instance.undraw if instance && (me.op? || me == player.instance)
+      instance.undraw if instance && (me.op? || me == instance.player)
     end
   end
 
@@ -184,7 +184,7 @@ class LogoPlugin
     sessions = TurtleSessions.new
     error = nil
 
-    player_command('draw', 'draw logo file', '/draw file') do |me, *args|
+    public_player_command('draw', 'draw logo file', '/draw file') do |me, *args|
       abort! "No program supplied" if args.length == 0
       program = args[0].to_s
       filename = File.join(logo_directory, program + '.rb')
@@ -211,7 +211,7 @@ class LogoPlugin
       end
     end
 
-    player_command('undraw', 'remove drawing', '/undraw') do |me, *|
+    public_player_command('undraw', 'remove drawing', '/undraw') do |me, *|
       sessions.undraw me
     end
   end
