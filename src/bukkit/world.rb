@@ -22,7 +22,7 @@ module org::bukkit::World
   # * location is where to put the spawned creature [note: to_loc coercion possible]
   #
   def spawn_mob(creature_name, location)
-    creature_type = org.bukkit.entity.CreatureType.from_name(creature_name.to_s.capitalize)
+    creature_type = org.bukkit.entity.EntityType.from_name(creature_name.to_s)
     
     raise TypeError.new "unknown mob type #{creature_name}" unless creature_type
     
