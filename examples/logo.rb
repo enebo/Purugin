@@ -1,6 +1,6 @@
 module Kernel
   def turtle(name=nil, entity=LogoPlugin::Turtle::DEFAULT_DRAWER, &block)
-    LogoPlugin::Turtle.start name, entity, &block
+    LogoPlugin::Turtle.new name, entity, &block
   end
 end
 
@@ -12,13 +12,9 @@ class LogoPlugin
     DEFAULT_DRAWER = :chicken
     attr_reader :commands, :name
 
-    def initialize(name, entity)
-      @name, @entity, @commands = name, entity, []
+    def initialize(name, entity, &script)
+      @name, @entity, @commands, @script = name, entity, [], script
       @subs = {}
-    end
-
-    def self.start(name, entity=DEFAULT_DRAWER, &script)
-      new(name, entity).tap { |t|  t.instance_eval(&script) }
     end
 
     def add_command(command, *args)
@@ -51,7 +47,8 @@ class LogoPlugin
     def turnup(degrees); add_command "pitch", -degrees; end
     def turndown(degrees); add_command "pitch", degrees; end
 
-    def draw(interface)
+    def draw(interface, args)
+      instance_exec(*args, &@script)
       interface.execute @name, @entity, @commands
     end
   end
@@ -212,12 +209,6 @@ class LogoPlugin
     event(:entity_damage) do |e|
       e.cancelled = true
     end
-    public_player_command('llist', 'list available logo scripts') do |me, *args|
-      me.msg yellow("Available logo files:")
-      Dir["#{logo_directory}/*.rb"].each do |f|
-        me.msg blue(File.basename(f).gsub('.rb',''))
-      end
-    end
 
     public_player_command('draw', 'draw logo file', '/draw file') do |me, *args|
       abort! "No program supplied" if args.length == 0
@@ -238,7 +229,7 @@ class LogoPlugin
         end
         
         begin
-          turtle.draw(TurtleInterface.new(sessions, me))
+          turtle.draw(TurtleInterface.new(sessions, me), args[1..-1])
         rescue Exception => e
           me.msg red("Problem executing logo app: #{$!}")
           break;

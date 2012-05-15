@@ -1,6 +1,6 @@
-turtle("four-sided triangle") do
-  block_type = :sandstone
-  dim = nil
+turtle("four-sided triangle") do |*args|
+  block_type = args.length >= 2 ? args[1] : :sandstone
+  dim = args.length >= 1 ? args[0].to_i : 8
 
   layer do
     4.times do |i|
@@ -22,7 +22,7 @@ turtle("four-sided triangle") do
   end
 
   block block_type
-  (1...18).step(2).to_a.reverse.each do |i|
+  (1...dim).step(2).to_a.reverse.each do |i|
     dim = i
     layer
     pivot
