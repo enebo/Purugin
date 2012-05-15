@@ -212,6 +212,12 @@ class LogoPlugin
     event(:entity_damage) do |e|
       e.cancelled = true
     end
+    public_player_command('llist', 'list available logo scripts') do |me, *args|
+      me.msg yellow("Available logo files:")
+      Dir["#{logo_directory}/*.rb"].each do |f|
+        me.msg blue(File.basename(f).gsub('.rb',''))
+      end
+    end
 
     public_player_command('draw', 'draw logo file', '/draw file') do |me, *args|
       abort! "No program supplied" if args.length == 0
