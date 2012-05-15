@@ -1,5 +1,5 @@
 module Kernel
-  def turtle(name=nil, entity=Turtle::DEFAULT_DRAWER, &block)
+  def turtle(name=nil, entity=LogoPlugin::Turtle::DEFAULT_DRAWER, &block)
     LogoPlugin::Turtle.start name, entity, &block
   end
 end
@@ -14,6 +14,7 @@ class LogoPlugin
 
     def initialize(name, entity)
       @name, @entity, @commands = name, entity, []
+      @subs = {}
     end
 
     def self.start(name, entity=DEFAULT_DRAWER, &script)
@@ -24,6 +25,19 @@ class LogoPlugin
       @commands << [command, *args]
     end
 
+    def method_missing(name, *args)
+      if block_given?
+        puts "Saving name"
+        @subs[name] = Proc.new
+      elsif @subs[name]
+        puts "Calling name"
+        instance_eval &@subs[name]
+      else
+        puts "Unknown command #{name}"
+      end
+    end
+
+    def delay(time); add_command "delay", time; end
     def verbose(state); add_command "verbose", state; end
     def block(type); add_command "block", type; end
     def log(message); add_command "log", message; end
@@ -81,6 +95,7 @@ class LogoPlugin
       @verbose = false
       @markers = {}
       @original_blocks = {} # loc -> type
+      @delay = 0.1
     end
 
     # Undraw/revert all blocks changed by this turtleinterface
@@ -96,6 +111,10 @@ class LogoPlugin
       @player.server
     end
 
+    def delay(amount)
+      @delay = amount
+    end
+
     def execute(name, drawer, commands)
       @drawer = @player.world.spawn_mob drawer, @location
       label = name ? name + ":" : ''
@@ -103,9 +122,10 @@ class LogoPlugin
         @player.msg "#{label}#{cmd} #{args.join(", ")}" if @verbose && cmd != "verbose"
         __send__ cmd, *args
       end
-      @drawer.remove
     rescue NoMethodError => e
       @player.msg red("#{name}: Unknown command #{e.name}")
+    ensure
+      @drawer.remove
     end
 
     def verbose(state)
@@ -160,7 +180,7 @@ class LogoPlugin
       yaw 180 if amount < 0
       direction = @location.direction # cache to prevent math
       amount.abs.times do
-        sleep 0.1
+        sleep @delay
         loc = @location.add(direction).clone
         loc.x, loc.y, loc.z = loc.x.round, loc.y.round, loc.z.round
         pixel loc
