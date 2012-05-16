@@ -8,19 +8,18 @@ turtle("plane") do |*args|
     forward i
     turnleft 90
   end
-  
-  # The four units are show to the right of this while loop
-  # First one is longest.  Second and third are one shorter.
-  # The Fourth is two shorter.  Next loop will is shown 
-  # in the second box we can see steps 5-8.  At this point i
-  # is 1 and we exit the while.  Leaving a single unit of 1
-  # to draw the final block.
-  while i >= 2         # 12222 12222
-    unit               # 1###3 15663
-    i -= 1             # 1###3 15#73
-    2.times { unit }   # 1###3 15873
-    i -= 1             # 14443 14443
-    unit               
-  end
+
+  # Basic explanation of this algorithm is that we draw one line the length
+  # of the plane we want to construct (seen as 1 in box to right of while loop
+  # drawn bottom to top).  Next we enter the 2.times and draw two more lines 
+  # (via unit) which is one shorter than dimension (seen as 'a' and then 'b').
+  # The second time through the outer 2.times we decrement and then write 'c' 
+  # and 'd'.  Then 'e' and 'f'. and finally 'g' and 'h'.
   unit
-end
+  while i > 1          # dimension = 5
+    2.times do         #
+      i -= 1           # 1aaaa
+      2.times { unit } # 1deeb
+    end                # 1dhfb
+  end                  # 1dgfb
+end                    # 1cccb
