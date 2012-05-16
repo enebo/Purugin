@@ -1,12 +1,12 @@
 module Kernel
-  def turtle(name=nil, entity=LogoPlugin::Turtle::DEFAULT_DRAWER, &block)
-    LogoPlugin::Turtle.new name, entity, &block
+  def turtle(name=nil, entity=PurogoPlugin::Turtle::DEFAULT_DRAWER, &block)
+    PurogoPlugin::Turtle.new name, entity, &block
   end
 end
 
-class LogoPlugin
+class PurogoPlugin
   include Purugin::Plugin, Purugin::Tasks, Purugin::Colors
-  description 'Logo', 0.2
+  description 'Purogo', 0.2
 
   class Turtle
     DEFAULT_DRAWER = :chicken
@@ -201,8 +201,8 @@ class LogoPlugin
   end
 
   def on_enable
-    default = File.join(File.dirname(__FILE__), "logo")
-    logo_directory = config.get!("logo.directory", default)
+    default = File.join(File.dirname(__FILE__), "purogo")
+    purogo_directory = config.get!("purogo.directory", default)
     sessions = TurtleSessions.new
     error = nil
 
@@ -210,16 +210,16 @@ class LogoPlugin
       e.cancelled = true
     end
 
-    public_player_command('draw', 'draw logo file', '/draw file') do |me, *args|
+    public_player_command('draw', 'draw purogo file', '/draw file args') do |me, *args|
       abort! "No program supplied" if args.length == 0
       program = args[0].to_s
-      filename = File.join(logo_directory, program + '.rb')
+      filename = File.join(purogo_directory, program + '.rb')
       abort! "No such file #{program}" unless File.exist?(filename)
       async_task do
         begin
           turtle = eval File.readlines(filename).join("\n")
         rescue Exception => e
-          me.msg red("Problem loading logo app: #{$!}")
+          me.msg red("Problem loading purogo app: #{$!}")
           break;
         end
 
@@ -231,7 +231,7 @@ class LogoPlugin
         begin
           turtle.draw(TurtleInterface.new(sessions, me), args[1..-1])
         rescue Exception => e
-          me.msg red("Problem executing logo app: #{$!}")
+          me.msg red("Problem executing purogo app: #{$!}")
           break;
         end
       end
