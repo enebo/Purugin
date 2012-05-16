@@ -1,15 +1,6 @@
 turtle("cube", :pig) do |*args|
-  if args.length >= 1
-    length = args[0].to_i
-  else
-    length = 5
-  end
-
-  if args.length >= 2
-    block_type = args[1].to_sym
-  else
-    block_type = :stone
-  end
+  length = (args[0] || 5).to_i
+  block_type = (args[1] || :stone).to_sym
 
   # Set block to be used for all drawing
   block block_type  
