@@ -1,6 +1,6 @@
 turtle("four-sided triangle") do |*args|
-  block_type = args.length >= 2 ? args[1] : :sandstone
-  dim = args.length >= 1 ? args[0].to_i : 8
+  dim = (args[0] || 5).to_i
+  block_type = (args[1] || :stone).to_sym
 
   layer do
     4.times do |i|
