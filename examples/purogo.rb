@@ -83,11 +83,15 @@ class PurogoPlugin
     DEFAULT_BLOCK_TYPE = :wood
     attr_reader :player
 
+    def round(float, prec=90)
+      (float / prec.to_f).round * prec.to_i
+    end
+
     def initialize(sessions, player)
       @sessions, @player, @block_type = sessions, player, DEFAULT_BLOCK_TYPE
       @location = player.target_block.location.tap do |loc|
-        loc.pitch = 0
-        loc.yaw = 0
+        loc.pitch = 0 # y-z (vertical)
+        loc.yaw = round(player.location.yaw) # x-z (horizontal)
       end
       @verbose = false
       @markers = {}
