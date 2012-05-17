@@ -1,5 +1,5 @@
 jars:
-  craftbukkit.jar: http://dl.bukkit.org/downloads/craftbukkit/get/00957_1.2.4-R0.1/craftbukkit-dev.jar
+  craftbukkit.jar: http://repo.bukkit.org/content/groups/public/org/bukkit/craftbukkit/1.2.5-R1.0/craftbukkit-1.2.5-R1.0.jar
   jruby-complete.jar: http://jruby.org.s3.amazonaws.com/downloads/1.6.5.1/jruby-complete-1.6.5.1.jar
 plugins:
   purugin.jar: http://cloud.github.com/downloads/enebo/Purugin/Purugin.jar
