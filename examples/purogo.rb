@@ -23,10 +23,8 @@ class PurogoPlugin
 
     def method_missing(name, *args)
       if block_given?
-        puts "Saving name"
         @subs[name] = Proc.new
       elsif @subs[name]
-        puts "Calling name"
         instance_eval &@subs[name]
       else
         puts "Unknown command #{name}"
@@ -34,6 +32,7 @@ class PurogoPlugin
     end
 
     def delay(time); add_command "delay", time; end
+    def draw(file, *args); add_command "draw", file, *args; end
     def verbose(state); add_command "verbose", state; end
     def block(type); add_command "block", type; end
     def log(message); add_command "log", message; end
@@ -42,19 +41,26 @@ class PurogoPlugin
     def goto(name); add_command "goto", name; end
     def forward(distance); add_command "go", distance; end
     def backward(distance); add_command "go", -distance; end
-    def turnleft(degrees); add_command "yaw", degrees; end
-    def turnright(degrees); add_command "yaw", -degrees; end
+    def turnleft(degrees); add_command "yaw", -degrees; end
+    def turnright(degrees); add_command "yaw", degrees; end
     def turnup(degrees); add_command "pitch", -degrees; end
     def turndown(degrees); add_command "pitch", degrees; end
 
-    def draw(interface, args)
-      instance_exec(*args, &@script)
-      interface.execute @name, @entity, @commands
+    def render(interface, args)
+      begin
+        instance_exec(*args, &@script)
+        interface.execute @name, @entity, @commands
+      rescue Exception => e
+        interface.error("Problem executing purogo app: #{$!}")
+      end
     end
   end
 
   class TurtleSessions
-    def initialize
+    attr_reader :directory
+
+    def initialize(directory)
+      @directory = directory
       @blocks = {} # block -> interface_instance
     end
 
@@ -81,13 +87,17 @@ class PurogoPlugin
     include Purugin::Colors
     MAX_PIXEL_COUNT = 1000
     DEFAULT_BLOCK_TYPE = :wood
-    attr_reader :player
+    attr_reader :player, :location
+
+    def round(float, prec=90)
+      (float / prec.to_f).round * prec.to_i
+    end
 
     def initialize(sessions, player)
       @sessions, @player, @block_type = sessions, player, DEFAULT_BLOCK_TYPE
       @location = player.target_block.location.tap do |loc|
-        loc.pitch = 0
-        loc.yaw = 0
+        loc.pitch = 0 # y-z (vertical)
+        loc.yaw = round(player.location.yaw) # x-z (horizontal)
       end
       @verbose = false
       @markers = {}
@@ -102,6 +112,17 @@ class PurogoPlugin
         block.change_type block_type
       end
       @original_blocks = {}
+    end
+
+    def draw(file, *args)
+      puts "Drawing #{file}"
+      path = File.join(@sessions.directory, "#{file}.rb")
+      turtle = PurogoPlugin.load_turtle(@player, path)
+      turtle.render(self, args)      
+    end
+
+    def error(message)
+      @player.msg red(message)
     end
 
     def server
@@ -200,14 +221,38 @@ class PurogoPlugin
     end
   end
 
+  def self.load_turtle(me, filename)
+    begin
+      turtle = eval File.readlines(filename).join("\n")
+    rescue Exception => e
+      me.msg "Problem loading purogo app: #{$!}"
+      return
+    end
+
+    unless turtle.kind_of? Turtle  # pretty ugly for asyc
+      me.msg "Not a turtle program #{program}"
+      return
+    end
+
+    turtle
+  end
+
   def on_enable
     default = File.join(File.dirname(__FILE__), "purogo")
     purogo_directory = config.get!("purogo.directory", default)
-    sessions = TurtleSessions.new
-    error = nil
+    sessions = TurtleSessions.new purogo_directory
 
-    event(:entity_damage) do |e|
-      e.cancelled = true
+    event(:entity_damage) { |e| e.cancelled = true; }
+
+    public_player_command('purogo', 'one line purugo', '/draw code') do |me, *args|
+      async_task do
+        turtle = eval <<-EOS
+          turtle("eval") do |*args|
+            #{args.join(' ')}
+          end
+        EOS
+        turtle.render(TurtleInterface.new(sessions, me), args[1..-1])
+      end
     end
 
     public_player_command('draw', 'draw purogo file', '/draw file args') do |me, *args|
@@ -216,24 +261,8 @@ class PurogoPlugin
       filename = File.join(purogo_directory, program + '.rb')
       abort! "No such file #{program}" unless File.exist?(filename)
       async_task do
-        begin
-          turtle = eval File.readlines(filename).join("\n")
-        rescue Exception => e
-          me.msg red("Problem loading purogo app: #{$!}")
-          break;
-        end
-
-        unless turtle.kind_of? Turtle  # pretty ugly for asyc
-          me.msg red("Not a turtle program #{program}")
-          break
-        end
-        
-        begin
-          turtle.draw(TurtleInterface.new(sessions, me), args[1..-1])
-        rescue Exception => e
-          me.msg red("Problem executing purogo app: #{$!}")
-          break;
-        end
+        turtle = PurogoPlugin.load_turtle(me, filename)
+        turtle.render(TurtleInterface.new(sessions, me), args[1..-1])
       end
     end
 
