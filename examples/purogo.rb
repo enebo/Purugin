@@ -31,6 +31,14 @@ class PurogoPlugin
       end
     end
 
+    def random(*args)
+      begin
+        return args.shuffle[0].to_sym
+      rescue
+        return :stone
+      end
+    end
+    
     def delay(time); add_command "delay", time; end
     def draw(file, *args); add_command "draw", file, *args; end
     def verbose(state); add_command "verbose", state; end

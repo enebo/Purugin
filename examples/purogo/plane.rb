@@ -1,12 +1,11 @@
 # Make an dimension x dimension grid of blocks
-turtle("plane") do |*args|
-  dimensions = (args[0] or 20).to_i
-  args.shift
-  
+turtle("plane") do |dim, *args|
+  dimensions = (dim or 20).to_i
+
   i = dimensions 
   unit do
     i.times do
-      block args.shuffle[0].to_sym
+      block random(*args)
       forward 1
     end
     turnleft 90
