@@ -242,6 +242,12 @@ class PurogoPlugin
   end
 
   def purogo_file_for(player, program)
+    # drawing@username will render from their user directory
+    if program =~ /@/
+      program, name = program.split('@')
+      other_player = server.get_player(name)
+      player = other_player if other_player
+    end
     dirs = [@purogo_directory]
     dirs << ip_for(player) if @ip_mode
     dirs << program + '.rb'
@@ -268,9 +274,9 @@ class PurogoPlugin
     end
 
     public_player_command('draw', 'draw purogo file', '/draw file args') do |me, *args|
-      abort! "No program supplied" if args.length == 0
+      abort! "No drawing specified" if args.length == 0
       filename = purogo_file_for(me, args[0].to_s)
-      abort! "No such file #{args[0]}" unless File.exist?(filename)
+      abort! "No drawing named '#{args[0]}' exists" unless File.exist?(filename)
       async_task do
         turtle = PurogoPlugin.load_turtle(me, filename)
         turtle.render(TurtleInterface.new(sessions, me), args[1..-1])
