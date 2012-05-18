@@ -237,10 +237,22 @@ class PurogoPlugin
     turtle
   end
 
+  def ip_for(me)
+    me.address.address.host_address
+  end
+
+  def purogo_file_for(player, program)
+    dirs = [@purogo_directory]
+    dirs << ip_for(player) if @ip_mode
+    dirs << program + '.rb'
+    File.join(*dirs)
+  end
+
   def on_enable
     default = File.join(File.dirname(__FILE__), "purogo")
-    purogo_directory = config.get!("purogo.directory", default)
-    sessions = TurtleSessions.new purogo_directory
+    @purogo_directory = config.get!("purogo.directory", default)
+    @ip_mode = config.get!("purogo.ipmode", true)
+    sessions = TurtleSessions.new @purogo_directory
 
     event(:entity_damage) { |e| e.cancelled = true; }
 
@@ -257,9 +269,8 @@ class PurogoPlugin
 
     public_player_command('draw', 'draw purogo file', '/draw file args') do |me, *args|
       abort! "No program supplied" if args.length == 0
-      program = args[0].to_s
-      filename = File.join(purogo_directory, program + '.rb')
-      abort! "No such file #{program}" unless File.exist?(filename)
+      filename = purogo_file_for(me, args[0].to_s)
+      abort! "No such file #{args[0]}" unless File.exist?(filename)
       async_task do
         turtle = PurogoPlugin.load_turtle(me, filename)
         turtle.render(TurtleInterface.new(sessions, me), args[1..-1])
