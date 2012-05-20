@@ -1,6 +1,6 @@
 turtle("tower") do
   # Draw base of cube
-  bottom do
+  square do
     4.times do |i|
       mark i
       forward 5
@@ -8,7 +8,7 @@ turtle("tower") do
     end
   end
 
-  ups do
+  pillars do
     4.times do |i|
       goto i 
       turnup 90
@@ -18,9 +18,9 @@ turtle("tower") do
   end
 
   3.times do
-    bottom 
-    ups
+    square 
+    pillars
   end
-  bottom
+  square
 end
 
