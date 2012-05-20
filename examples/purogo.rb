@@ -152,12 +152,12 @@ class PurogoPlugin
 
     def mark(name)
       @markers[name] = @location.clone
-      puts "marked #{name} -> #{@location}"
+#      puts "marked #{name} -> #{@location}"
     end
 
     def goto(name)
       @location = @markers[name].clone
-      puts "goto #{name} -> #{@location}"
+#      puts "goto #{name} -> #{@location}"
     end
 
     def block(type)
@@ -175,7 +175,7 @@ class PurogoPlugin
       elsif new_yaw <= 0
         new_yaw = 360.0 + new_yaw
       end
-      puts "new yaw: #{new_yaw}"
+#      puts "new yaw: #{new_yaw}"
       @location.yaw = new_yaw
     end
 
@@ -186,12 +186,12 @@ class PurogoPlugin
       elsif new_pitch <= 0
         new_pitch = 360.0 + new_pitch
       end
-      puts "new pitch: #{new_pitch}"
+#      puts "new pitch: #{new_pitch}"
       @location.pitch = new_pitch
     end
 
     def pos
-      puts "POS #{@location.to_a.join(", ")}"
+      log "POS #{@location.to_a.join(", ")}"
     end
 
     def go(amount)
@@ -208,7 +208,7 @@ class PurogoPlugin
 
     def pixel(loc)
       @drawer.teleport(loc)
-      puts "Changing [#{loc.to_a.join(", ")}] to #{@block_type}"
+#      puts "Changing [#{loc.to_a.join(", ")}] to #{@block_type}"
       block = loc.block
       original_type = block.type
       block.change_type @block_type unless @block_type == :none
