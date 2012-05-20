@@ -261,6 +261,7 @@ class PurogoPlugin
     sessions = TurtleSessions.new @purogo_directory
 
     event(:entity_damage) { |e| e.cancelled = true; }
+    event(:creature_spawn) { |e| e.cancelled = true if e.entity.slime? }
 
     public_player_command('purogo', 'one line purugo', '/draw code') do |me, *args|
       async_task do
