@@ -6,7 +6,7 @@ end
 
 class PurogoPlugin
   include Purugin::Plugin, Purugin::Tasks, Purugin::Colors
-  description 'Purogo', 0.2
+  description 'purogo', 0.2
 
   class Turtle
     DEFAULT_DRAWER = :chicken
