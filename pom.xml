@@ -4,14 +4,15 @@
   <groupId>org.purugin</groupId>
   <artifactId>purugin</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.5-R3.0-SNAPSHOT</version>
+  <version>0.1-bukkit-${bukkit.version}-SNAPSHOT</version>
   <name>CraftBukkit</name>
   <url>http://www.bukkit.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <api.version>unknown</api.version>
-    <junit.version>4.10</junit.version>
+	<minecraft.version>1.2.5</minecraft.version>
+	<bukkit.version>1.2.5-R3.0</bukkit.version>
+	<jruby.version>1.6.7</jruby.version>
   </properties>
 
   <repositories>
@@ -32,21 +33,21 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.2.5-R3.1-SNAPSHOT</version>
+      <version>${bukkit.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>minecraft-server</artifactId>
-      <version>1.2.5</version>
+      <version>${minecraft.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
 	<dependency>
 		<groupId>org.jruby</groupId>
 		<artifactId>jruby-complete</artifactId>
-		<version>1.6.7</version>
+		<version>${jruby.version}</version>
 	</dependency>
   </dependencies>
 
