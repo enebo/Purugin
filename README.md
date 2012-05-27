@@ -96,3 +96,18 @@ If you want to do this manually, then you will need to:
 
 1. Install maven 3
 2. Invoke: `mvn clean package`
+
+## Contributors
+
+`git shortlog -s -n`
+
+    199  Thomas E. Enebo
+     14  Thomas E Enebo
+     10  Eric Anderson
+      7  Marv Cool
+      6  Thomas Dervan
+      4  Humza
+      3  aumgn
+      2  mml
+      1  Tom Dervan
+      1  chase4926
