@@ -91,3 +91,7 @@ If you want to do this manually, then you will need to:
 1. Have jruby-complete.jar from www.jruby.org/downloads in your Minecraft directory.
 2. java -Xms1024M -Xmx1024M -cp jruby-complete.jar:craftbukkit-0.0.1-SNAPSHOT.jar org.bukkit.craftbukkit.Main
 
+## Building Purugin locally
+
+1. Install maven 3
+2. Invoke: `mvn clean package`
