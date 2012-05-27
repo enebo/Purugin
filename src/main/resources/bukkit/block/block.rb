@@ -74,7 +74,7 @@ module org::bukkit::block::Block
   # bad_block.break! true # same as above but it leaves an item to pick up
   # bad_block.break! true, :stone # drops item and replaces broken block with stone
   def break!(with_drop=false, replace_type=:air)
-    droppable = !type.is?(:air, :water, :lava)
+    droppable = !is?(:air, :water, :lava)
  
     # Only drop items which are actually droppable    
     if with_drop && droppable
