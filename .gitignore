@@ -1,7 +1,4 @@
 manifest.mf
-nbproject/private
-build
-dist
 *~
 *.orig
 *.rej
