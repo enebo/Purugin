@@ -3,3 +3,6 @@ manifest.mf
 *.orig
 *.rej
 /target/
+dist
+build
+nbproject
