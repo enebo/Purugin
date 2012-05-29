@@ -88,6 +88,26 @@ all you need to do is execute the run.sh or run.bat script which gets put
 into your minecraft directory.
 
 If you want to do this manually, then you will need to:
+
 1. Have jruby-complete.jar from www.jruby.org/downloads in your Minecraft directory.
 2. java -Xms1024M -Xmx1024M -cp jruby-complete.jar:craftbukkit-0.0.1-SNAPSHOT.jar org.bukkit.craftbukkit.Main
 
+## Building Purugin locally
+
+1. Install maven 3
+2. Invoke: `mvn clean package`
+
+## Contributors
+
+`git shortlog -s -n`
+
+    199  Thomas E. Enebo
+     14  Thomas E Enebo
+     10  Eric Anderson
+      7  Marv Cool
+      6  Thomas Dervan
+      4  Humza
+      3  aumgn
+      2  mml
+      1  Tom Dervan
+      1  chase4926

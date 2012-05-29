@@ -1,0 +1,4 @@
+name: 'PuruginPlugin'
+main: 'org.purugin.PuruginPlugin'
+version: '1.2.5-0.1'
+author: 'enebo'
