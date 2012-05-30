@@ -257,7 +257,7 @@ class PurogoPlugin
   def on_enable
     default = File.join(File.dirname(__FILE__), "purogo")
     @purogo_directory = config.get!("purogo.directory", default)
-    @ip_mode = config.get!("purogo.ipmode", true)
+    @ip_mode = false # hack this out for now. config.get!("purogo.ipmode", true)
     sessions = TurtleSessions.new @purogo_directory
 
     event(:entity_damage) { |e| e.cancelled = true; }
