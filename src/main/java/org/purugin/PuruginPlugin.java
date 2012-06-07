@@ -29,6 +29,7 @@ public final class PuruginPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         try {
+            container.setClassLoader(PuruginPlugin.class.getClassLoader());
             URL url = getClass().getResource(MAIN);
             String unescapedURL = URLDecoder.decode(url.toString(), "UTF-8");
             Object brainsClass = executeScript(url.openStream(), unescapedURL);
