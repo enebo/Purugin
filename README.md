@@ -7,13 +7,6 @@ Once you copy Purugin.jar into your plugins directory you only need to drop
 .rb files into your plugins directory.  If they contain code which includes
 Purugin::Plugin, then they will load and get registered as Bukkit plugins.
 
-When I started this plugin I thought it would be fairly straight-forward. In
-respect to basic methods like onEnable it has been.  Overall, it has been a
-huge voyage of discovery.  I did not know Bukkit at all when I started (and
-I really just started) and limitations combined with lessons learned makes
-me think the API will be changing over time.  So write plugins but be 
-forewarned, they may change here and there....
-
 ## Example
 
 Here is a plugin which gets registered as a plugin in Bukkit which tells
@@ -83,14 +76,9 @@ be able to reference it.
 
 ## Running
 
-If you used the install script (requires a Ruby interpreter >1.9.1), then
-all you need to do is execute the run.sh or run.bat script which gets put
-into your minecraft directory.
-
-If you want to do this manually, then you will need to:
-
-1. Have jruby-complete.jar from www.jruby.org/downloads in your Minecraft directory.
-2. java -Xms1024M -Xmx1024M -cp jruby-complete.jar:craftbukkit-0.0.1-SNAPSHOT.jar org.bukkit.craftbukkit.Main
+To run Purugin, you just copy Purugin.jar into your plugins directory like any 
+other minecraft plugin.  Once running you can write Purugins and copy 
+those .rb files into your plugins directory.  Simple!
 
 ## Building Purugin locally
 
