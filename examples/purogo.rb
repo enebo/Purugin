@@ -9,6 +9,7 @@ class PurogoPlugin
   description 'purogo', 0.2
 
   class Turtle
+    NORTH, SOUTH, EAST, WEST = 180, 0, 270, 90
     DEFAULT_DRAWER = :chicken
     attr_reader :commands, :name
 
@@ -45,6 +46,16 @@ class PurogoPlugin
     def turnright(degrees); add_command "yaw", degrees; end
     def turnup(degrees); add_command "pitch", -degrees; end
     def turndown(degrees); add_command "pitch", degrees; end
+
+    # Absolute directions
+
+    def up; add_command "pitch", 270, true; end
+    def down; add_command "pitch", 90, true; end
+    def horizontal; add_command "pitch", 0, true; end
+    def north; horizontal; add_command "yaw", NORTH, true; end
+    def east; horizontal; add_command "yaw", EAST, true; end
+    def south; horizontal; add_command "yaw", SOUTH, true; end
+    def west; horizontal; add_command "yaw", WEST, true; end
 
     def render(interface, args)
       begin
@@ -168,27 +179,22 @@ class PurogoPlugin
       @player.msg message
     end
 
-    def yaw(degrees)
-      new_yaw = @location.yaw + degrees
-      if new_yaw >= 360.0
-        new_yaw = new_yaw - 360.0
-      elsif new_yaw <= 0
-        new_yaw = 360.0 + new_yaw
-      end
-#      puts "new yaw: #{new_yaw}"
+    def yaw(degrees, absolute=false)
+      new_yaw = normalize_degrees((absolute ? 0 : @location.yaw) + degrees)
       @location.yaw = new_yaw
     end
 
-    def pitch(degrees)
-      new_pitch = @location.pitch + degrees
-      if new_pitch >= 360.0
-        new_pitch = new_pitch - 360.0
-      elsif new_pitch <= 0
-        new_pitch = 360.0 + new_pitch
-      end
-#      puts "new pitch: #{new_pitch}"
+    def pitch(degrees, absolute=false)
+      new_pitch = normalize_degrees((absolute ? 0 : @location.pitch) + degrees)
       @location.pitch = new_pitch
     end
+
+    def normalize_degrees(value)
+      value %= 360
+      value = valuw += 360 if value < 0
+      value
+    end
+    private :normalize_degrees
 
     def pos
       log "POS #{@location.to_a.join(", ")}"
