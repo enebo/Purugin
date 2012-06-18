@@ -48,14 +48,44 @@ class PurogoPlugin
     def turndown(degrees); add_command "pitch", degrees; end
 
     # Absolute directions
+    def up(amount=nil)
+      add_command "pitch", 270, true
+      forward amount if amount
+    end
 
-    def up; add_command "pitch", 270, true; end
-    def down; add_command "pitch", 90, true; end
-    def horizontal; add_command "pitch", 0, true; end
-    def north; horizontal; add_command "yaw", NORTH, true; end
-    def east; horizontal; add_command "yaw", EAST, true; end
-    def south; horizontal; add_command "yaw", SOUTH, true; end
-    def west; horizontal; add_command "yaw", WEST, true; end
+    def down(amount=nil)
+      add_command "pitch", 90, true
+      forward amount if amount
+    end
+
+    def horizontal(amount=nil)
+      add_command "pitch", 0, true
+      forward amount if amount
+    end
+
+    def north(amount=nil)
+      horizontal
+      add_command "yaw", NORTH, true
+      forward amount if amount
+    end
+
+    def east(amount=nil)
+      horizontal
+      add_command "yaw", EAST, true
+      forward amount if amount
+    end
+
+    def south(amount=nil)
+      horizontal
+      add_command "yaw", SOUTH, true
+      forward amount if amount
+    end
+
+    def west(amount=nil)
+      horizontal
+      add_command "yaw", WEST, true
+      forward amount if amount
+    end
 
     def render(interface, args)
       begin
