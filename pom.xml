@@ -11,7 +11,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <minecraft.version>1.2.5</minecraft.version>
     <bukkit.version>1.2.5-R3.0</bukkit.version>
-    <jruby.version>1.6.7</jruby.version>
+    <jruby.version>1.7.0.preview1</jruby.version>
   </properties>
   <repositories>
     <repository>
