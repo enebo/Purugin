@@ -34,7 +34,7 @@ module Purugin
     # :nodoc:
     def initialize(plugin, plugin_manager, path)
       path.gsub!(/\\/, '/') # Wackiness until nicer plugin reg than $plugins (for win paths)
-      @plugin, @plugin_loader = plugin, plugin_manager
+      @purugin_plugin, @plugin_loader = plugin, plugin_manager
       @server = plugin.server
       $plugins[path] = [self, File.mtime(path)]
       @plugin_description = org.bukkit.plugin.PluginDescriptionFile.new self.class.plugin_name, self.class.plugin_version.to_s, 'none'
@@ -43,6 +43,7 @@ module Purugin
       @configuration = Purugin::Config.new(self, loadConfig)
       @required_plugins = self.class.required_plugins
       @optional_plugins = self.class.optional_plugins
+      @gems = self.class.gems
     end
 
     # bukkit Plugin impl (see Bukkit API documentation)
@@ -54,6 +55,18 @@ module Purugin
       @data_dir
     end
     alias :data_folder :getDataFolder
+    
+    # return the path to the gem directory and optionally create it if it has never
+    # been accessed before
+    def gem_directory
+      purugin_dir = @purugin_plugin.getDataFolder.to_s
+      Dir.mkdir purugin_dir unless File.exist? purugin_dir
+      
+      File.join(purugin_dir, 'gems').tap do |gem_dir|
+        Dir.mkdir gem_dir unless File.exist? gem_dir
+        ENV['GEM_HOME'] = gem_dir
+      end
+    end
     
     # bukkit Plugin impl (see Bukkit API documentation)
     def getDescription
@@ -107,6 +120,7 @@ module Purugin
     # bukkit Plugin impl (see Bukkit API documentation) 
     def onEnable
       @enabled = true
+      process_gems(@gems)
       process_plugins(@required_plugins, true)
       process_plugins(@optional_plugins, false)
       on_enable if respond_to? :on_enable
@@ -155,6 +169,29 @@ module Purugin
       end
       
       include_module_from(plugin, plugin_module)
+    end
+    
+    def process_gems(gems)
+      if !gems.empty?
+        require 'rubygems' # FIXME: Once we switch to 1.7.x 1.9 is default and we don't need this
+        Gem.paths = {'GEM_HOME' => gem_directory}
+      end
+      
+      gems.each do |gem_name, options|
+        # FIXME: Add processing of options
+        begin
+          gem gem_name
+        rescue LoadError
+          system "gem install #{gem_name} --verbose --install-dir #{gem_directory}"
+          
+          begin
+            gem gem_name
+          rescue LoadError => e
+            console "unable to load gem: #{gem_name}"
+            raise e
+          end
+        end
+      end
     end
     
     def process_plugins(list, required)
