@@ -93,9 +93,8 @@ those .rb files into your plugins directory.  Simple!
      14  Thomas E Enebo
      10  Eric Anderson
       7  Marv Cool
-      6  Thomas Dervan
+      7  Thomas Dervan
       4  Humza
       3  aumgn
       2  mml
-      1  Tom Dervan
       1  chase4926
