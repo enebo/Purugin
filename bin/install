@@ -5,6 +5,7 @@ require 'open-uri'
 require 'openssl'
 require 'fileutils'
 require 'yaml'
+require 'net/http'
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
@@ -12,8 +13,14 @@ BIN_DIR = File.join File.dirname(__FILE__)
 
 directory = ARGV.shift || "../minecraft"
 config_url = ARGV.shift || "http://cloud.github.com/downloads/enebo/Purugin/bits.yml"
-yaml = open(config_url) { |f| f.read }
+yaml = open('../bits.yml') { |f| f.read }
 resources = YAML.load(yaml)
+
+if resources["jars"]["craftbukkit.jar"] != Net::HTTP.get_response(URI.parse('http://dl.bukkit.org/downloads/craftbukkit/get/latest-rb/craftbukkit.jar'))['location']
+  yml_txt = File.read('../bits.yml')
+  yml_txt.gsub(resources["jars"]["craftbukkit.jar"], Net::HTTP.get_response(URI.parse('http://dl.bukkit.org/downloads/craftbukkit/get/latest-rb/craftbukkit.jar'))['location'])
+  File.open('../bits.yaml', 'w') {|file| file.puts yml_txt}
+end
 
 def retrieve(uri, as_name)
   puts "Retrieving #{as_name} from #{uri}"
