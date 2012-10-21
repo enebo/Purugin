@@ -78,8 +78,13 @@ be able to reference it.
 
 To run Purugin, you just copy Purugin.jar into your plugins directory like any 
 other minecraft plugin.  Once running you can write Purugins and copy 
-those .rb files into your plugins directory.  Simple!
+those .rb files into your plugins directory.  Simple!  
 
+bin/run.sh and bin/run.bat are provided with defaults that I use and it also sets a local GEM_HOME:
+
+```text
+GEM_HOME=./gems java -Xms1024M -Xmx1024M -jar craftbukkit.jar
+```
 ## Building Purugin locally
 
 1. Install maven 3
