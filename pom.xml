@@ -59,6 +59,7 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <forceCreation>true</forceCreation>
               <artifactSet>
                 <excludes>
                   <exclude>org.bukkit:bukkit</exclude>
