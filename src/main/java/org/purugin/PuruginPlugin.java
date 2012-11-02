@@ -16,6 +16,10 @@ public final class PuruginPlugin extends JavaPlugin {
     private ScriptingContainer container = new ScriptingContainer();
     private Object main = null;
     
+    public PuruginPlugin() {
+        super(); // WTF
+    }
+    
     @Override
     public void onDisable() {
         container.callMethod(main, "onDisable");
