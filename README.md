@@ -92,7 +92,7 @@ GEM_HOME=./gems java -Xms1024M -Xmx1024M -jar craftbukkit.jar
 
 ## Other Novelties
 
-[[https://github.com/enebo/Purugin/wiki/Purogo-Introduction]] - A 3D Logo implementation in Purugin.
+[Purogo](https://github.com/enebo/Purugin/wiki/Purogo-Introduction) - A 3D Logo implementation in Purugin.
 
 ## Contributors
 
