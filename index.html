@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Purugin by enebo</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Purugin</h1>
+        <h2>Write Minecraft Plugins in Ruby</h2>
+        <a href="https://github.com/enebo/Purugin" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <p>Purugin (pronounces 'PRuggin') is a plugin framework which sites on top of Bukkit that allows you to
+write plugins in a Ruby syntax.</p>
+
+<p>Once you copy Purugin.jar into your plugins directory you only need to drop
+.rb files into your plugins directory.  If they contain code which includes
+Purugin::Plugin, then they will load and get registered as Bukkit plugins.</p>
+
+<h2>Example</h2>
+
+<p>Here is a plugin which gets registered as a plugin in Bukkit which tells
+every use in the players world when a player joins or quits the world:</p>
+
+<div class="highlight"><pre><span class="c1">#--------- examples/player_joined_full_class.rb ----------</span>
+<span class="k">class</span> <span class="nc">PlayerJoinedPlugin</span>
+  <span class="kp">include</span> <span class="no">Purugin</span><span class="o">::</span><span class="no">Plugin</span><span class="p">,</span> <span class="no">Purugin</span><span class="o">::</span><span class="no">Colors</span>
+  <span class="n">description</span> <span class="s1">'PlayerJoined'</span><span class="p">,</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span>
+
+  <span class="k">def</span> <span class="nf">on_enable</span>
+    <span class="c1"># Tell everyone in players world that they have joined</span>
+    <span class="n">event</span><span class="p">(</span><span class="ss">:player_join</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span>
+      <span class="n">e</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">p</span><span class="o">|</span> 
+        <span class="nb">p</span><span class="o">.</span><span class="n">msg</span> <span class="n">red</span><span class="p">(</span><span class="s2">"Player </span><span class="si">#{</span><span class="n">e</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> has joined"</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c1"># Tell everyone in players world that they have quit</span>
+    <span class="n">event</span><span class="p">(</span><span class="ss">:player_quit</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span>
+      <span class="n">e</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">p</span><span class="o">|</span> 
+        <span class="nb">p</span><span class="o">.</span><span class="n">msg</span> <span class="n">red</span><span class="p">(</span><span class="s2">"Player </span><span class="si">#{</span><span class="n">e</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> has quit"</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+<h3>Plugin Dependencies</h3>
+
+<p>Plugins can depend on other plugins.  There are multiple ways of accessing 
+dependent plugins.  The first is to declare your plugin dependencies at the top
+of your Purugin:</p>
+
+<div class="highlight"><pre>    <span class="k">class</span> <span class="nc">PortsPlugin</span>
+      <span class="kp">include</span> <span class="no">Purugin</span><span class="o">::</span><span class="no">Plugin</span><span class="p">,</span> <span class="no">Purugin</span><span class="o">::</span><span class="no">Colors</span>
+      <span class="n">description</span> <span class="s1">'Ports'</span><span class="p">,</span> <span class="mi">0</span><span class="o">.</span><span class="mi">3</span>
+      <span class="n">required</span> <span class="ss">:LocsPlus</span><span class="p">,</span> <span class="ss">:include</span> <span class="o">=&gt;</span> <span class="ss">:CoordinateEncoding</span>
+      <span class="c1">#...</span>
+    <span class="k">end</span>
+</pre></div>
+
+<p>This example shows that the 'Ports' plugin requires (via 'required' method) 
+ the 'LocsPlus' plugin and that it should include the 'CoordinateEncoding' module from the 'LocsPlus' plugin.</p>
+
+<p>You can specify optional dependencies via the optional declaration:</p>
+
+<div class="highlight"><pre>    <span class="n">optional</span> <span class="ss">:Permissions</span>
+</pre></div>
+
+<p>As a side-effect both required and optional will define a method by the same 
+name as plugin being referenced (Note: This may change since plugin names may 
+not conform to sane Ruby-naming and some people don't like methods like 
+'Permissions()').</p>
+
+<p>A second way to get a live reference to a plugin is to ask the plugin manager:</p>
+
+<div class="highlight"><pre>    <span class="n">plugin_manager</span><span class="o">[</span><span class="s1">'Permissions'</span><span class="o">]</span>
+</pre></div>
+
+<p>This has the advantage that a plugin can be named anything and you will still 
+be able to reference it.</p>
+
+<h2>Running</h2>
+
+<p>To run Purugin, you just copy Purugin.jar into your plugins directory like any 
+other minecraft plugin.  Once running you can write Purugins and copy 
+those .rb files into your plugins directory.  Simple!  </p>
+
+<p>bin/run.sh and bin/run.bat are provided with defaults that I use and it also sets a local GEM_HOME:</p>
+
+<div class="highlight"><pre>GEM_HOME=./gems java -Xms1024M -Xmx1024M -jar craftbukkit.jar
+</pre></div>
+
+<h2>Building Purugin locally</h2>
+
+<ol>
+<li>Install maven 3</li>
+<li>Invoke: <code>mvn clean package</code>
+</li>
+</ol><h2>Other Novelties</h2>
+
+<p><a href="https://github.com/enebo/Purugin/wiki/Purogo-Introduction">Purogo</a> - A 3D Logo implementation in Purugin.</p>
+
+<h2>Contributors</h2>
+
+<p><code>git shortlog -s -n</code></p>
+
+<pre><code>199  Thomas E. Enebo
+ 14  Thomas E Enebo
+ 10  Eric Anderson
+  7  Marv Cool
+  6  Thomas Dervan
+  4  Humza
+  3  aumgn
+  2  mml
+  1  Tom Dervan
+  1  chase4926
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/enebo/Purugin/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/enebo/Purugin/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/enebo/Purugin"></a> is maintained by <a href="https://github.com/enebo">enebo</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
