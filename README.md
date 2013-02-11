@@ -90,6 +90,10 @@ GEM_HOME=./gems java -Xms1024M -Xmx1024M -jar craftbukkit.jar
 1. Install maven 3
 2. Invoke: `mvn clean package`
 
+## Other Novelties
+
+[[https://github.com/enebo/Purugin/wiki/Purogo-Introduction]] - A 3D Logo implementation in Purugin.
+
 ## Contributors
 
 `git shortlog -s -n`
