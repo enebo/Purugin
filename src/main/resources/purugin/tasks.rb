@@ -1,5 +1,7 @@
 require 'java'
 
+import 'org.bukkit.Bukkit'
+
 module Purugin
   # Set of tasks for scheduling synchronous or asynchronous tasks.  Note, that most of
   # the underlying Bukkit API in which Purugin is based is not actually thread-safe.  Try
@@ -19,9 +21,9 @@ module Purugin
       
       if repeat > -1
         raise ArgumentError.new "repeat must be positive value" if repeat <= 0
-        task_id = server.scheduler.schedule_sync_repeating_task self, code, delay, repeat
+        task_id = Bukkit.server.scheduler.schedule_sync_repeating_task self, code, delay, repeat
       else
-        task_id = server.scheduler.schedule_sync_delayed_task self, code, delay
+        task_id = Bukkit.server.scheduler.schedule_sync_delayed_task self, code, delay
       end
       
       raise Purugin::ScheduleFailedError.new if task_id == -1
@@ -36,9 +38,9 @@ module Purugin
       
       if repeat > -1
         raise ArgumentError.new "repeat must be positive value" if repeat <= 0
-        task_id = server.scheduler.schedule_async_repeating_task self, code, delay, repeat
+        task_id = Bukkit.server.scheduler.schedule_async_repeating_task self, code, delay, repeat
       else
-        task_id = server.scheduler.schedule_async_delayed_task self, code, delay
+        task_id = Bukkit.server.scheduler.schedule_async_delayed_task self, code, delay
       end
       
       raise Purugin::ScheduleFailedError.new if task_id == -1
