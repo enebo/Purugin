@@ -4,6 +4,7 @@ purugin_jar_path = __FILE__.gsub(/(^jar:file:|!.*$)/, '')
 $LOAD_PATH << purugin_jar_path
 
 require 'java'
+require 'purugin/utils/conversion_util'
 require 'purugin/predicate'
 require 'bukkit/block/biome'
 require 'bukkit/block/block'
@@ -25,6 +26,7 @@ require 'bukkit/event/player/player_pre_login_event'
 require 'bukkit/game_mode'
 require 'bukkit/location'
 require 'bukkit/material'
+require 'core_ext/symbol'
 require 'bukkit/permissions/permissible'
 require 'bukkit/plugin/plugin_manager'
 require 'bukkit/plugin/simple_plugin_manager'
@@ -35,7 +37,9 @@ require 'purugin/change_listener'
 require 'purugin/colors'
 require 'purugin/command'
 require 'purugin/configuration'
+require 'purugin/items'
 require 'purugin/plugin'
+require 'purugin/recipes'
 require 'purugin/tasks'
 
 $plugins = {} # path => [purugin, time_loaded]

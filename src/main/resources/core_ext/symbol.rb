@@ -6,4 +6,12 @@ class Symbol
   def printable
     to_s.split('_').map { |e| e.capitalize }.join(' ')    
   end
+  
+  ##
+  # Retrieves the Material representable by this symbol.
+  # === Examples ===
+  # :gold_axe.to_material #=> org.bukkit.Material::GOLD_AXE
+  def to_material
+    org::bukkit::Material::match_material(to_s)
+  end
 end

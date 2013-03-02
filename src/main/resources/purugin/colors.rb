@@ -1,10 +1,19 @@
 module Purugin
+  ##
+  # This module can be included in your Purugin's so you can conveniently colorize your
+  # message text.
+  #
   module Colors
     java_import org.bukkit.ChatColor
     
     DEFAULT=ChatColor::WHITE
-    
-    # Change to the specified color and then to the done color (which defaults to white)
+
+    ##
+    # Change to the specified color and then to the done color (which defaults to white).
+    #
+    # === Examples: ===
+    # player.msg color('gold', "I just got #{gold_count} gold nuggets")
+    #
     def color(color, message, done_color=DEFAULT)
       "#{color}#{message}#{done_color}"
     end
