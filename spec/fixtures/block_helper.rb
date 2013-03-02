@@ -1,6 +1,6 @@
 require 'java'
-require File.join(File.dirname(__FILE__),'..','..','dist','Purugin.jar')
-require 'bukkit/block'
+require Dir[File.join(File.dirname(__FILE__),'..','..','target','*.jar')][0]
+require 'purugin'
 require 'bukkit/material'
 
 # This represents a live version of a block.  Note that we cannot use
