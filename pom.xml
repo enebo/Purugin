@@ -9,9 +9,9 @@
   <url>http://www.bukkit.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <minecraft.version>1.4.7</minecraft.version>
-    <bukkit.version>1.4.7-R1.0</bukkit.version>
-    <jruby.version>1.7.2</jruby.version>
+    <minecraft.version>1.5.2</minecraft.version>
+    <bukkit.version>1.5.2-R1.0</bukkit.version>
+    <jruby.version>1.7.4</jruby.version>
   </properties>
   <repositories>
     <repository>
@@ -47,6 +47,7 @@
     </dependency>
   </dependencies>
   <build>
+    <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
