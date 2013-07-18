@@ -4,7 +4,7 @@
   <groupId>org.purugin</groupId>
   <artifactId>purugin</artifactId>
   <packaging>jar</packaging>
-  <version>${bukkit.version}.1-bukkit-${bukkit.version}-SNAPSHOT</version>
+  <version>${bukkit.version}.1-bukkit-${bukkit.version}</version>
   <name>Purugin</name>
   <url>http://www.bukkit.org</url>
   <properties>
