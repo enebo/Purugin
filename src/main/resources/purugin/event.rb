@@ -34,7 +34,7 @@ module Purugin
     # symbol -> listener class map populated by calls to define_event_listener
     EVENT_NAME_TO_LISTENER = {}     
     
-    # These listeners and the map below come from auto-generation via generate_ruby_listeners_hack    
+    # These listeners and the map below come from auto-generation via generate_ruby_listeners_hack 
     define_event_listener('AsyncPlayerChatEvent', 'org.bukkit.event.player')
     define_event_listener('AsyncPlayerPreLoginEvent', 'org.bukkit.event.player')
     define_event_listener('BlockBreakEvent', 'org.bukkit.event.block')
@@ -43,6 +43,7 @@ module Purugin
     define_event_listener('BlockDamageEvent', 'org.bukkit.event.block')
     define_event_listener('BlockDispenseEvent', 'org.bukkit.event.block')
     define_event_listener('BlockEvent', 'org.bukkit.event.block')
+    define_event_listener('BlockExpEvent', 'org.bukkit.event.block')
     define_event_listener('BlockFadeEvent', 'org.bukkit.event.block')
     define_event_listener('BlockFormEvent', 'org.bukkit.event.block')
     define_event_listener('BlockFromToEvent', 'org.bukkit.event.block')
@@ -80,6 +81,8 @@ module Purugin
     define_event_listener('EntityExplodeEvent', 'org.bukkit.event.entity')
     define_event_listener('EntityInteractEvent', 'org.bukkit.event.entity')
     define_event_listener('EntityPortalEnterEvent', 'org.bukkit.event.entity')
+    define_event_listener('EntityPortalEvent', 'org.bukkit.event.entity')
+    define_event_listener('EntityPortalExitEvent', 'org.bukkit.event.entity')
     define_event_listener('EntityRegainHealthEvent', 'org.bukkit.event.entity')
     define_event_listener('EntityShootBowEvent', 'org.bukkit.event.entity')
     define_event_listener('EntityTameEvent', 'org.bukkit.event.entity')
@@ -90,11 +93,21 @@ module Purugin
     define_event_listener('ExplosionPrimeEvent', 'org.bukkit.event.entity')
     define_event_listener('FoodLevelChangeEvent', 'org.bukkit.event.entity')
     define_event_listener('FurnaceBurnEvent', 'org.bukkit.event.inventory')
+    define_event_listener('FurnaceExtractEvent', 'org.bukkit.event.inventory')
     define_event_listener('FurnaceSmeltEvent', 'org.bukkit.event.inventory')
+    define_event_listener('HangingBreakByEntityEvent', 'org.bukkit.event.hanging')
+    define_event_listener('HangingBreakEvent', 'org.bukkit.event.hanging')
+    define_event_listener('HangingEvent', 'org.bukkit.event.hanging')
+    define_event_listener('HangingPlaceEvent', 'org.bukkit.event.hanging')
     define_event_listener('InventoryClickEvent', 'org.bukkit.event.inventory')
     define_event_listener('InventoryCloseEvent', 'org.bukkit.event.inventory')
+    define_event_listener('InventoryCreativeEvent', 'org.bukkit.event.inventory')
+    define_event_listener('InventoryDragEvent', 'org.bukkit.event.inventory')
     define_event_listener('InventoryEvent', 'org.bukkit.event.inventory')
+    define_event_listener('InventoryInteractEvent', 'org.bukkit.event.inventory')
+    define_event_listener('InventoryMoveItemEvent', 'org.bukkit.event.inventory')
     define_event_listener('InventoryOpenEvent', 'org.bukkit.event.inventory')
+    define_event_listener('InventoryPickupItemEvent', 'org.bukkit.event.inventory')
     define_event_listener('ItemDespawnEvent', 'org.bukkit.event.entity')
     define_event_listener('ItemSpawnEvent', 'org.bukkit.event.entity')
     define_event_listener('LeavesDecayEvent', 'org.bukkit.event.block')
@@ -119,6 +132,7 @@ module Purugin
     define_event_listener('PlayerCommandPreprocessEvent', 'org.bukkit.event.player')
     define_event_listener('PlayerDeathEvent', 'org.bukkit.event.entity')
     define_event_listener('PlayerDropItemEvent', 'org.bukkit.event.player')
+    define_event_listener('PlayerEditBookEvent', 'org.bukkit.event.player')
     define_event_listener('PlayerEggThrowEvent', 'org.bukkit.event.player')
     define_event_listener('PlayerEvent', 'org.bukkit.event.player')
     define_event_listener('PlayerExpChangeEvent', 'org.bukkit.event.player')
@@ -128,6 +142,7 @@ module Purugin
     define_event_listener('PlayerInteractEvent', 'org.bukkit.event.player')
     define_event_listener('PlayerInventoryEvent', 'org.bukkit.event.player')
     define_event_listener('PlayerItemBreakEvent', 'org.bukkit.event.player')
+    define_event_listener('PlayerItemConsumeEvent', 'org.bukkit.event.player')
     define_event_listener('PlayerItemHeldEvent', 'org.bukkit.event.player')
     define_event_listener('PlayerJoinEvent', 'org.bukkit.event.player')
     define_event_listener('PlayerKickEvent', 'org.bukkit.event.player')
@@ -188,7 +203,7 @@ module Purugin
     define_event_listener('WorldLoadEvent', 'org.bukkit.event.world')
     define_event_listener('WorldSaveEvent', 'org.bukkit.event.world')
     define_event_listener('WorldUnloadEvent', 'org.bukkit.event.world')
-    
+
     def event(event_name, priority_value=:lowest, &code)
       type = EVENT_NAME_TO_LISTENER[event_name.to_sym]
 
