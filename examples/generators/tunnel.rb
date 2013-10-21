@@ -39,19 +39,26 @@ class TunnelGenerationPlugin
           width.times do |width_dist|
             # The block will be mined (eg there will be a ItemStack with
             # its Material dropped) and changed to :air or to :torch
-            
-            if torches and (depth_dist%3)==0 and (width_dist==0 or width_dist==width-1) and height_dist==height-1
-              # torched will be, however, not placed correctly but dropped on the ground.
-              # this seems to be something with the south/west whatsoever rule...
-              # If digging a tunnel to the west, everything is fine!
-              block.block_at(width_facing,width_dist).break!(breakit,:torch)
-            else
-              block.block_at(width_facing,width_dist).break!(breakit)
-            end
-
+            block.block_at(width_facing,width_dist).break!(breakit)
           end
         end
       end
+
+      1.upto(depth) do |depth_dist|
+        deep_block = first_block.block_at(facing,depth_dist)
+        height.times do |height_dist|
+          block = deep_block.block_at(height_facing,height_dist)
+          width.times do |width_dist|
+            # The block will be mined (eg there will be a ItemStack with
+            # its Material dropped) and changed to :air or to :torch
+            
+            if torches and (depth_dist%3)==0 and (width_dist==0 or width_dist==width-1) and height_dist==height-1
+              block.block_at(width_facing,width_dist).type = :torch.to_material
+            end
+          end
+        end
+      end
+
       
       me.send_message "Done creating tunnel #{depth}x#{height}x#{width}"
     end
