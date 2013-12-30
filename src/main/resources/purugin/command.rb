@@ -1,3 +1,5 @@
+require 'purugin/command_syntax_parser'
+
 module Purugin
   module Command
     class CommandError < Exception
@@ -117,6 +119,27 @@ module Purugin
     # error message (Usage same as as command() but no perm parameter).
     def public_player_command(name, desc, usage="/#{name}", &code)
       command(name, desc, usage, nil, :player, &code)      
+    end
+
+    # TODO: specify syntax=nil for cmd, desc, &code for manual methods (like egg_madness)
+    # TODO: Consider improving the syntax of language to know colors, int, positive or negative values, block_types
+    # TODO: Hook up new methods once done.
+    # TODO: Make parser generate the lambda
+    def public_command!(name, desc, syntax)
+      commands = Purugin::Syntax::Parser.parse(syntax)
+      code = lambda do |sender, *args|
+        match = false
+        commands.each do |command|
+          if new_args = command.matches(args)
+            match = true
+            send "#{name}#{command.method_suffix}", sender, *new_args
+            break
+          end
+        end
+
+        send "#{name}_error", sender, *args unless match
+      end
+      command(name, desc, syntax, &code)
     end
   end
 end
