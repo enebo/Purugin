@@ -1,4 +1,4 @@
-require 'purugin/command_syntax_parser'
+require 'purugin/command_parser/parser'
 
 module Purugin
   module Command

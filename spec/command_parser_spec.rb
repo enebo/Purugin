@@ -1,27 +1,7 @@
 require 'java'
-require 'fixtures/block_helper'
+require 'fixtures/command_parser_helper'
 
-EOF = Purugin::Syntax::EOF
-
-def lex(str)
-  Purugin::Syntax::Lexer.new(str).to_a
-end
-
-def parse(str)
-  Purugin::Syntax::Parser.parse(str)
-end
-
-def command(*words)
-  Purugin::Syntax::Command.new(*words)
-end
-
-def variable(name, type=nil)
-  Purugin::Syntax::Variable.new(name).tap do |var|
-    var.type = Purugin::Syntax::Type.new(type) if type
-  end
-end
-
-describe Purugin::Syntax::Lexer do
+describe Purugin::CommandParser::Lexer do
   it "Can lex barewords" do
     lex("a | d e").should == ['a', '|', 'd', 'e', EOF]
   end
@@ -44,7 +24,7 @@ describe Purugin::Syntax::Lexer do
   end
 end
 
-describe Purugin::Syntax::Parser do
+describe Purugin::CommandParser::Parser do
   it "Can parse bareword commands" do
     parse("a | d e").should == [command('a'), command('d', 'e')]
   end
@@ -58,8 +38,8 @@ describe Purugin::Syntax::Parser do
   end
 
   it "Can parse variables with type declarations" do
-    parse("{a} | {b:int}").should == 
-      [command(variable('a')), command(variable('b', 'int'))]
+    parse("{a} | {b:byte}").should == 
+      [command(variable('a')), command(variable('b', 'byte'))]
   end
 
   it "Can lex star (wild card)" do
