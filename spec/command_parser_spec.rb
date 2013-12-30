@@ -22,11 +22,20 @@ describe Purugin::CommandParser::Lexer do
   it "Can lex star (wild card)" do
     lex("{a} | *").should == ['{', 'a', '}', '|', '*', EOF]
   end
+
+  it "Can lex mixed command" do
+    lex("a {b}").should == ['a', '{', 'b', '}', EOF]
+  end
+
 end
 
 describe Purugin::CommandParser::Parser do
   it "Can parse bareword commands" do
-    parse("a | d e").should == [command('a'), command('d', 'e')]
+    commands = parse("a | d e")
+    commands.should == [command('a'), command('d', 'e')]
+    commands[0].method_suffix.should == '_a'
+    commands[1].method_suffix.should == '_d_e'
+    commands[1].arity.should == 2
   end
 
   it "Can parse empty OR (|)" do
@@ -38,11 +47,22 @@ describe Purugin::CommandParser::Parser do
   end
 
   it "Can parse variables with type declarations" do
-    parse("{a} | {b:byte}").should == 
-      [command(variable('a')), command(variable('b', 'byte'))]
+    commands = parse("{a} | {b:byte}")
+    commands.should == [command(variable('a')), command(variable('b', 'byte'))]
+    commands[1].method_suffix.should == ''
+    commands[1].words[0].type.should == type('byte')
+    commands[1].arity.should == 1
   end
 
-  it "Can lex star (wild card)" do
-    parse("a | *").should == [command('a'), command('*')]
+  it "Can parse star (wild card)" do
+    commands = parse("a | *")
+    commands.should == [command('a'), command('*')]
+    commands[1].method_suffix.should == '_star'
+    commands[1].arity.should == Purugin::CommandParser::Syntax::Command::MULTIPLE_ARGS
   end
+
+  it "Can parse mixed command" do
+    parse("a {b}").should == [command('a', variable('b'))]
+  end
+
 end

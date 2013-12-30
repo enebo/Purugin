@@ -3,7 +3,7 @@ module Purugin
     module Syntax
       class Command
         MULTIPLE_ARGS = -1;
-        attr_reader :words, :method_suffix
+        attr_reader :words, :method_suffix, :arity
 
         def initialize(*words)
           @words = words

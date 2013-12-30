@@ -9,11 +9,17 @@ def parse(str)
 end
 
 def command(*words)
-  Purugin::CommandParser::Syntax::Command.new(*words)
+  Purugin::CommandParser::Syntax::Command.new(*words).tap do |command|
+    command.post_process
+  end
 end
 
-def variable(name, type=nil)
+def type(name)
+  Purugin::CommandParser::Syntax::Type.new(name)
+end
+
+def variable(name, type_name=nil)
   Purugin::CommandParser::Syntax::Variable.new(name).tap do |var|
-    var.type = Purugin::CommandParser::Syntax::Type.new(type) if type
+    var.type = type(type_name) if type_name
   end
 end
