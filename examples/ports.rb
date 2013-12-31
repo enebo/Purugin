@@ -15,10 +15,29 @@ class PortsPlugin
   
   SAFE_BLOCKS = [:air, :water]
   
-  def safe_loc?(world, location)
-    bottom_block = world.block_at location
+  def safe_loc?(me, bottom_block)
     top_block = bottom_block.block_at(:up)
-    top_block.is?(*SAFE_BLOCKS) && bottom_block.is?(*SAFE_BLOCKS)
+    floor_block = bottom_block.block_at(:down)
+    top_block.is?(*SAFE_BLOCKS) && bottom_block.is?(*SAFE_BLOCKS) && 
+      floor_block.solid?
+  end
+
+  # Attempts to find a safe location when block under your feet is solid
+  # and where both blocks your player occupies are either air or water.
+  # The algorithm is to try the location you want. If it does not work then
+  # try all adjacent squares.  If that does not work go up one and repeat.
+  # This will fail after limit tries.
+  def safe_loc(me, world, location, limit = 5)
+    return nil if limit <= 0
+    bottom_block = world.block_at(location)
+    return location if safe_loc?(me, bottom_block)
+
+    [:north, :east, :west, :south].each do |direction|
+      alt_block = bottom_block.block_at(direction)
+      return alt_block.location if safe_loc?(me, alt_block)
+    end
+      
+    return safe_loc(me, world, location.add(0, 1, 0), limit - 1)
   end
   
   def on_enable
@@ -27,11 +46,12 @@ class PortsPlugin
         loc = teleporter_loc e.clicked_block.state
         return unless loc 
         
-        if loc =~ /([0-9a-z]+)\s*,\s*([0-9a-z]+)\s*,\s*([0-9a-z]+)/
-          x, y, z = $1, $2, $3
+        if loc =~ /([^\x00-\x7F].)?([0-9a-z]+)\s*,\s*([0-9a-z]+)\s*,\s*([0-9a-z]+)/u
+          x, y, z = $2, $3, $4
           destination = org.bukkit.Location.new e.player.world, decode(x), decode(y), decode(z)
 
-          if safe_loc? e.player.world, destination
+          destination = safe_loc(e.player, e.player.world, destination)
+          if destination
             server.scheduler.schedule_sync_delayed_task(self) { e.player.teleport destination }
           else
             e.player.msg red("Crud at destination!")
@@ -48,12 +68,19 @@ class PortsPlugin
       return unless loc
       if loc =~ /\{([^}]+)\}/
         waypoint = $1
-        waypoint, loc = *LocsPlus().locations(e.player).find { |name, l| name == waypoint }
+        begin
+          loc = LocsPlus().location(e.player, waypoint).to_a
+        rescue ArgumentError
+          e.player.msg red($!.message)
+          break
+        end
       end
       
       e.lines.to_a.each_with_index do |line, i|
         if i == 1 && loc
-          e.set_line i, loc[0..2].map {|l| encode(l) }.join(",")
+          e.set_line i, gray(loc[0..2].to_a.map {|l| encode(l) }.join(","))
+        elsif i == 2 and line == "" && waypoint
+          e.set_line i, green(waypoint)
         else
           e.set_line i, colorize(line)
         end
