@@ -1,4 +1,5 @@
 require 'purugin/command_parser/parser'
+require 'purugin/command_parser/command_type_registry'
 
 module Purugin
   module Command
@@ -68,15 +69,22 @@ module Purugin
     def abort!(message)
       raise CommandError.new message
     end
+    module_function :abort!
     
     # If condition is false,nil, or an exception break out of command and display error message.
     # returns the result of the condition otherwise
+    # === Parameter
+    # * _condition_ to check for truthiness
+    # * _message_ to print out if _condition_ is not true
+    # === Example
+    # error? i > 3, "'i' is not greater than 3"
     def error?(condition, message)
       raise CommandError.new message unless condition
       condition
     rescue
       raise CommandError.new message, $!
     end
+    module_function :error?
 
     # Create a command which will respond to /name.
     # 
@@ -126,20 +134,24 @@ module Purugin
     # TODO: Hook up new methods once done.
     # TODO: Make parser generate the lambda
     def public_command!(name, desc, syntax)
-      commands = Purugin::Syntax::Parser.parse(syntax)
+      commands = Purugin::CommandParser::Parser.parse(syntax)
       code = lambda do |sender, *args|
         match = false
         commands.each do |command|
-          if new_args = command.matches(args)
+          if new_args = command.matches(args, sender, @type_registry)
             match = true
             send "#{name}#{command.method_suffix}", sender, *new_args
             break
           end
         end
-
+        
         send "#{name}_error", sender, *args unless match
       end
       command(name, desc, syntax, &code)
+    end
+    
+    def command_type(name, &code)
+      @type_registry[name] = code
     end
   end
 end

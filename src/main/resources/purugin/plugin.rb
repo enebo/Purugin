@@ -25,6 +25,7 @@ module Purugin
   # Purugin::Plugin.
   module Plugin
     include Base, Command, Event, org.bukkit.plugin.Plugin
+    
     # :nodoc:
     def self.included(other)
       other.extend(PluginMetaData)
@@ -44,6 +45,16 @@ module Purugin
       @required_plugins = self.class.required_plugins
       @optional_plugins = self.class.optional_plugins
       @gems = self.class.gems
+      @type_registry = Purugin::CommandParser::CommandTypeRegistry.new # Giving each plugin their registry to avoid collisions of popular names
+    end
+    
+    # FIXME: Move into module for type coercion
+    def coerce(type_name, sender, value)
+      converter = @type_registry[type_name]
+      
+      error? converter, "Cannot find type converter: '#{type_name}'"
+      
+      converter.call(sender, value)
     end
 
     # bukkit Plugin impl (see Bukkit API documentation)

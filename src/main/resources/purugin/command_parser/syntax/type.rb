@@ -2,15 +2,15 @@ module Purugin
   module CommandParser
     module Syntax
       class Type
-        attr_reader :value, :constraints
+        attr_reader :name, :constraints
       
-        def initialize(value)
-          @value = value
+        def initialize(name)
+          @name = name
           @constraints = []
         end
       
         def ==(other)
-          value == other.value && constraints == other.constraints
+          @name == other.name && @constraints == other.constraints
         end
       end
     end

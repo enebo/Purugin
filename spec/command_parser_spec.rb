@@ -42,6 +42,10 @@ describe Purugin::CommandParser::Parser do
     parse("| d e").should == [command(), command('d', 'e')]
   end
 
+  it "Can parse a single variable" do
+    parse("{foo}").should == [command(variable('foo'))]
+  end
+
   it "Can parse variables" do
     parse("{a} | d").should == [command(variable('a')), command('d')]
   end
@@ -52,6 +56,10 @@ describe Purugin::CommandParser::Parser do
     commands[1].method_suffix.should == ''
     commands[1].words[0].type.should == type('byte')
     commands[1].arity.should == 1
+  end
+
+  it "Can parse a single typed variable" do
+    parse("{foo:byte}").should == [command(variable('foo', 'byte'))]
   end
 
   it "Can parse star (wild card)" do
