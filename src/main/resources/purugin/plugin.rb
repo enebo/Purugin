@@ -106,6 +106,11 @@ module Purugin
     end
     
     # bukkit Plugin impl (see Bukkit API documentation)
+    def getLogger
+      java.util.logging.Logger.getLogger(getName)
+    end
+    
+    # bukkit Plugin impl (see Bukkit API documentation)
     def getServer
       server
     end
