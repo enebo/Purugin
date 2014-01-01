@@ -100,6 +100,7 @@ module Purugin
     # end
     #    
     def command(name, desc, usage="/#{name}", perm="#{basename}.#{name}", style=:all, &code)
+      code = syntax_generated_command(name, usage) unless block_given?
       plugin_name = getDescription.name.downcase
       plugin_manager.add_command CMD.new(name, perm, desc, usage, plugin_name, style, code)
     end
@@ -129,13 +130,9 @@ module Purugin
       command(name, desc, usage, nil, :player, &code)      
     end
 
-    # TODO: specify syntax=nil for cmd, desc, &code for manual methods (like egg_madness)
-    # TODO: Consider improving the syntax of language to know colors, int, positive or negative values, block_types
-    # TODO: Hook up new methods once done.
-    # TODO: Make parser generate the lambda
-    def public_command!(name, desc, syntax)
+    def syntax_generated_command(name, syntax)
       commands = Purugin::CommandParser::Parser.parse(syntax)
-      code = lambda do |sender, *args|
+       lambda do |sender, *args|
         match = false
         commands.each do |command|
           if new_args = command.matches(args, sender, @type_registry)
@@ -147,7 +144,6 @@ module Purugin
         
         send "#{name}_error", sender, *args unless match
       end
-      command(name, desc, syntax, &code)
     end
     
     def command_type(name, &code)
