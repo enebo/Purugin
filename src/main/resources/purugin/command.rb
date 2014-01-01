@@ -136,9 +136,14 @@ module Purugin
         match = false
         commands.each do |command|
           if new_args = command.matches(args, sender, @type_registry)
+            method_name = name + command.method_suffix
             match = true
-            send "#{name}#{command.method_suffix}", sender, *new_args
-            break
+            begin
+              send method_name, sender, *new_args
+            rescue NoMethodError
+              sender.msg "Missing expected command method: #{method_name}"
+              break
+            end
           end
         end
         
@@ -146,8 +151,7 @@ module Purugin
           if respond_to? "#{name}_error"
             send "#{name}_error", sender, *args 
           else
-            sender.msg "Invalid command: /#{name} #{args.join(' ')}"
-            sender.msg "Syntax: #{syntax}"
+            sender.msg "Invalid command: /#{name} #{args.join(' ')}", "Syntax: #{syntax}"
           end
         end
       end
