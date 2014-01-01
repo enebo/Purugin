@@ -33,8 +33,8 @@ class EggMadnessPlugin
       entity
     end
 
-    public_command!('egg_count', '# of spawns.', '{num:byte}')
-    public_command!('egg_spawn', 'type of egg spawn.', '{mob:spawnable}')
+    public_player_command('egg_count', '# of spawns.', '{num:byte}')
+    public_player_command('egg_spawn', 'type of egg spawn.', '{mob:spawnable}')
 
     event(:player_egg_throw) do |e|
       e.hatching = true

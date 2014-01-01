@@ -47,7 +47,7 @@ class SlimePlugin
   end
 
   def on_enable
-    public_command!('slime_map', 'print slime map', '| {dim}')
-    public_command!('is_slime', 'Am I in a slize chunk?', '|')
+    public_player_command('slime_map', 'print slime map', '| {dim}')
+    public_player_command('is_slime', 'Am I in a slize chunk?', '|')
   end
 end

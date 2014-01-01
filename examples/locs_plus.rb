@@ -174,11 +174,11 @@ class LocsPlus
       waypoint_name
     end
 
-    public_command!('waypoint', 'manage waypoints', 
+    public_player_command('waypoint', 'manage waypoints', 
        '| {name} | help | create {name} | remove {name:valid_waypoint}')
 
     setup_tracker_thread
-    public_command!('track', 'track to a waypoint', 
+    public_player_command('track', 'track to a waypoint', 
        '| help | stop | {waypoint:valid_waypoint}')
   end
 end
