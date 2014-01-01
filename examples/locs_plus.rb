@@ -95,7 +95,6 @@ class LocsPlus
 
   def waypoint_create(player, name)
     raise ArgumentError.new "Cannot use 'bind' as name" if name == 'bind'
-    player.
     locations(player)[name] = player.location.to_a
     save_locations
   end
