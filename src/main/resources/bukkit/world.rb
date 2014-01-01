@@ -4,6 +4,7 @@ require 'purugin/predicate'
 module org::bukkit::World
   extend Purugin::Predicate
   
+  ##
   # Get the block at the given coordinates
   # === Parameters
   # * x,y,z - Give three coord. location
@@ -16,6 +17,7 @@ module org::bukkit::World
     getBlockAt *r
   end
   
+  ##
   # Spawn a creature ("chicken", "creeper") at a specified location.
   # === Parameters
   # * mob_name is the creature to spawn (@see CreatureType)
@@ -30,11 +32,26 @@ module org::bukkit::World
     spawnCreature location, creature_type
   end
   
+  ##
   # Is the world experiencing a storm currently
   def storming?
     has_storm
   end
   
+  ##
+  # Get the biome associated with the provided location
+  # === Parameters
+  # * _location_ place you want the biome for
+  # === Example
+  # me.world.biome(me)
+  #
+  def biome(location)
+    location = location.respond_to?(:to_loc) ? location.to_loc : location
+    
+    getBiome(location.x, location.z)
+  end
+  
+  ##
   # Is this world the type you think it is?
   # === Parameters
   # * environment_name is a str or symbol mapping to world you are checking against.
