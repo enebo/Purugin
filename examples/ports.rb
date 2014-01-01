@@ -37,7 +37,7 @@ class PortsPlugin
       return alt_block.location if safe_loc?(me, alt_block)
     end
       
-    return safe_loc(me, world, location.add(0, direction, 0), limit - 1)
+    return safe_loc(me, world, org.bukkit.Location.new(world, location.x, location.y + direction, location.z), limit - 1, direction)
   end
   
   def on_enable
@@ -48,12 +48,12 @@ class PortsPlugin
         
         if loc =~ /([^\x00-\x7F].)?([0-9a-z]+)\s*,\s*([0-9a-z]+)\s*,\s*([0-9a-z]+)/u
           x, y, z = $2, $3, $4
-          destination = org.bukkit.Location.new e.player.world, decode(x), decode(y), decode(z)
+          loc = org.bukkit.Location.new e.player.world, decode(x), decode(y), decode(z)
 
           # Look from waypoint down
-          destination = safe_loc(e.player, e.player.world, destination)
+          destination = safe_loc(e.player, e.player.world, loc, 5, -1)
           # If no safe point then look up
-          destination = safe_loc(e.player, e.player.world, destination, 1) unless destination
+          destination = safe_loc(e.player, e.player.world, loc, 5, 1) unless destination
           
           if destination
             server.scheduler.schedule_sync_delayed_task(self) { e.player.teleport destination }
