@@ -53,7 +53,8 @@ module org::bukkit::entity::Entity
   predicate org::bukkit::entity::TNTPrimed, :tnt_primed
   predicate org::bukkit::entity::Minecart
   predicate org::bukkit::entity::Weather
-  
+
+  ##  
   # Is this entity a particular type of entity
   # === Examples
   # entity.is? arrow
@@ -68,6 +69,14 @@ module org::bukkit::entity::Entity
       __send__ predicate_name
     end
     false
+  end
+  
+  ##
+  # Methods which honor to_loc can get the location from any entity directly
+  # === Example
+  # player.world.biome(player) #> Player (and Entity) will to_loc its location.
+  def to_loc
+    getLocation
   end
 end
 
