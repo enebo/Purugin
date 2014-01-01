@@ -142,7 +142,14 @@ module Purugin
           end
         end
         
-        send "#{name}_error", sender, *args unless match
+        unless match
+          if respond_to? "#{name}_error"
+            send "#{name}_error", sender, *args 
+          else
+            sender.msg "Invalid command: /#{name} #{args.join(' ')}"
+            sender.msg "Syntax: #{syntax}"
+          end
+        end
       end
     end
     
