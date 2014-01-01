@@ -27,11 +27,10 @@ module Purugin
       # 1. 'help' dispatch to command_help(issuer)
       # 2. '*' dispatch to command_star(issuer, *rest)
       # 
-      # player_command('egg_count', '# of spawns.', '{number:integer[0-127]}')
+      # player_command('egg_spawn', 'type of egg', '{mob:entity}'
       # 
-      # 1. ':' specifies type constaint, and 0-127 specifies the range qualifier. dispatches to egg_count
-      # 
-      # player_command('egg_spawn', 'type of egg', '{mob:creature}'
+      # 1. dispatches to egg_spawn() with a single argument of mob which is type-checked to be an
+      # entity.
       # 
       # Types to support: creature, block, boolean, integer, float, color
       #
