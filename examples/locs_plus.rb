@@ -143,7 +143,8 @@ class LocsPlus
     load_locations
     public_player_command('loc', 'display current location') do |me, *|
       loc = me.location
-      me.msg "Location: #{pos_string(*loc.to_a)} #{direction(loc)}"
+      biome = me.world.biome(me)
+      me.msg colorize("Location: {gray}#{pos_string(*loc.to_a)} {green}#{direction(loc)} ({blue}#{biome.name}{white})")
     end
 
     command_type('valid_wp') do |me, waypoint_name|
