@@ -153,7 +153,7 @@ class LocsPlus
     end
 
     public_player_command('waypoint', 'manage waypoints', 
-       '<show_all> | <show> {name:valid_wp} | help | create {name} | remove {name:valid_wp}')
+       '<show_all> | help | create {name} | remove {name:valid_wp} | <show> {name:valid_wp} ')
 
     setup_tracker_thread
     public_player_command('track', 'track to a waypoint', 
