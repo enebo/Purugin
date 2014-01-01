@@ -18,16 +18,17 @@ class LocsPlus
   
   # Takes distance and applies proper direction label
   def distance_string(distance, positive, negative)
-    "%0.1f%s" % [distance.abs, green(distance < 0 ? negative : positive)]
+    label = distance == 0.0 ? "" : green(distance < 0 ? negative : positive)
+    "%0.1f%s" % [distance.abs, label]
   end  
 
   def loc_string(name, player, x, y, z, pitch, yaw)
     loc = player.location
     dx, dy, dz = loc.x - x, loc.y - y, loc.z - z
     distance = Math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
-    ns = distance_string(dx, 'N', 'S')
-    ew = distance_string(dz, 'E', 'W')
-    ud = distance_string(dz, 'D', 'U')
+    ns = distance_string(dz, 'N', 'S')
+    ew = distance_string(dx, 'W', 'E')
+    ud = distance_string(dy, 'D', 'U')
     colorize("{blue}%s {gray}[%s]{white} ~%0.1f voxs [%s, %s, %s]" % 
              [name, pos_string(x, y, z), distance, ns, ew, ud])
   end
@@ -36,11 +37,13 @@ class LocsPlus
     "%s, %s, %s" % [encode(x), encode(y), encode(z)]
   end
 
-  DIRS = ['W', 'NW', 'N', 'NE', 'E', 'SE', 'S', 'SW']
+  DIRS = ['S', 'SE', 'E', 'NE', 'N', 'NW', 'W', 'SW', 'S']
 
   def direction(location)
     # add 255 to shift W to beginning of int division. 450 yaw per dir.
-    DIRS[(location.yaw.abs * 10 + 225).to_i / 450]
+    index = (location.yaw.abs * 10 + 225).to_i / 450
+    puts "DIR: #{index}"
+    DIRS[index]
   end
 
   def locations(player)
@@ -127,8 +130,11 @@ class LocsPlus
   end
 
   def track_stop(me)
-    @tracks.delete(me)
-    me.msg "Tracking stopped"
+    if @tracks.delete(me)
+      me.msg "Tracking stopped" 
+    else
+      me.msg "No Track is active"
+    end  
   end
 
   def track_status(me)
