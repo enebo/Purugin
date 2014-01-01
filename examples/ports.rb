@@ -25,9 +25,9 @@ class PortsPlugin
   # Attempts to find a safe location when block under your feet is solid
   # and where both blocks your player occupies are either air or water.
   # The algorithm is to try the location you want. If it does not work then
-  # try all adjacent squares.  If that does not work go up one and repeat.
-  # This will fail after limit tries.
-  def safe_loc(me, world, location, limit = 5)
+  # try all adjacent squares.  If that does not work go _direction_ one and
+  # repeat. This will fail after limit tries.
+  def safe_loc(me, world, location, limit = 3, direction = -1)
     return nil if limit <= 0
     bottom_block = world.block_at(location)
     return location if safe_loc?(me, bottom_block)
@@ -37,7 +37,7 @@ class PortsPlugin
       return alt_block.location if safe_loc?(me, alt_block)
     end
       
-    return safe_loc(me, world, location.add(0, 1, 0), limit - 1)
+    return safe_loc(me, world, location.add(0, direction, 0), limit - 1)
   end
   
   def on_enable
@@ -50,7 +50,11 @@ class PortsPlugin
           x, y, z = $2, $3, $4
           destination = org.bukkit.Location.new e.player.world, decode(x), decode(y), decode(z)
 
+          # Look from waypoint down
           destination = safe_loc(e.player, e.player.world, destination)
+          # If no safe point then look up
+          destination = safe_loc(e.player, e.player.world, destination, 1) unless destination
+          
           if destination
             server.scheduler.schedule_sync_delayed_task(self) { e.player.teleport destination }
           else
