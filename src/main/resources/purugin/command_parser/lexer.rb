@@ -7,7 +7,7 @@ module Purugin
       
       def initialize(str)
         @string, @index = str, 0
-        @stream = str.split(/\s*([\{\}\|:])\s*/).flat_map { |c| c.strip.split(/\s+/) }
+        @stream = str.split(/\s*([<>\{\}\|:])\s*/).flat_map { |c| c.strip.split(/\s+/) }
       end
 
       def peek

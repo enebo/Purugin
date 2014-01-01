@@ -27,6 +27,9 @@ describe Purugin::CommandParser::Lexer do
     lex("a {b}").should == ['a', '{', 'b', '}', EOF]
   end
 
+  it "Can lex method name marker" do
+    lex("<b> a").should == ['<', 'b', '>', 'a', EOF]
+  end
 end
 
 describe Purugin::CommandParser::Parser do
@@ -75,5 +78,27 @@ describe Purugin::CommandParser::Parser do
 
   it "Can parse empty string as no-arg command" do
     parse("").should == [command()]
+  end
+
+  it "Can parse method name marker" do
+    command = command()
+    command.name = 'none'
+    commands = parse("<none>")
+    commands.should == [command]
+    commands[0].method_suffix.should == '_none'
+  end
+
+  it "Can parse method name marker in front of variable" do
+    command = command()
+    command.name = 'none'
+    parse("<none> {foo}").should == [command(variable('foo'))]
+  end
+
+  it "Can parse method name marker in front of bareword" do
+    command = command()
+    command.name = 'none'
+    commands = parse("<none> foo")
+    commands.should == [command('foo')]
+    commands[0].method_suffix.should == '_none'
   end
 end

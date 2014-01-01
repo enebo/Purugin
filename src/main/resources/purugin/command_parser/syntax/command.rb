@@ -4,6 +4,7 @@ module Purugin
       class Command
         MULTIPLE_ARGS = -1;
         attr_reader :words, :method_suffix, :arity
+        attr_accessor :name
 
         def initialize(*words)
           @words = words
@@ -75,6 +76,7 @@ module Purugin
               @bareword_slots << word
             end
           end
+          @method_suffix = "_#{name}" if name # If name specified for command use that.
         end
       end
     end

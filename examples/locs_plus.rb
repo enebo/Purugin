@@ -60,10 +60,10 @@ class LocsPlus
     return player.world.spawn_location if name == 'bind'
 
     player_locs = locations(player)
-    raise ArgumentError.new "No player stored locations" unless player_locs
+    return nil unless player_locs
 
     loc = player_locs[name]
-    raise ArgumentError.new "Invalid location #{name}" unless loc
+    return nil unless loc
 
     org.bukkit.Location.from_a loc
   end
@@ -116,35 +116,17 @@ class LocsPlus
     player.send_message loc_string(name, player, *location(player, name))
   end
 
-  def waypoint_show_all(player)
-    player.msg colorize(WAYPOINT_SHOW_ALL_HEADER)
-    locations(player).each do |name, loc|
-      player.send_message loc_string(name, player, *loc)
+  def waypoint_show_all(me)
+    me.msg colorize(WAYPOINT_SHOW_ALL_HEADER)
+    locations(me).each do |name, loc|
+      me.send_message loc_string(name, me, *loc)
     end
-    player.send_message loc_string("bind", player, *player.world.spawn_location.to_a)
+    me.send_message loc_string("bind", me, *me.world.spawn_location.to_a)
   end
 
-  def waypoint(sender, arg=nil)
-    if arg
-      waypoint_show sender, arg
-    else
-      waypoint_show_all sender
-    end
-  end
-
-  def waypoint_error(sender, *args)
-    sender.msg red("Bad args: /waypoint: #{args.join(' ')}")
-  end
-
-  def track(sender, waypoint_name = nil)
-    if waypoint_name
-      sender.msg "You start tracking '#{waypoint_name}'"
-      @tracks[sender] = [waypoint_name, location(sender, waypoint_name)] 
-    elsif @tracks[sender]
-      sender.msg "You are tracking to waypoint '#{@tracks[sender][0]}'"
-    else
-      sender.msg "You are not tracking anything"
-    end
+  def track(sender, waypoint_name)
+    sender.msg "You start tracking '#{waypoint_name}'"
+    @tracks[sender] = [waypoint_name, location(sender, waypoint_name)] 
   end
 
   def track_help(me)
@@ -157,8 +139,12 @@ class LocsPlus
     sender.msg "Tracking stopped"
   end
 
-  def track_error(sender, *args)
-    sender.msg "Track error: #{args}"
+  def track_status(me)
+    if @tracks[me]
+      me.msg "You are tracking to waypoint '#{@tracks[sender][0]}'"
+    else
+      me.msg "You are not tracking anything"
+    end
   end
 
   def on_enable
@@ -168,18 +154,17 @@ class LocsPlus
       me.msg "Location: #{pos_string(*loc.to_a)} #{direction(loc)}"
     end
 
-    command_type('valid_waypoint') do |sender, waypoint_name|
+    command_type('valid_wp') do |sender, waypoint_name|
       loc = location(sender, waypoint_name)
       error? loc, "No such waypoint: '#{waypoint_name}'"
       waypoint_name
     end
 
     public_player_command('waypoint', 'manage waypoints', 
-       '| {name} | help | create {name} | remove {name:valid_waypoint}')
+       '<show_all> | <show> {name:valid_wp} | help | create {name} | remove {name:valid_wp}')
 
     setup_tracker_thread
     public_player_command('track', 'track to a waypoint', 
-       '| help | stop | {waypoint:valid_waypoint}')
+         '<status> | help | stop | {waypoint:valid_wp}')
   end
 end
-

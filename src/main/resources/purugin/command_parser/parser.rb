@@ -51,6 +51,13 @@ module Purugin
       def self.parse_command(lexer)
         return nil if lexer.peek == Purugin::CommandParser::Lexer::EOF
         
+        if lexer.peek == '<'
+          token = lexer.next 
+          name = parse_word(lexer)
+          token = lexer.next
+          verify? '>', token, token != '>'
+        end
+        
         Purugin::CommandParser::Syntax::Command.new.tap do |command|
           loop do
             break if delimeter?(lexer)  # Empty command case
@@ -58,6 +65,7 @@ module Purugin
             break if delimeter?(lexer)  # End of one or more words
           end
           lexer.next
+          command.name = name if name
         end
       end
 
