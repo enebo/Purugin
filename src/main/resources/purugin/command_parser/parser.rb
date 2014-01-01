@@ -34,13 +34,13 @@ module Purugin
       # player_command('egg_spawn', 'type of egg', '{mob:creature}'
       # 
       # Types to support: creature, block, boolean, integer, float, color
-      # 
-      # TODO: Add range constraints
-      # TODO: Add framework for defining and registering types and constraints so people can make their own
       #
-      # This impl is pretty ugly... :)    class Parser
       def self.parse(str)
         lexer = Lexer.new(str)
+        
+        # Special-case: syntax string is just ''.
+        return [Purugin::CommandParser::Syntax::Command.new] if lexer.peek == Purugin::CommandParser::Lexer::EOF
+        
         [].tap do |commands|
           while command = parse_command(lexer)
             command.post_process

@@ -73,4 +73,7 @@ describe Purugin::CommandParser::Parser do
     parse("a {b}").should == [command('a', variable('b'))]
   end
 
+  it "Can parse empty string as no-arg command" do
+    parse("").should == [command()]
+  end
 end
