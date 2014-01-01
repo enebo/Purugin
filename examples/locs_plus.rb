@@ -36,18 +36,11 @@ class LocsPlus
     "%s, %s, %s" % [encode(x), encode(y), encode(z)]
   end
 
+  DIRS = ['W', 'NW', 'N', 'NE', 'E', 'SE', 'S', 'SW']
+
   def direction(location)
-    case location.yaw.abs
-    when 0..22.5 then "W"
-    when 22.5..67.5 then "NW"
-    when 67.5..112.5 then "N"
-    when 112.5..157.5 then "NE"
-    when 157.5..202.5 then "E"
-    when 202.5..247.5 then "SE"
-    when 247.5..292.5 then "S"
-    when 292.5..337.5 then "SW"
-    when 337.5..360 then "W"
-    end
+    # add 255 to shift W to beginning of int division. 450 yaw per dir.
+    DIRS[(location.yaw.abs * 10 + 225).to_i / 450]
   end
 
   def locations(player)
@@ -100,11 +93,11 @@ class LocsPlus
   end
 
   def waypoint_help(p)
-    p.send_message "/waypoint - show all waypoints"
-    p.send_message "/waypoint name|bind - show named waypoint"
-    p.send_message "/waypoint create name - create waypoint for name"
-    p.send_message "/waypoint remove name - remove waypoint for name"
-    p.send_message "/waypoint help - display help for waypoints"
+    p.msg "/waypoint - show all waypoints"
+    p.msg "/waypoint name|bind - show named waypoint"
+    p.msg "/waypoint create name - create waypoint for name"
+    p.msg "/waypoint remove name - remove waypoint for name"
+    p.msg "/waypoint help - display help for waypoints"
   end
 
   def waypoint_remove(player, name)
@@ -113,35 +106,34 @@ class LocsPlus
   end
 
   def waypoint_show(player, name)
-    player.send_message loc_string(name, player, *location(player, name))
+    player.msg loc_string(name, player, *location(player, name))
   end
 
   def waypoint_show_all(me)
     me.msg colorize(WAYPOINT_SHOW_ALL_HEADER)
     locations(me).each do |name, loc|
-      me.send_message loc_string(name, me, *loc)
+      me.msg loc_string(name, me, *loc)
     end
-    me.send_message loc_string("bind", me, *me.world.spawn_location.to_a)
+    me.msg loc_string("bind", me, *me.world.spawn_location.to_a)
   end
 
-  def track(sender, waypoint_name)
-    sender.msg "You start tracking '#{waypoint_name}'"
-    @tracks[sender] = [waypoint_name, location(sender, waypoint_name)] 
+  def track(me, waypoint_name)
+    me.msg "You start tracking '#{waypoint_name}'"
+    @tracks[me] = [waypoint_name, location(me, waypoint_name)] 
   end
 
   def track_help(me)
-    me.msg "/track name {time} - update loc every n seconds"
-    me.msg "/track stop"
+    me.msg "/track name", "/track stop"
   end
 
-  def track_stop(sender)
-    @tracks.delete(sender)
-    sender.msg "Tracking stopped"
+  def track_stop(me)
+    @tracks.delete(me)
+    me.msg "Tracking stopped"
   end
 
   def track_status(me)
     if @tracks[me]
-      me.msg "You are tracking to waypoint '#{@tracks[sender][0]}'"
+      me.msg "You are tracking to waypoint '#{@tracks[me][0]}'"
     else
       me.msg "You are not tracking anything"
     end
@@ -154,8 +146,8 @@ class LocsPlus
       me.msg "Location: #{pos_string(*loc.to_a)} #{direction(loc)}"
     end
 
-    command_type('valid_wp') do |sender, waypoint_name|
-      loc = location(sender, waypoint_name)
+    command_type('valid_wp') do |me, waypoint_name|
+      loc = location(me, waypoint_name)
       error? loc, "No such waypoint: '#{waypoint_name}'"
       waypoint_name
     end
