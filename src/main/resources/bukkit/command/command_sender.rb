@@ -1,7 +1,9 @@
 require 'java'
 
 module org::bukkit::command::CommandSender
-  def msg(message) # WTF why doesn't alias work
-    send_message(message)
+  def msg(*messages) # WTF why doesn't alias work
+    messages.each do |message|
+      send_message(message)
+    end
   end
 end
