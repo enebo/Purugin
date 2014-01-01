@@ -142,8 +142,8 @@ module Purugin
               send method_name, sender, *new_args
             rescue NoMethodError
               sender.msg "Missing expected command method: #{method_name}"
-              break
             end
+            break
           end
         end
         
