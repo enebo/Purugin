@@ -34,5 +34,47 @@ module Purugin
     def material_for(value)
       org.bukkit.Material.match_material value.to_s
     end
+    
+    ##
+    # If on fire can this burn away to nothing?
+    def burnable?
+      type.burnable?
+    end
+    
+    ##
+    # Can you eat it?
+    def edible?
+      type.edible?
+    end
+    
+    ##
+    # Can this catch on fire?
+    def flammable?
+      type.flammable?
+    end
+    
+    ##
+    # Does it block your vision (cannot be seen through)
+    def occluding?
+      type.occluding?
+    end
+    
+    ##
+    # Is it a record (LP)?
+    def record?
+      type.record?
+    end
+    
+    ##
+    # Does it block any light?  Transparent from game mechanics standpoint.
+    def transparent?
+      type.transparent?
+    end
+    
+    ##
+    # Is this solid (e.g. a player can navigate through it)
+    def solid?
+      type.solid?
+    end     
   end
 end
