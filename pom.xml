@@ -4,13 +4,13 @@
   <groupId>org.purugin</groupId>
   <artifactId>purugin</artifactId>
   <packaging>jar</packaging>
-  <version>${bukkit.version}.1-bukkit-${bukkit.version}</version>
+  <version>0.7.0-bukkit-${bukkit.version}</version>
   <name>Purugin</name>
   <url>http://www.bukkit.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <minecraft.version>1.7.2</minecraft.version>
-    <bukkit.version>1.7.2-R0.3-SNAPSHOT</bukkit.version>
+    <bukkit.version>1.7.2-R0.2</bukkit.version>
     <jruby.version>1.7.9</jruby.version>
   </properties>
   <repositories>
