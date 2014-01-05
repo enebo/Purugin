@@ -46,40 +46,47 @@
       <version>${jruby.version}</version>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>fatjar</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.0</version>
+            <configuration>
+              <source>1.6</source>
+              <target>1.6</target>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+                <configuration>
+                  <forceCreation>true</forceCreation>
+                  <artifactSet>
+                    <excludes>
+                      <exclude>org.bukkit:bukkit</exclude>
+                      <exclude>org.bukkit:minecraft-server</exclude>
+                    </excludes>
+                  </artifactSet>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <build>
     <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.0</version>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <forceCreation>true</forceCreation>
-              <artifactSet>
-                <excludes>
-                  <exclude>org.bukkit:bukkit</exclude>
-                  <exclude>org.bukkit:minecraft-server</exclude>
-                </excludes>
-              </artifactSet>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 </project>
