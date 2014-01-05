@@ -1,4 +1,4 @@
 name: 'PuruginPlugin'
 main: 'org.purugin.PuruginPlugin'
-version: '1.4.7-R1.0.1'
+version: '${purugin.version}'
 author: 'enebo'

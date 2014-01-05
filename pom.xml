@@ -4,11 +4,12 @@
   <groupId>org.purugin</groupId>
   <artifactId>purugin</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.0-bukkit-${bukkit.version}</version>
+  <version>${purugin.version}-bukkit-${bukkit.version}</version>
   <name>Purugin</name>
   <url>http://www.bukkit.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <purugin.version>0.7.0</purugin.version>
     <minecraft.version>1.7.2</minecraft.version>
     <bukkit.version>1.7.2-R0.2</bukkit.version>
     <jruby.version>1.7.9</jruby.version>
@@ -88,5 +89,11 @@
   </profiles>
   <build>
     <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
   </build>
 </project>
