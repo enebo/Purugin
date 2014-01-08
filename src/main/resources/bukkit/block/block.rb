@@ -34,6 +34,7 @@ module org::bukkit::block::Block
     
     distance ? get_relative(face, distance) : get_relative(face)
   end
+  alias :relative :block_at
   
   ##
   # Which face relative to the supplied block would be visible?
