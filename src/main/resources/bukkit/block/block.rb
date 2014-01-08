@@ -43,10 +43,30 @@ module org::bukkit::block::Block
   end
   
   ##
-  # How bright is the light on this block.  Can be 0-15.
+  # How bright is the light on this block?  Can be 0-15.
   #
   def light_level
     getLightLevel
+  end
+  
+  ##
+  # How bright is this block only from sky light?
+  #
+  def light_from_sky
+    getLightFromSky
+  end
+  
+  ##
+  # How bright is this block from block source (not sky light)?
+  #
+  def light_from_blocks
+   getLightFromBlocks 
+  end
+  
+  ##
+  # What world does this block belong to?
+  def world
+    getWorld
   end
   
   ##
