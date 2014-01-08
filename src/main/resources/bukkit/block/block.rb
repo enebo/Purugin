@@ -88,6 +88,24 @@ module org::bukkit::block::Block
   end
   
   ##
+  # Current location of this block
+  # === Parameters
+  # * _location_ - Optional location in case you want to use an instance instead of construct a new one
+  def location(location=nil)
+    if location
+      getLocation(location)
+    else
+      getLocation
+    end
+  end
+  
+  ##
+  # What chunk does this block belong to?
+  def chunk
+    getChunk
+  end
+  
+  ##
   # Which face relative to the supplied block would be visible?
   # === Parameters
   # * _other_block_ - the block we want to compare against
