@@ -70,6 +70,24 @@ module org::bukkit::block::Block
   end
   
   ##
+  # x location of this block (Fixnum)
+  def x
+    getX
+  end
+  
+  ##
+  # y location of this block (Fixnum)
+  def y
+    getY
+  end
+
+  ##
+  # z location of this block (Fixnum)
+  def z
+    getZ
+  end
+  
+  ##
   # Which face relative to the supplied block would be visible?
   # === Parameters
   # * _other_block_ - the block we want to compare against
