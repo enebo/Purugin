@@ -37,6 +37,19 @@ module org::bukkit::block::Block
   alias :relative :block_at
   
   ##
+  # Type of this block (as a Material)
+  def type
+    getType
+  end
+  
+  ##
+  # How bright is the light on this block.  Can be 0-15.
+  #
+  def light_level
+    getLightLevel
+  end
+  
+  ##
   # Which face relative to the supplied block would be visible?
   # === Parameters
   # * _other_block_ - the block we want to compare against
