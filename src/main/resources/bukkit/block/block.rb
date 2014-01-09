@@ -123,7 +123,7 @@ module org::bukkit::block::Block
   # Change the type of this block to be another type.
   # 
   def change_type(new_type)
-    set_type(material_for(new_type) || new_type)
+    setType(material_for(new_type) || new_type)
   end
   alias :type= :change_type
   
