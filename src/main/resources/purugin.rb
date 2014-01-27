@@ -2,6 +2,11 @@
 purugin_jar_path = __FILE__.gsub(/(^jar:file:|!.*$)/, '')
 
 $LOAD_PATH << purugin_jar_path
+$PACKAGE_BASE = eval org.bukkit.Bukkit.server.java_class.package.name
+
+def cb
+  $PACKAGE_BASE
+end
 
 require 'java'
 require 'purugin/utils/conversion_util'

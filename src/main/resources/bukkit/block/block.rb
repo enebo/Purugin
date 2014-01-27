@@ -1,7 +1,7 @@
 require 'java'
 require 'purugin/materials'
 
-module org::bukkit::block::Block
+class cb::block::CraftBlock
   include Purugin::Materials
   BF = org.bukkit.block.BlockFace
   FACE_VALUES = {
@@ -106,26 +106,95 @@ module org::bukkit::block::Block
   end
   
   ##
-  # Which face relative to the supplied block would be visible?
-  # === Parameters
-  # * _other_block_ - the block we want to compare against
-  def face_for(other_block)
-    get_face(other_block)
-  end
-  
-  ##
-  # Some methods will implcitly convert a block to its location if it responds to :to_loc
+  # Some methods will implicitly convert a block to its location if it responds to :to_loc
   def to_loc
     location
   end
   
   ##
   # Change the type of this block to be another type.
-  # 
+  # Deprecated
   def change_type(new_type)
     setType(material_for(new_type) || new_type)
   end
-  alias :type= :change_type
+
+  ##
+  # Change the type of this block to be another type.
+  #   
+  def type=(new_type)
+    setType(material_for(new_type) || new_type)
+  end
+  
+  ##
+  # Which face relative to the supplied block would be visible?
+  # === Parameters
+  # * _other_block_ - the block we want to compare against
+  #
+  def face_for(other_block)
+    getFace(other_block)
+  end
+  alias :face :face_for
+  
+  ##
+  # Gets any BlockState data associated with this block
+  #
+  def state
+    getState
+  end
+  
+  ##
+  # Retrieve or change the biome associated with this block?
+  # === Examples
+  # me.target_block.biome #=> org.bukkit.block.Biome::Swamp
+  #
+  def biome
+    getBiome
+  end
+  
+  ##
+  # Change the biome of this block.
+  # === Parameters
+  # * _new_biome_ change this block to the new biome type
+  # 
+  #  Note: If you expect
+  # to see visual changes on your client after making this change you must call
+  # World.refresh_chunk(x,z) on the chunk this block is contained in to have
+  # client notice this change (this is expensive so it is not automatic).
+  #
+  # === Examples
+  # me.target_block.biome = :forest
+  #
+  def biome=(new_biome)
+    value = new_biome.respond_to?(:to_biome) ? new_biome.to_biome : new_biome
+
+    raise ArgumentError.new "Invalid biome type: #{new_biome}" if !value.kind_of? org.bukkit.block.Biome
+
+    setBiome(value)
+  end
+  
+  ##
+  # Does redstone power this block?
+  def block_powered?
+    isBlockPowered
+  end
+  
+  ##
+  # Does redstone indirectly power this block?  
+  def block_indirectly_powered?
+    isBlockIndirectlyPowered
+  end
+  
+  ##
+  # Does redstone power this block face?
+  def block_face_powered?(face)
+    isBlockFacePowered(symbol_for_face(face))
+  end
+  
+  ##
+  # Does redstone indirectly power this block?  
+  def block_face_indirectly_powered?(face)
+    isBlockFaceIndirectlyPowered(symbol_for_face(face))
+  end
   
   ##
   # return the face relative to the supplied face given a direction

@@ -14,4 +14,12 @@ class Symbol
   def to_material
     org::bukkit::Material::match_material(to_s)
   end
+  
+  ##
+  # Retrieve the Biome associated wit this symbol
+  # === Examples ===
+  # :sky.to_biome #=> org.bukkit.block.Biome::SKY
+  def to_biome
+    org::bukkit::block::Biome::match_biome(to_s)
+  end
 end
