@@ -217,7 +217,7 @@ class cb::block::CraftBlock
     # Only drop items which are actually droppable    
     if with_drop && droppable
       itemstack = org::bukkit::inventory::ItemStack.new(type, 1)
-      location.world.drop_item_naturally(location, itemstack)
+      location.world.drop_item(location, itemstack, true)
     end
     
     change_type replace_type unless type.is? replace_type

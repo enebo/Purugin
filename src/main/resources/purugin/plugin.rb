@@ -3,7 +3,7 @@ require 'purugin/plugin_metadata'
 
 module Purugin
   # This module is the main module you should include if you want to make a registered
-  # Bukkit plugin.  It will actually implement all the methods required by org.bukkit.plugin.Plugin.
+  # Bukkit plugin.  It will implement all the methods required by org.bukkit.plugin.Plugin.
   # Here is a simple example of making a plugin:
   #
   #   class PlayerJoinedPlugin
