@@ -72,6 +72,35 @@ class cb::CraftWorld
   end
 
   ##
+  # All entities in this world
+  #
+  def entities
+    getEntities
+  end
+
+  ##
+  # Get all entities specific by list of class/interfaces
+  def entities_by_class(*clazzes)
+    clazzes = clazzes.map { |c| c.java_class }
+
+    getEntitiesByClasses(clazzes)
+  end
+
+  ##
+  # Get the absolute time of this world
+  def full_time
+    getFullTime
+  end
+
+  ##
+  # Set the absolute time of this world
+  # === Parameters
+  # * _new_time_ - new absolute time (long in Java)
+  def full_time=(new_time)
+    setFullTime(new_time)
+  end
+
+  ##
   # Generate a Tree and the specified location
   # === Parameters
   # * _location_ - where you want the tree
@@ -117,6 +146,12 @@ class cb::CraftWorld
   end
 
   ##
+  # All living entities in this world
+  def living_entities
+    getLivingEntities
+  end
+
+  ##
   # Load the chunk at [x,z] and choose whether you want it generated or not (default: true).
   # === Parameters
   # _x_ - x coordinate of chunk
@@ -131,6 +166,18 @@ class cb::CraftWorld
   #
   def loaded_chunks
     getLoadedChunks.to_a
+  end
+
+  ##
+  # What is the name of this world?
+  def name
+    getName
+  end
+
+  ##
+  # Get list of all players in this world.
+  def players
+    getPlayers
   end
   
   ##
@@ -182,6 +229,22 @@ class cb::CraftWorld
   end
 
   ##
+  # Get default spawn location for this world
+  def spawn_location
+    getSpawnLocation
+  end
+
+  ##
+  # Set default spawn location for this world
+  # === Parameters
+  # * _location_ - where to set the spawn location
+  def spawn_location=(location)
+    location = location.respond_to?(:to_loc) ? location.to_loc : location
+
+    setSpawnLocation(location.x, location.y, location.z)
+  end
+
+  ##
   # Spawn a creature ("chicken", "creeper") at a specified location.
   # === Parameters
   # * _mob_name_ is the creature to spawn (@see CreatureType)
@@ -204,10 +267,64 @@ class cb::CraftWorld
     has_storm
   end
 
+  ##
+  # Set whether the world is storming or not
+  # === Parameters
+  # * _is_storming_ - Is it storming or not?
+  def storm=(is_storming)
+    setStorm(is_storming)
+  end
+
   def strike_lightning(location, effect_only=false)
     location = location.respond_to?(:to_loc) ? location.to_loc : location
     
     effect_only ? strikeLightningEffect(location) : strikeLightning(location)
+  end
+
+  ##
+  # How long should the thunder last?
+  def thunder_duration
+    getThunderDuration
+  end
+
+  ##
+  # How long should the thunder last
+  # === Parameters
+  # * _duration how many ticks should the thunder last
+  def thunder_duration=(duration)
+    setThunderDuration(duration)
+  end
+
+  ##
+  # Is it currently thundering in this world?
+  def thundering?
+    isThundering
+  end
+
+  ##
+  # Set whether it is thundering or not in this world.
+  # === Parameters
+  # * _is_thundering_ - set whether it is thundering or not.
+  def thundering=(is_thundering)
+    setThundering(is_thundering)
+  end
+
+  ##
+  # What time is it in this world in relative time (hours * 1000)
+  def time
+    getTime
+  end
+
+  ##
+  # Set relative time for this workd (hours * 1000)
+  def time=(new_time)
+    setTime(new_time)
+  end
+
+  ##
+  # get UUID of this world
+  def uid
+    getUID
   end
 
   ##
@@ -231,6 +348,21 @@ class cb::CraftWorld
   # _safe_ - only unload it is no players are close enough to notice
   def unload_chunk_request(x, z, safe=true)
     unloadChunkRequest(x, z, safe)
+  end
+
+  # FIXME: Convert ticks to seconds
+  ##
+  # How many ticks will the current weather persist
+  def weather_duration
+    getWeatherDuration
+  end
+
+  ##
+  # How many ticks should the current weather persist
+  # === Parameters
+  # * _ticks_ number of ticks weather should stay the same
+  def weather_duration=(ticks)
+    setWeatherDuration(ticks)
   end
 
   ##
