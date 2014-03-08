@@ -11,8 +11,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <purugin.version>0.7.1</purugin.version>
     <minecraft.version>1.7.2</minecraft.version>
-    <bukkit.version>1.7.2-R0.2</bukkit.version>
-    <jruby.version>1.7.9</jruby.version>
+    <bukkit.version>1.7.2-R0.3</bukkit.version>
+    <jruby.version>1.7.11</jruby.version>
   </properties>
   <repositories>
     <repository>
