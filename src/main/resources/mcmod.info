@@ -1,0 +1,21 @@
+[
+{
+  "modid": "Purugin",
+  "name": "Purugin",
+  "description": "A Ruby mod framework for minecraft",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/enebo/Purugin",
+  "updateUrl": "",
+  "authorList": [
+    "enebo",
+  ],
+  "credits": "Thanks to everyone who has helped us so far",
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+  ]
+}
+]

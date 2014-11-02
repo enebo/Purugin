@@ -2,53 +2,48 @@
 purugin_jar_path = __FILE__.gsub(/(^jar:file:|!.*$)/, '')
 
 $LOAD_PATH << purugin_jar_path
-$PACKAGE_BASE = eval org.bukkit.Bukkit.server.java_class.package.name
 
-def cb
-  $PACKAGE_BASE
-end
-
-require 'java'
-require 'purugin/utils/conversion_util'
-require 'purugin/predicate'
-require 'bukkit/block/biome'
-require 'bukkit/block/block'
-require 'bukkit/command/command'
-require 'bukkit/command/command_sender'
-require 'bukkit/entity/entity'
-require 'bukkit/entity/entity_type'
-require 'bukkit/entity/human_entity'
-require 'bukkit/entity/living_entity'
-require 'bukkit/event/entity/creeper_power_event'
-require 'bukkit/event/entity/creature_spawn_event'
-require 'bukkit/event/entity/entity_damage_event'
-require 'bukkit/event/entity/entity_regain_health_event'
-require 'bukkit/event/entity/entity_target_event'
-require 'bukkit/event/painting/painting_break_event'
-require 'bukkit/event/player'
-require 'bukkit/event/player/player_fish_event'
-require 'bukkit/event/player/player_login_event'
-require 'bukkit/event/player/player_pre_login_event'
-require 'bukkit/game_mode'
-require 'bukkit/location'
-require 'bukkit/material'
-require 'bukkit/tree_type'
-require 'core_ext/symbol'
-require 'bukkit/permissions/permissible'
-require 'bukkit/plugin/plugin_manager'
-require 'bukkit/plugin/simple_plugin_manager'
-require 'bukkit/event/player'
-require 'bukkit/util/vector'
-require 'bukkit/world'
-require 'purugin/change_listener'
-require 'purugin/colors'
-require 'purugin/command'
-require 'purugin/configuration'
-require 'purugin/items'
-require 'purugin/player_storage'
-require 'purugin/plugin'
-require 'purugin/recipes'
-require 'purugin/tasks'
+#require 'java'
+#require 'purugin/utils/conversion_util'
+#require 'purugin/predicate'
+#require 'bukkit/block/biome'
+# require 'bukkit/block/block'
+# require 'bukkit/command/command'
+# require 'bukkit/command/command_sender'
+# require 'bukkit/entity/entity'
+# require 'bukkit/entity/entity_type'
+# require 'bukkit/entity/human_entity'
+# require 'bukkit/entity/living_entity'
+# require 'bukkit/event/entity/creeper_power_event'
+# require 'bukkit/event/entity/creature_spawn_event'
+# require 'bukkit/event/entity/entity_damage_event'
+# require 'bukkit/event/entity/entity_regain_health_event'
+# require 'bukkit/event/entity/entity_target_event'
+# require 'bukkit/event/painting/painting_break_event'
+# require 'bukkit/event/player'
+# require 'bukkit/event/player/player_fish_event'
+# require 'bukkit/event/player/player_login_event'
+# require 'bukkit/event/player/player_pre_login_event'
+# require 'bukkit/game_mode'
+# require 'bukkit/location'
+# require 'bukkit/material'
+# require 'bukkit/tree_type'
+# require 'core_ext/symbol'
+# require 'bukkit/permissions/permissible'
+# require 'bukkit/plugin/plugin_manager'
+# require 'bukkit/plugin/simple_plugin_manager'
+# require 'bukkit/event/player'
+# require 'bukkit/util/vector'
+# require 'bukkit/world'
+# require 'purugin/change_listener'
+# require 'purugin/colors'
+# require 'purugin/command'
+# require 'purugin/configuration'
+# require 'purugin/items'
+# require 'purugin/player_storage'
+# require 'purugin/plugin'
+# require 'purugin/recipes'
+# require 'purugin/tasks'
 
 $plugins = {} # path => [purugin, time_loaded]
 
@@ -58,14 +53,13 @@ module Purugin
   # implemented in Ruby.
   class PuruginProxy
     PURUGINS_GLOB = "plugins/*.rb"
-    include Purugin::Base
+    #include Purugin::Base
 
     attr_accessor :ruby_plugin_loader
     
-    def initialize(plugin, plugin_loader, purugin_path)
-      @purugin_plugin, @plugin_loader = plugin, plugin_loader
+    def initialize(plugin, purugin_path)
+      @purugin_plugin, @purugins_glob = plugin, File.join(purugin_path, "*.rb")
       @server = @purugin_plugin.server
-      @purugins_glob = File.join(purugin_path, "*.rb")
     end
     
     def onLoad
