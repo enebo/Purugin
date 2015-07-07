@@ -222,7 +222,7 @@ module Purugin
 
         # Make convenience method for plugin 
         # TODO: Resolve what happens if plugin conflicts w/ existing method)
-        self.class.send(:define_method, name.to_s) { plugin }
+        self.class.send(:define_method, name.to_s) { plugin_manager[name.to_s] }
         process_includes plugin, options[:include] if options[:include]
         process_services plugin, options[:services] if options[:services]
       end
