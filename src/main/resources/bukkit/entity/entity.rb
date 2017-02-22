@@ -36,11 +36,11 @@ module org::bukkit::entity::Entity
   
   predicate org::bukkit::entity::Player
 
-  predicate org::bukkit::entity::PoweredMinecart
+  # predicate org::bukkit::entity::PoweredMinecart
   predicate org::bukkit::entity::LightningStrike 
   predicate org::bukkit::entity::Boat
-  predicate org::bukkit::entity::StorageMinecart
-  predicate org::bukkit::entity::FallingSand
+  # predicate org::bukkit::entity::StorageMinecart
+  predicate org::bukkit::entity::FallingBlock
   predicate org::bukkit::entity::Explosive
   predicate org::bukkit::entity::Painting
   predicate org::bukkit::entity::Egg
