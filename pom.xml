@@ -4,45 +4,37 @@
   <groupId>org.purugin</groupId>
   <artifactId>purugin</artifactId>
   <packaging>jar</packaging>
-  <version>${purugin.version}-bukkit-${bukkit.version}</version>
+  <version>${purugin.version}-spigot-${bukkit.version}</version>
   <name>Purugin</name>
   <url>http://www.bukkit.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <purugin.version>0.8.0</purugin.version>
-    <minecraft.version>1.7.9</minecraft.version>
-    <bukkit.version>1.7.9-R0.2</bukkit.version>
-    <jruby.version>1.7.21</jruby.version>
+    <purugin.version>1.12.0</purugin.version>
+    <minecraft.version>1.12</minecraft.version>
+    <bukkit.version>1.12-R0.1-SNAPSHOT</bukkit.version>
+    <jruby.version>1.7.27</jruby.version>
   </properties>
   <repositories>
     <repository>
-      <id>repobo-snapshots</id>
-      <url>http://repo.md-5.net/content/repositories/snapshots/</url>
-    </repository>
-    
-    <repository>
-      <id>repobo-rel</id>
-      <url>http://repo.md-5.net/content/repositories/repobo-rel/</url>
-    </repository>
-    <repository>
-      <id>repobo-releases</id>
-      <url>http://repo.md-5.net/content/repositories/releases/</url>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
   </repositories>
   <dependencies>
+    <!-- See https://www.spigotmc.org/wiki/spigot-maven/ -->
+    <!--Spigot API-->
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>${bukkit.version}</version>
-      <type>jar</type>
-      <scope>compile</scope>
+           <groupId>org.spigotmc</groupId>
+           <artifactId>spigot-api</artifactId>
+           <version>${bukkit.version}</version>
+           <scope>provided</scope>
     </dependency>
+    <!--Bukkit API-->
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>minecraft-server</artifactId>
-      <version>${minecraft.version}</version>
-      <type>jar</type>
-      <scope>compile</scope>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>${bukkit.version}</version>
+            <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
