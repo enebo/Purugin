@@ -1,11 +1,13 @@
 # Make an dimension x dimension grid of blocks
-turtle("plane") do |*args|
-  dimensions = (args[0] or 20).to_i
-  block (args[1] or :grass).to_sym
+turtle("plane") do |dim, *args|
+  dimensions = (dim or 20).to_i
 
   i = dimensions 
   unit do
-    forward i
+    i.times do
+      block random(*args)
+      forward 1
+    end
     turnleft 90
   end
 
