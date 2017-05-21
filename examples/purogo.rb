@@ -292,6 +292,8 @@ class PurogoPlugin
 
   def on_enable
     default = File.join(File.dirname(__FILE__), "purogo")
+    cwd = Dir.getwd + '/'
+    default.slice!(cwd) if default.start_with? cwd # as a relative path
     @purogo_directory = config.get!("purogo.directory", default)
     @ip_mode = false # hack this out for now. config.get!("purogo.ipmode", true)
     sessions = TurtleSessions.new @purogo_directory
