@@ -76,6 +76,9 @@ be able to reference it.
 
 ## Running
 
+https://www.spigotmc.org/wiki/buildtools/
+https://www.spigotmc.org/wiki/spigot-installation/
+
 To run Purugin, you just copy Purugin.jar into your plugins directory like any 
 other minecraft plugin.  Once running you can write Purugins and copy 
 those .rb files into your plugins directory.  Simple!  
