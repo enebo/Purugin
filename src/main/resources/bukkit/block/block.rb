@@ -236,5 +236,14 @@ class cb::block::CraftBlock
   
   def inspect
     "Block: #{self.type}"
-  end  
+  end
+
+  ##
+  # Is this block a sign?
+  # === Examples
+  # sign_block.sign?   #=> true
+  # stone_block.sign?  #=> false
+  def sign?
+    state.kind_of?(org::bukkit::block::Sign)
+  end
 end

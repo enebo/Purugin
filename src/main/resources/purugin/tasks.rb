@@ -11,6 +11,18 @@ module Purugin
   # In order to use the task methods your including class must have a _server_ and _plugin_
   # method defined.
   module Tasks
+    # Will periodically call block passed.  So long as the block continues to return
+    # something truthy it will continue to run.
+    class AsyncRunnable < Java::org::bukkit::scheduler::BukkitRunnable
+      def initialize(&code)
+        @code = code
+      end
+
+      def run
+        @code[] || cancel
+      end
+    end
+
     TICKS_PER_SECOND = 20
     
     def sync_task(delay=0, repeat=-1, &block)
@@ -32,15 +44,15 @@ module Purugin
     
     def async_task(delay=0, repeat=-1, &block)
       delay, repeat = (delay.to_f * TICKS_PER_SECOND).to_i, (repeat.to_f * TICKS_PER_SECOND).to_i
-      code = java.lang.Runnable.impl &block
-      
+      code = AsyncRunnable.new &block
+
       raise ArgumentError.new "delay must be a positive value" if delay < 0
       
       if repeat > -1
         raise ArgumentError.new "repeat must be positive value" if repeat <= 0
-        task_id = Bukkit.server.scheduler.schedule_async_repeating_task self, code, delay, repeat
+        task_id = code.runTaskTimer self, delay, repeat # FIXME: this should repeat in Runnable to cancel
       else
-        task_id = Bukkit.server.scheduler.schedule_async_delayed_task self, code, delay
+        task_id = code.runTaskTimer self, 0, delay
       end
       
       raise Purugin::ScheduleFailedError.new if task_id == -1

@@ -223,7 +223,7 @@ class cb::CraftWorld
   #
   def spawn_entity(location, entity_type)
     location = location.respond_to?(:to_loc) ? location.to_loc : location
-    entity_type = entity_type.respond_to?(:to_entity) ? entity_type.to_loc : entity_type
+    entity_type = entity_type.respond_to?(:to_entity) ? entity_type.to_entity : entity_type
 
     spawnEntity(location, entity_type)
   end
@@ -254,11 +254,9 @@ class cb::CraftWorld
   #
   def spawn_mob(creature_name, location)
     creature_type = org.bukkit.entity.EntityType.from_name(creature_name.to_s)
-    
     raise TypeError.new "unknown mob type #{creature_name}" unless creature_type
-    
     location = location.respond_to?(:to_loc) ? location.to_loc : location
-    spawnCreature location, creature_type
+    spawnEntity location, creature_type
   end
   
   ##

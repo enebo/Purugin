@@ -52,7 +52,6 @@ module org::bukkit::entity::Entity
   predicate org::bukkit::entity::Arrow
   predicate org::bukkit::entity::TNTPrimed, :tnt_primed
   predicate org::bukkit::entity::Minecart
-  predicate org::bukkit::entity::Weather
 
   ##  
   # Is this entity a particular type of entity

@@ -38,41 +38,39 @@ module Purugin
     def disable_plugin(path)
       plugin = plugin_for(path)
       if plugin && plugin.enabled?
-        plugin_manager.disablePlugin plugin
-        # Hack around lack of unregistering
-        begin
+        done = false
+        Bukkit.server.scheduler.run_task(plugin) do
+          plugin_manager.disablePlugin plugin
+          # Hack around lack of unregistering
           m = org.bukkit.event.HandlerList.java_method :unregisterAll, [org.bukkit.plugin.Plugin]
           m.call(plugin)
           unregister_constants plugin.class
-        rescue
-          puts "Who #{$!}"
+          done = true
+        end
+
+        while !done
+          sleep 0.002
         end
       end
     end
 
     def enable_plugin(path)
       plugin = plugin_for(path)
-      plugin_manager.enablePlugin plugin if plugin && !plugin.enabled?
+      Bukkit.server.scheduler.run_task(@main.purugin_plugin) { plugin_manager.enablePlugin plugin } if plugin && !plugin.enabled?
     end
 
     # Isolate starting in a thread to not stop the world
     def restart_plugin(path)
-      puts "RESTARTING: #{path}"
-      Thread.new do
-        begin
-          disable_plugin path
-          load path # HEH...danger is my middle name
-          enable_plugin path
-          $plugins[path][1] = File.mtime(path)
-        rescue
-          puts "Problem restarting #{path}: #{$!}"
-        end
-      end
+      disable_plugin path
+      load path # HEH...danger is my middle name
+      enable_plugin path
+      $plugins[path][1] = File.mtime(path)
+    rescue
+      puts "Problem restarting #{path}: #{$!}"
     end
 
     # Isolate starting in a thread to not stop the world
     def start_plugin(path)
-      puts "STARTING: #{path}"
       Thread.new do
         begin
           load_plugin path

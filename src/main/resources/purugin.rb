@@ -61,6 +61,7 @@ module Purugin
     include Purugin::Base
 
     attr_accessor :ruby_plugin_loader
+    attr_accessor :purugin_plugin
     
     def initialize(plugin, plugin_loader, purugin_path)
       @purugin_plugin, @plugin_loader = plugin, plugin_loader
