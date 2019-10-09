@@ -128,7 +128,7 @@ class PurogoPlugin
     include Purugin::Colors
     MAX_PIXEL_COUNT = 1000
     DEFAULT_BLOCK_TYPE = :wood
-    attr_reader :player, :location
+    attr_reader :player, :location, :blocks
 
     def round(float, prec=90)
       (float / prec.to_f).round * prec.to_i
@@ -142,8 +142,7 @@ class PurogoPlugin
       end
       @verbose = false
       @markers = {}
-      @original_blocks = {} # loc -> type
-      @delay = 0.1
+      @blocks = []
     end
 
     # Undraw/revert all blocks changed by this turtleinterface
@@ -170,21 +169,14 @@ class PurogoPlugin
       @player.server
     end
 
-    def delay(amount)
-      @delay = amount
-    end
-
     def execute(name, drawer, commands)
-      @drawer = @player.world.spawn_mob drawer, @location
-      label = name ? name + ":" : ''
-      commands.each do |cmd, *args|
-        @player.msg "#{label}#{cmd} #{args.join(", ")}" if @verbose && cmd != "verbose"
-        __send__ cmd, *args
-      end
+      #@drawer = @player.world.spawn_mob drawer, @location
+      commands.each { |cmd, *args| __send__ cmd, *args }
+      @blocks
     rescue NoMethodError => e
       @player.msg red("#{name}: Unknown command #{e.name}")
     ensure
-      @drawer.remove
+      #@drawer.remove
     end
 
     def verbose(state)
@@ -234,7 +226,6 @@ class PurogoPlugin
       yaw 180 if amount < 0
       direction = @location.direction # cache to prevent math
       amount.abs.times do
-        sleep @delay
         loc = @location.add(direction).clone
         loc.x, loc.y, loc.z = loc.x.round, loc.y.round, loc.z.round
         pixel loc
@@ -243,17 +234,15 @@ class PurogoPlugin
     end
 
     def pixel(loc)
-      @drawer.teleport(loc)
+      #@drawer.teleport(loc)
 #      puts "Changing [#{loc.to_a.join(", ")}] to #{@block_type}"
       block = loc.block
       original_type = block.type
-      block.change_type @block_type unless @block_type == :none
-      unless @original_blocks[block]
-        @original_blocks[block] = original_type
-        @sessions[block] = self
-      end
+      #block.change_type @block_type unless @block_type == :none
+      @blocks << [loc, original_type, @block_type]
+      @sessions[block] = self
 
-      raise ExecutionAborted.new "Program has too many blocks (>#{MAX_PIXEL_COUNT})" if @original_blocks.size > MAX_PIXEL_COUNT
+      raise ExecutionAborted.new "Program has too many blocks (>#{MAX_PIXEL_COUNT})" if @blocks.size > MAX_PIXEL_COUNT
     end
   end
 
@@ -296,11 +285,11 @@ class PurogoPlugin
     @ip_mode = false # hack this out for now. config.get!("purogo.ipmode", true)
     sessions = TurtleSessions.new @purogo_directory
 
-    event(:entity_damage) { |e| e.cancelled = true; }
-    event(:creature_spawn) { |e| e.cancelled = true if e.entity.slime? }
+#    event(:entity_damage) { |e| e.cancelled = true }
+#    event(:creature_spawn) { |e| e.cancelled = true if e.entity.slime? }
 
     public_player_command('purogo', 'one line purugo', '/draw code') do |me, *args|
-      async_task do
+      async_task(0.1) do
         turtle = eval <<-EOS
           turtle("eval") do |*args|
             #{args.join(' ')}
@@ -314,10 +303,20 @@ class PurogoPlugin
       abort! "No drawing specified" if args.length == 0
       filename = purogo_file_for(me, args[0].to_s)
       abort! "No drawing named '#{args[0]}' exists" unless File.exist?(filename)
-      async_task do
-        turtle = PurogoPlugin.load_turtle(me, filename)
-        turtle.render(TurtleInterface.new(sessions, me), args[1..-1])
+      turtle = PurogoPlugin.load_turtle(me, filename)
+      blocks = turtle.render(TurtleInterface.new(sessions, me), args[1..-1])
+      enum = blocks.each
+      async_task(0.1) do
+        begin
+          loc, _, new_block_type = enum.next
+          block = loc.block
+          block.change_type new_block_type unless new_block_type == :none
+          true
+        rescue StopIteration
+          false
+        end
       end
+
     end
 
     public_player_command('undraw', 'remove drawing', '/undraw') do |me, *|
