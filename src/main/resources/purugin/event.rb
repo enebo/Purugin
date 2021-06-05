@@ -207,7 +207,7 @@ module Purugin
     def event(event_name, priority_value=:lowest, &code)
       type = EVENT_NAME_TO_LISTENER[event_name.to_sym]
 
-      raise ArgumentError.new "No suck event #{event_name}" unless type
+      raise ArgumentError.new "No such event #{event_name}" unless type
         
       plugin_manager.register_events(type.new(&code), self)
     end

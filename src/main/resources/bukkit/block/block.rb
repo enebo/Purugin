@@ -239,6 +239,15 @@ class cb::block::CraftBlock
   end
 
   ##
+  # Is this block a sapling?
+  # === Examples
+  # acacia_sapling.sapling? #=> true
+  # stone_block.sapling?    #=> false
+  def sapling?
+    block_data.kind_of?(org::bukkit::block::data::type::Sapling)
+  end
+
+  ##
   # Is this block a sign?
   # === Examples
   # sign_block.sign?   #=> true
