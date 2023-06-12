@@ -9,9 +9,9 @@
   <url>http://www.bukkit.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <purugin.version>1.16.5</purugin.version>
-    <minecraft.version>1.16</minecraft.version>
-    <bukkit.version>1.16.5-R0.1-SNAPSHOT</bukkit.version>
+    <purugin.version>1.17.1</purugin.version>
+    <minecraft.version>1.17.1</minecraft.version>
+    <bukkit.version>1.17.1-R0.1-SNAPSHOT</bukkit.version>
     <jruby.version>9.2.17.0</jruby.version>
   </properties>
   <repositories>
